@@ -18,7 +18,7 @@ export async function GET() {
   const index = await getIndex();
   return NextResponse.json({
     chunks: index.size,
-    llm: getLlmConfig()?.model ?? null,
+    llm: getLlmConfig()?.models.join(" → ") ?? null,
   });
 }
 

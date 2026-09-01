@@ -52,7 +52,7 @@ export const PROJECTS: Project[] = [
     ],
     outcome:
       "A maintainable base that later steps plug into — the calculator, explorer, reaction lab and AI assistant all inherit this design system.",
-    links: { repo: "https://github.com/yourusername/chem-portfolio" },
+    links: { repo: "https://github.com/amirjahed837-netizen/chemovexa" },
     featured: true,
   },
   {

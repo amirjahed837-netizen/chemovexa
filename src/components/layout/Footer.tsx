@@ -13,8 +13,8 @@ export function Footer() {
           <div className="flex items-center gap-2.5">
             <LogoMark className="size-8" />
             <span className="font-display text-lg font-bold text-white">
-              {profile.name.split(" ")[0]}
-              <span className="text-gradient">.lab</span>
+              CHEMO
+              <span className="text-gradient">VEXA</span>
             </span>
           </div>
           <p className="max-w-xs text-sm leading-relaxed text-slate-400">{profile.tagline}</p>

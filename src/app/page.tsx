@@ -6,7 +6,7 @@ import { FeaturedTools } from "@/components/home/FeaturedTools";
 import { ScienceMeetsCode } from "@/components/home/ScienceMeetsCode";
 import { CTABanner } from "@/components/home/CTABanner";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://chem-portfolio.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://chemovexa.vercel.app";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -27,7 +27,7 @@ const personLd = {
 const websiteLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: `${profile.name}.lab`,
+  name: "CHEMOVEXA",
   url: siteUrl,
   description: profile.tagline,
   inLanguage: "en",

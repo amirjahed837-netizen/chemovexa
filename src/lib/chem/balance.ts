@@ -108,11 +108,15 @@ export function balanceEquation(inputs: SpeciesInput[]): BalanceResult {
     for (const input of inputs) {
       if (!input.formula.trim()) throw new Error("Every species needs a formula.");
       const normalized = normalizeStructuralFormula(input.formula);
-      parsed.push({
+      const candidate = {
         formula: input.formula.trim(),
         counts: parseFormula(normalized).counts,
         side: input.side,
-      });
+      };
+      const dup = parsed.find(
+        (p) => p.formula === candidate.formula && p.side === candidate.side,
+      );
+      if (!dup) parsed.push(candidate);
     }
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Invalid formula." };

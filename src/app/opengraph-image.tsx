@@ -62,7 +62,7 @@ export default function OG() {
             <circle cx="31" cy="14.5" r="1.9" fill={ACCENT} />
           </svg>
           <div style={{ display: "flex", fontSize: 22, color: "#cbd5e1" }}>
-            {profile.name.split(" ")[0]}.lab
+            CHEMOVEXA
           </div>
         </div>
 

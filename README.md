@@ -1,4 +1,4 @@
-# Chemistry × Code Portfolio
+# CHEMOVEXA — Chemistry × Code
 
 A professional, extensible portfolio for a chemistry student who builds software. Designed to be built up step by step — every tool, page and piece of content is data-driven and modular.
 

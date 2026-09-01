@@ -1,5 +1,5 @@
 export const profile = {
-  name: "Amir Hossein Jahed",
+  name: "Amirhossein Jahed",
   shortName: "AJ",
   role: "Chemistry Student & Developer",
   tagline: "Building computational tools for chemistry, research & AI.",

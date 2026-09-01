@@ -22,16 +22,16 @@ const mono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://chem-portfolio.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://chemovexa.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${profile.name} — Chemistry meets Code`,
+    default: `${profile.name} · CHEMOVEXA`,
     template: `%s · ${profile.name}`,
   },
   description: profile.tagline,
-  applicationName: `${profile.name}.lab`,
+  applicationName: "CHEMOVEXA",
   keywords: [
     "chemistry",
     "organic chemistry",
@@ -60,21 +60,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: `${profile.name}.lab`,
-    title: `${profile.name} — Chemistry meets Code`,
+    siteName: "CHEMOVEXA",
+    title: `${profile.name} · CHEMOVEXA — Chemistry meets Code`,
     description: profile.tagline,
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: `${profile.name} — Chemistry meets Code`,
+        alt: `${profile.name} · CHEMOVEXA — Chemistry meets Code`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${profile.name} — Chemistry meets Code`,
+    title: `${profile.name} · CHEMOVEXA — Chemistry meets Code`,
     description: profile.tagline,
     images: ["/opengraph-image"],
   },

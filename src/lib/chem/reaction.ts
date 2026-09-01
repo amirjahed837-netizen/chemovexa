@@ -4,6 +4,7 @@ import { REAGENTS } from "@/config/reagents";
 import type { Reagent } from "@/config/reagents";
 import { balanceEquation } from "./balance";
 import type { SpeciesInput } from "./balance";
+import { BOOK_REACTIONS } from "./book-reactions";
 
 export type ReactionRole =
   | "acid"
@@ -26,6 +27,7 @@ export type KnownReaction = {
   right: string[];
   title: string;
   typeLabel: string;
+  chapter?: string;
   mechanism: string;
   whatHappens: string;
   observation: string;
@@ -357,7 +359,9 @@ const KNOWLEDGE: KnownReaction[] = [
   },
 ];
 
-const K = KNOWLEDGE;
+export const ALL_KNOWN_REACTIONS: KnownReaction[] = [...KNOWLEDGE, ...BOOK_REACTIONS];
+
+const K = ALL_KNOWN_REACTIONS;
 
 function matchKnowledge(
   left: string[],
@@ -399,6 +403,7 @@ export type ReactionWriteup = {
   found: boolean;
   title: string;
   typeLabel: string;
+  chapter?: string;
   mechanism: string;
   whatHappens: string;
   observation: string;
@@ -454,6 +459,7 @@ export function buildWriteup(
       found: true,
       title: known.title,
       typeLabel: known.typeLabel,
+      chapter: known.chapter,
       mechanism: known.mechanism,
       whatHappens: known.whatHappens,
       observation: known.observation,

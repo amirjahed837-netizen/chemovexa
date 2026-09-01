@@ -4,7 +4,7 @@ export type MolBond = [number, number, 1 | 2 | 3];
 export function toMolblock(title: string, atoms: MolAtom[], bonds: MolBond[]): string {
   const lines: string[] = [];
   lines.push(title.slice(0, 80));
-  lines.push("  chem-portfolio");
+  lines.push("  CHEMOVEXA");
   lines.push("");
   lines.push(
     `${String(atoms.length).padStart(3, " ")}${String(bonds.length).padStart(3, " ")}  0  0  0  0  0  0  0  0999 V2000`,

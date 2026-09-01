@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV_ITEMS } from "@/config/site";
-import { profile } from "@/config/profile";
 import { LogoMark } from "@/components/icons";
 import { StatusBadge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
@@ -53,8 +52,8 @@ export function Navbar() {
         <Link href="/" className="group flex items-center gap-2.5" aria-label="Home">
           <LogoMark className="size-8 transition-transform duration-500 group-hover:rotate-[30deg]" />
           <span className="font-display text-lg font-bold tracking-tight text-white">
-            {profile.name.split(" ")[0]}
-            <span className="text-gradient">.lab</span>
+            CHEMO
+            <span className="text-gradient">VEXA</span>
           </span>
         </Link>
 

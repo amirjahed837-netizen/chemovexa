@@ -7,6 +7,9 @@ import { balanceEquation } from "@/lib/chem/balance";
 import { classify } from "@/lib/chem/classify";
 import { REACTION_TYPE_LABEL } from "@/lib/chem/classify";
 import { buildWriteup, roleOf } from "@/lib/chem/reaction";
+import { BOOK_REACTIONS } from "@/lib/chem/book-reactions";
+import { predictReaction } from "@/lib/chem/predict";
+import type { Prediction } from "@/lib/chem/predict";
 
 type SlotValue = string;
 
@@ -266,6 +269,64 @@ function AiWriteup({ equation, auto }: { equation: string; auto: boolean }) {
   );
 }
 
+function ReactionRadar({
+  prediction,
+  onLoad,
+}: {
+  prediction: Prediction | null;
+  onLoad: (id: string) => void;
+}) {
+  if (!prediction) return null;
+  const dot =
+    prediction.kind === "exact"
+      ? "bg-emerald-400"
+      : prediction.kind === "partial"
+        ? "bg-amber-400"
+        : "bg-cyan-400";
+  const border =
+    prediction.kind === "exact"
+      ? "border-emerald-400/30 bg-emerald-400/[0.06]"
+      : prediction.kind === "partial"
+        ? "border-amber-400/30 bg-amber-400/[0.06]"
+        : "border-cyan-400/20 bg-cyan-400/[0.04]";
+  const missing = [...prediction.missingLeft, ...prediction.missingRight];
+
+  return (
+    <div className={`flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border px-4 py-3 ${border}`}>
+      <span className="relative flex size-2.5 shrink-0">
+        <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${dot}`} />
+        <span className={`relative inline-flex size-2.5 rounded-full ${dot}`} />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium text-white">
+          {prediction.kind === "exact" ? "This is: " : "Predicted: "}
+          {prediction.title}
+        </p>
+        <p className="truncate text-xs text-slate-400">{prediction.detail}</p>
+      </div>
+      {missing.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] uppercase tracking-wider text-slate-500">missing:</span>
+          {missing.slice(0, 4).map((m) => (
+            <span key={m} className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[11px] text-slate-300">
+              {m}
+            </span>
+          ))}
+        </div>
+      )}
+      {prediction.reactionId && (
+        <button
+          type="button"
+          onClick={() => onLoad(prediction.reactionId!)}
+          className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[11px] text-cyan-200 transition-colors hover:bg-cyan-400/20"
+        >
+          load full reaction →
+        </button>
+      )}
+    </div>
+  );
+}
+
 function WriteupPanel({
   left,
   right,
@@ -329,6 +390,9 @@ function WriteupPanel({
                 </span>
               </div>
               <p className="text-sm font-medium text-cyan-200/90">{writeup.typeLabel}</p>
+              {writeup.chapter && (
+                <p className="mt-1 font-mono text-[11px] text-slate-500">{writeup.chapter}</p>
+              )}
             </div>
 
             <section>
@@ -585,6 +649,23 @@ export function ReactionLab() {
 
   const error = result && !result.ok ? result.error : null;
 
+  const prediction = useMemo(
+    () => predictReaction(left, right),
+    [left, right],
+  );
+
+  function loadBookReaction(id: string) {
+    const k = BOOK_REACTIONS.find((r) => r.id === id);
+    if (!k) return;
+    const pad = (arr: string[]) => {
+      const filled = arr.filter((f) => f.trim());
+      while (filled.length < 2) filled.push("");
+      return filled.slice(0, 4);
+    };
+    setLeft(pad(k.left));
+    setRight(pad(k.right));
+  }
+
   return (
     <div className="space-y-6">
       {/* presets */}
@@ -600,6 +681,33 @@ export function ReactionLab() {
           </button>
         ))}
       </div>
+
+      {/* book reactions library */}
+      <details className="group rounded-xl border border-violet-400/20 bg-violet-400/[0.04]">
+        <summary className="cursor-pointer list-none px-4 py-3 text-xs font-medium text-violet-200 transition-colors hover:text-violet-100">
+          <span className="font-display">McMurry 11e library</span>
+          <span className="ml-2 text-slate-500">— {BOOK_REACTIONS.length} reactions from the book, click to load any</span>
+          <span className="float-right text-slate-500 transition-transform group-open:rotate-90">›</span>
+        </summary>
+        <div className="grid gap-1.5 border-t border-white/5 p-3 sm:grid-cols-2 lg:grid-cols-3">
+          {BOOK_REACTIONS.map((r) => (
+            <button
+              key={r.id}
+              type="button"
+              onClick={() => loadBookReaction(r.id)}
+              className="rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-left transition-colors hover:border-violet-400/40 hover:bg-violet-400/[0.06]"
+            >
+              <span className="block truncate text-xs text-slate-200">{r.title}</span>
+              <span className="mt-0.5 block truncate font-mono text-[10px] text-slate-600">
+                {r.left.join(" + ")} → {r.right.join(" + ")}
+              </span>
+            </button>
+          ))}
+        </div>
+      </details>
+
+      {/* live reaction radar */}
+      <ReactionRadar prediction={prediction} onLoad={loadBookReaction} />
 
       {/* builder */}
       <div className="grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-start">

@@ -16,6 +16,44 @@ export type BalanceResult =
   | { ok: true; species: BalancedSpecies[]; gcd: number }
   | { ok: false; error: string };
 
+const STRUCTURAL_BOND = /[=≡#\-−–]/g;
+
+/**
+ * Converts a plain structural formula like "CH2=CH-CH2-CH3" or "CH3CHO" into
+ * its empirical molecular summary (e.g. "C4H8") so the balancer can handle
+ * notation that molecular formulas cannot express directly. Grouped repeating
+ * units "CH2)2" or "(CH2)2" are supported.
+ */
+export function normalizeStructuralFormula(raw: string): string {
+  const input = raw.trim();
+  if (!STRUCTURAL_BOND.test(input)) return input;
+  STRUCTURAL_BOND.lastIndex = 0;
+
+  let s = input.replace(/\s+/g, "").replace(/[=≡#\-−–]/g, "");
+  s = s.replace(/^\^?[0-9]*[+-]/, "");
+
+  let out = "";
+  let i = 0;
+  while (i < s.length) {
+    const ch = s[i];
+    if (ch === "(") {
+      const close = s.indexOf(")", i);
+      if (close === -1) throw new Error(`Unclosed "(" in "${input}".`);
+      const inner = s.slice(i + 1, close);
+      const rest = /^(\d+)/.exec(s.slice(close + 1));
+      const mult = rest ? parseInt(rest[1], 10) : 1;
+      const expanded = inner.repeat(mult);
+      out += expanded;
+      i = close + 1 + (rest ? rest[1].length : 0);
+    } else {
+      out += ch;
+      i += 1;
+    }
+  }
+  if (!/[A-Z]/.test(out)) throw new Error(`No elements found in "${input}".`);
+  return out;
+}
+
 function gcd(a: number, b: number): number {
   a = Math.abs(a);
   b = Math.abs(b);
@@ -69,9 +107,10 @@ export function balanceEquation(inputs: SpeciesInput[]): BalanceResult {
   try {
     for (const input of inputs) {
       if (!input.formula.trim()) throw new Error("Every species needs a formula.");
+      const normalized = normalizeStructuralFormula(input.formula);
       parsed.push({
         formula: input.formula.trim(),
-        counts: parseFormula(input.formula).counts,
+        counts: parseFormula(normalized).counts,
         side: input.side,
       });
     }
@@ -129,12 +168,41 @@ export function balanceEquation(inputs: SpeciesInput[]): BalanceResult {
 
   const freeCols = Array.from({ length: cols }, (_, i) => i).filter((c) => !pivots.includes(c));
   if (freeCols.length !== 1) {
+    if (freeCols.length === 0) {
+      const leftOnly: string[] = [];
+      const rightOnly: string[] = [];
+      for (const el of elList) {
+        const l = parsed
+          .filter((p) => p.side === "left")
+          .reduce((acc, p) => acc + (p.counts.get(el) ?? 0), 0);
+        const r = parsed
+          .filter((p) => p.side === "right")
+          .reduce((acc, p) => acc + (p.counts.get(el) ?? 0), 0);
+        if (l > 0 && r === 0) leftOnly.push(el);
+        if (r > 0 && l === 0) rightOnly.push(el);
+      }
+      const parts: string[] = [];
+      if (leftOnly.length > 0) {
+        parts.push(
+          `${leftOnly.join(", ")} appear(s) only on the reactant side — a product containing it is missing`,
+        );
+      }
+      if (rightOnly.length > 0) {
+        parts.push(
+          `${rightOnly.join(", ")} appear(s) only on the product side — a reactant containing it is missing`,
+        );
+      }
+      return {
+        ok: false,
+        error: parts.length
+          ? `This reaction cannot be balanced as written: ${parts.join("; ")}.`
+          : "No non-trivial solution — check that this reaction can be balanced.",
+      };
+    }
     return {
       ok: false,
       error:
-        freeCols.length === 0
-          ? "No non-trivial solution — check that this reaction can be balanced."
-          : "Underdetermined system — remove or combine species until exactly one free variable remains.",
+        "Underdetermined system — remove or combine species until exactly one free variable remains.",
     };
   }
 

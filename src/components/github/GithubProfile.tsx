@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { profile } from "@/config/profile";
 import { GlassCard } from "@/components/ui/GlassCard";
+import { useI18n } from "@/lib/i18n";
 
 type GhUser = {
   login: string;
@@ -45,22 +46,13 @@ const LANGUAGE_COLORS: Record<string, string> = {
   C: "#555555",
 };
 
-function relativeTime(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const days = Math.floor(diff / 86_400_000);
-  if (days < 1) return "today";
-  if (days === 1) return "yesterday";
-  if (days < 30) return `${days}d ago`;
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo ago`;
-  return `${Math.floor(months / 12)}y ago`;
-}
-
 function handle(): string {
   return profile.github.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
 }
 
 export function GithubProfile() {
+  const { t, fmt: interpolate } = useI18n();
+  const g = t.pages.github;
   const [user, setUser] = useState<GhUser | null>(null);
   const [repos, setRepos] = useState<GhRepo[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -113,6 +105,17 @@ export function GithubProfile() {
     };
   }, []);
 
+  function relativeTime(iso: string): string {
+    const diff = Date.now() - new Date(iso).getTime();
+    const days = Math.floor(diff / 86_400_000);
+    if (days < 1) return g.today;
+    if (days === 1) return g.yesterday;
+    if (days < 30) return interpolate(g.daysAgo, { n: days });
+    const months = Math.floor(days / 30);
+    if (months < 12) return interpolate(g.monthsAgo, { n: months });
+    return interpolate(g.yearsAgo, { n: Math.floor(months / 12) });
+  }
+
   if (error) {
     return (
       <GlassCard className="mx-auto max-w-xl p-8 text-center">
@@ -120,14 +123,18 @@ export function GithubProfile() {
           ⚠
         </span>
         <h3 className="font-display text-lg font-semibold text-white">
-          {error === "not-found" ? "GitHub profile not found" : "Couldn't reach the GitHub API"}
+          {error === "not-found"
+            ? g.errNotFound
+            : error === "rate-limit"
+              ? g.errRate
+              : g.errNetwork}
         </h3>
         <p className="mt-2 text-sm leading-relaxed text-slate-400">
           {error === "not-found"
-            ? `The configured username "${handle()}" doesn't exist yet — once you update it in the site config, this page fills itself in automatically.`
+            ? interpolate(g.errNotFoundDesc, { user: handle() })
             : error === "rate-limit"
-              ? "The public API allows 60 requests per hour per IP and the limit was hit. Try again a bit later, or browse directly on GitHub."
-              : "A network problem interrupted the request. You can still browse everything directly on GitHub."}
+              ? g.errRateDesc
+              : g.errNetworkDesc}
         </p>
         <a
           href={profile.github}
@@ -135,7 +142,7 @@ export function GithubProfile() {
           rel="noopener noreferrer"
           className="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:border-cyan-400/40 hover:text-cyan-200"
         >
-          Open github.com/{handle()} →
+          {interpolate(g.openOnGithub, { user: handle() })}
         </a>
       </GlassCard>
     );
@@ -164,9 +171,9 @@ export function GithubProfile() {
             </div>
             <dl className="flex gap-7 font-mono text-sm">
               {[
-                ["repos", user.public_repos],
-                ["followers", user.followers],
-                ["following", user.following],
+                [g.repos, user.public_repos],
+                [g.followers, user.followers],
+                [g.following, user.following],
               ].map(([label, value]) => (
                 <div key={label as string} className="text-center">
                   <dt className="order-2 text-[11px] uppercase tracking-wider text-slate-500">
@@ -192,7 +199,7 @@ export function GithubProfile() {
       <section>
         <h3 className="mb-5 flex items-center gap-2.5 font-mono text-xs uppercase tracking-widest text-slate-500">
           <span className="inline-block size-1.5 rounded-full bg-cyan-300" />
-          Top repositories
+          {g.topRepos}
         </h3>
 
         {repos === null && !error ? (
@@ -214,7 +221,7 @@ export function GithubProfile() {
                     {repo.name}
                   </h4>
                   <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-500">
-                    {repo.description ?? "No description provided."}
+                    {repo.description ?? g.noDescription}
                   </p>
                   <div className="mt-auto flex items-center gap-4 pt-4 font-mono text-[11px] text-slate-500">
                     {repo.language && (
@@ -234,17 +241,11 @@ export function GithubProfile() {
             ))}
           </div>
         ) : (
-          repos && (
-            <p className="text-sm text-slate-500">
-              No original repositories yet — first push incoming.
-            </p>
-          )
+          repos && <p className="text-sm text-slate-500">{g.noRepos}</p>
         )}
       </section>
 
-      <p className="text-center font-mono text-[11px] text-slate-600">
-        fetched live from api.github.com · unauthenticated · 60 req/hour
-      </p>
+      <p className="text-center font-mono text-[11px] text-slate-600">{g.footer}</p>
     </div>
   );
 }

@@ -1,9 +1,15 @@
+"use client";
+
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { profile } from "@/config/profile";
+import { useI18n } from "@/lib/i18n";
 
 export function CTABanner() {
+  const { t } = useI18n();
+  const c = t.home.cta;
+
   return (
     <section className="py-10 pb-28">
       <Container>
@@ -17,21 +23,18 @@ export function CTABanner() {
 
             <div className="relative">
               <p className="font-mono text-xs uppercase tracking-[0.25em] text-cyan-300/90">
-                Open to collaboration
+                {c.eyebrow}
               </p>
               <h2 className="font-display mx-auto mt-4 max-w-2xl text-balance text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Have an idea at the intersection of{" "}
-                <span className="text-gradient">chemistry & code?</span>
+                {c.titleA} <span className="text-gradient">{c.titleB}</span>
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-slate-400">
-                Research projects, computational tools or scientific communication — let&apos;s talk.
-              </p>
+              <p className="mx-auto mt-4 max-w-xl text-slate-400">{c.description}</p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <ButtonLink href="/contact" size="lg">
-                  Get in touch
+                  {c.contact}
                 </ButtonLink>
                 <ButtonLink href={profile.github} variant="secondary" size="lg">
-                  GitHub
+                  {t.ui.github}
                 </ButtonLink>
               </div>
             </div>

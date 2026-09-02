@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap");
+
 @theme {
   /* ---------------------------- Dark Scientific --------------------------- */
   --color-ink-950: #04070f;
@@ -17,6 +19,7 @@
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-fa: "Vazirmatn", ui-sans-serif, system-ui, sans-serif;
 
   /* ------------------------------- animations ------------------------------ */
   --animate-float: float 7s ease-in-out infinite;
@@ -429,3 +432,83 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* --------------------------- Persian / RTL -------------------------------- */
+
+html[dir="rtl"] {
+  font-family: var(--font-fa);
+}
+
+html[dir="rtl"] body {
+  font-family: var(--font-fa);
+  letter-spacing: 0;
+}
+
+/* Persian text inherits Vazirmatn; keep mono for code/formulas, Latin-friendly */
+html[dir="rtl"] .font-mono {
+  font-family: var(--font-mono);
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/* formulas, equations and chemical notation stay LTR even in RTL prose */
+html[dir="rtl"] .ltr-embed {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* flip purely decorative directional icons in RTL (arrows, chevrons) */
+html[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/* KaTeX and mhchem must stay LTR inside RTL notes */
+html[dir="rtl"] .katex,
+html[dir="rtl"] .katex-display,
+html[dir="rtl"] .mhchem {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* code blocks and pre stay LTR */
+html[dir="rtl"] pre,
+html[dir="rtl"] code {
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+/* prose spacing fixes for RTL */
+html[dir="rtl"] .prose-chem ul,
+html[dir="rtl"] .prose-chem ol {
+  padding-left: 0;
+  padding-right: 1.5em;
+}
+
+html[dir="rtl"] .prose-chem blockquote {
+  border-left: none;
+  border-right: 3px solid var(--color-accent);
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+html[dir="rtl"] .prose-chem th,
+html[dir="rtl"] .prose-chem td {
+  text-align: right;
+}
+
+/* Persian display headings use Vazirmatn too */
+html[dir="rtl"] .font-display {
+  font-family: var(--font-fa);
+}
+
+/* number/date inputs stay LTR */
+html[dir="rtl"] input[type="number"],
+html[dir="rtl"] input[type="date"] {
+  direction: ltr;
+  text-align: right;
+}
+
+/* Native Persian numerals option (uncomment to activate):
+html[dir="rtl"] body {
+  font-feature-settings: "ss01";
+}
+*/

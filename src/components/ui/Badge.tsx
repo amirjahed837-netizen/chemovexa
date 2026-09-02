@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 import type { Status } from "@/config/site";
 
 const toneClasses = {
@@ -34,8 +37,9 @@ export function Badge({
 }
 
 export function StatusBadge({ status, step }: { status?: Status; step?: string }) {
+  const { t } = useI18n();
   if (!status) return null;
-  const label = status === "live" ? "Live" : status === "wip" ? "In progress" : "Planned";
+  const label = t.status[status];
   const tone: BadgeTone = status === "live" ? "emerald" : status === "wip" ? "cyan" : "slate";
   return (
     <Badge tone={tone}>

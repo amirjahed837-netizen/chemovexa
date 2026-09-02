@@ -1,9 +1,22 @@
+"use client";
+
 import { DOMAINS } from "@/config/site";
 import { ButtonLink } from "@/components/ui/Button";
 import { MoleculeCanvas } from "@/components/home/MoleculeCanvas";
-import { profile } from "@/config/profile";
+import { useI18n } from "@/lib/i18n";
+import type { Domain } from "@/config/site";
 
 export function Hero() {
+  const { t } = useI18n();
+  const h = t.home.hero;
+
+  const domainTitles: Record<string, { title: string; description: string }> = {
+    "/chemistry": t.home.domains.items.chemistry,
+    "/programming": t.home.domains.items.programming,
+    "/research": t.home.domains.items.research,
+    "/ai/assistant": t.home.domains.items.ai,
+  };
+
   return (
     <section className="relative flex min-h-[100svh] items-center overflow-hidden">
       {/* Molecular background */}
@@ -26,43 +39,46 @@ export function Hero() {
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-cyan-400 opacity-60" />
               <span className="relative inline-flex size-2 rounded-full bg-cyan-300" />
             </span>
-            Portfolio under active development
+            {h.pill}
             <span className="font-mono text-cyan-300/80">v0.1</span>
           </a>
 
           <h1 className="font-display text-balance text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Chemistry meets <span className="text-gradient">Code.</span>
+            {h.titleA} <span className="text-gradient">{h.titleB}</span>
           </h1>
 
           <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-slate-400 sm:text-xl">
-            {profile.tagline}
+            {h.tagline}
           </p>
 
           {/* Domain chips */}
           <ul id="domains" className="mt-8 flex flex-wrap items-center justify-center gap-2 font-mono text-sm">
-            {DOMAINS.map((d, i) => (
-              <li key={d.href} className="flex items-center gap-2">
-                {i > 0 && <span className="select-none text-slate-600">×</span>}
-                <a
-                  href={d.href}
-                  className={`rounded-full border px-3 py-1 transition-all hover:-translate-y-0.5 ${d.accentClass}`}
-                >
-                  {d.title}
-                </a>
-              </li>
-            ))}
+            {DOMAINS.map((d: Domain, i: number) => {
+              const tr = domainTitles[d.href];
+              return (
+                <li key={d.href} className="flex items-center gap-2">
+                  {i > 0 && <span className="select-none text-slate-600">×</span>}
+                  <a
+                    href={d.href}
+                    className={`rounded-full border px-3 py-1 transition-all hover:-translate-y-0.5 ${d.accentClass}`}
+                  >
+                    {tr?.title ?? d.title}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
 
           {/* CTAs */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <ButtonLink href="/chemistry" size="lg">
-              Explore the tools
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4" aria-hidden="true">
+              {h.cta1}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4 rtl-flip" aria-hidden="true">
                 <path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </ButtonLink>
             <ButtonLink href="/programming/projects" variant="secondary" size="lg">
-              View projects
+              {h.cta2}
             </ButtonLink>
           </div>
         </div>

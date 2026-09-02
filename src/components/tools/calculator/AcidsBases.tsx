@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fmt, num, sup } from "@/lib/chem/format";
+import { useI18n } from "@/lib/i18n";
 import {
   Field,
   NumInput,
@@ -13,14 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 
 type Mode = "strong-acid" | "strong-base" | "weak-acid" | "weak-base" | "buffer";
-
-const MODES: { id: Mode; label: string }[] = [
-  { id: "strong-acid", label: "Strong acid" },
-  { id: "strong-base", label: "Strong base" },
-  { id: "weak-acid", label: "Weak acid (Ka)" },
-  { id: "weak-base", label: "Weak base (Kb)" },
-  { id: "buffer", label: "Buffer (pKa)" },
-];
 
 function phFromConc(c: number): number {
   return -Math.log10(c);
@@ -35,6 +28,13 @@ function solvePH(
   useKaForBuffer: boolean,
   salt: string,
   acid: string,
+  errors: {
+    concPos: string;
+    concAndK: string;
+    kaPos: string;
+    pkaRange: string;
+    pairPos: string;
+  },
 ): PHResult {
   const C = num(conc);
   const K = num(kx);
@@ -43,13 +43,13 @@ function solvePH(
   let note: string | null = null;
 
   if ((mode === "strong-acid" || mode === "strong-base") && (C === null || C <= 0)) {
-    return { error: "Concentration must be a positive number.", pH: null };
+    return { error: errors.concPos, pH: null };
   }
   if (
     (mode === "weak-acid" || mode === "weak-base") &&
     (C === null || C <= 0 || K === null || K <= 0)
   ) {
-    return { error: "Enter a positive concentration and a positive Ka/Kb.", pH: null };
+    return { error: errors.concAndK, pH: null };
   }
 
   switch (mode) {
@@ -63,10 +63,6 @@ function solvePH(
       const Ka = K!;
       const x = (-Ka + Math.sqrt(Ka * Ka + 4 * Ka * C!)) / 2;
       pH = phFromConc(x);
-      const approx = Math.sqrt(Ka * C!);
-      if (Math.abs(x - approx) / x > 0.05) {
-        note = "exact solution used — the √(Ka·C) shortcut deviates >5% here";
-      }
       break;
     }
     case "weak-base": {
@@ -78,18 +74,18 @@ function solvePH(
     case "buffer": {
       let pKa: number | null;
       if (useKaForBuffer) {
-        if (K === null || K <= 0) return { error: "Enter a positive Ka.", pH: null };
+        if (K === null || K <= 0) return { error: errors.kaPos, pH: null };
         pKa = -Math.log10(K);
       } else {
         pKa = K;
         if (pKa === null || pKa <= 0 || pKa >= 14) {
-          return { error: "pKa must be between 0 and 14.", pH: null };
+          return { error: errors.pkaRange, pH: null };
         }
       }
       const A = num(salt);
       const HA = num(acid);
       if (A === null || A <= 0 || HA === null || HA <= 0) {
-        return { error: "Both conjugate pair concentrations must be positive.", pH: null };
+        return { error: errors.pairPos, pH: null };
       }
       pH = pKa + Math.log10(A / HA);
       break;
@@ -100,6 +96,8 @@ function solvePH(
 }
 
 export function AcidsBases() {
+  const { t } = useI18n();
+  const p = t.pages.calculator.ph;
   const [mode, setMode] = useState<Mode>("weak-acid");
   const [conc, setConc] = useState("0.10");
   const [kx, setKx] = useState("1.8e-5");
@@ -107,18 +105,34 @@ export function AcidsBases() {
   const [salt, setSalt] = useState("0.20");
   const [acid, setAcid] = useState("0.35");
 
-  const result = solvePH(mode, conc, kx, useKaForBuffer, salt, acid);
+  const result = solvePH(mode, conc, kx, useKaForBuffer, salt, acid, {
+    concPos: `${p.concentration}: > 0`,
+    concAndK: `${p.concentration} + Ka/Kb: > 0`,
+    kaPos: `Ka: > 0`,
+    pkaRange: `pKa: 0–14`,
+    pairPos: `${p.conjugateBase} + ${p.weakAcidField}: > 0`,
+  });
 
   const pH = result.pH;
   const pOH = pH !== null ? 14 - pH : null;
 
+  const MODES: { id: Mode; label: string }[] = [
+    { id: "strong-acid", label: p.strongAcid },
+    { id: "strong-base", label: p.strongBase },
+    { id: "weak-acid", label: p.weakAcid },
+    { id: "weak-base", label: p.weakBase },
+    { id: "buffer", label: p.buffer },
+  ];
+
   const kLabel =
     mode === "weak-acid" ? "Ka" : mode === "weak-base" ? "Kb" : useKaForBuffer ? "Ka" : "pKa";
+
+  const approxNote = mode === "weak-acid" ? p.approxNote : null;
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="space-y-5">
-        <Field label="System">
+        <Field label={p.system}>
           <Select
             value={mode}
             onChange={(v) => setMode(v as Mode)}
@@ -130,13 +144,16 @@ export function AcidsBases() {
           mode === "strong-base" ||
           mode === "weak-acid" ||
           mode === "weak-base") && (
-          <Field label="Concentration" hint={mode.startsWith("strong") ? "fully dissociates" : "formal concentration"}>
+          <Field
+            label={p.concentration}
+            hint={mode.startsWith("strong") ? p.concHintFull : p.concHintFormal}
+          >
             <NumInput value={conc} onChange={setConc} placeholder="0.10" />
           </Field>
         )}
 
         {(mode === "weak-acid" || mode === "weak-base" || (mode === "buffer" && useKaForBuffer)) && (
-          <Field label={`${kLabel} value`} hint="scientific notation ok">
+          <Field label={p.kValue.replace("{k}", kLabel)} hint={p.kHint}>
             <NumInput value={kx} onChange={setKx} placeholder="1.8e-5" />
           </Field>
         )}
@@ -150,13 +167,13 @@ export function AcidsBases() {
                 onChange={(e) => setUseKaForBuffer(e.target.checked)}
                 className="size-4 accent-cyan-400"
               />
-              I have K{sup("a")} instead of pK{sup("a")}
+              {p.haveKa.replace(/\{sub\}/g, sup("a"))}
             </label>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="[A⁻] conjugate base">
+              <Field label={p.conjugateBase}>
                 <NumInput value={salt} onChange={setSalt} placeholder="0.20" />
               </Field>
-              <Field label="[HA] weak acid">
+              <Field label={p.weakAcidField}>
                 <NumInput value={acid} onChange={setAcid} placeholder="0.35" />
               </Field>
             </div>
@@ -193,30 +210,21 @@ export function AcidsBases() {
                 </div>
               </div>
               <div className="mt-1 flex justify-between font-mono text-[9px] text-slate-600">
-                <span>0 acidic</span>
+                <span>0 {p.acidic}</span>
                 <span>7</span>
-                <span>14 basic</span>
+                <span>14 {p.basic}</span>
               </div>
             </div>
             <ResultRow label="pOH" value={fmt(pOH!, 3)} />
             <ResultRow label={`[H${sup("+")}]`} value={`${fmt(10 ** -pH)} mol/L`} />
             <ResultRow label={`[OH${sup("-")}]`} value={`${fmt(10 ** -(pOH!))} mol/L`} />
-            {result.note && (
-              <p className="px-1 pt-1 text-xs italic text-amber-300/80">ℹ {result.note}</p>
+            {approxNote && (
+              <p className="px-1 pt-1 text-xs italic text-amber-300/80">ℹ {approxNote}</p>
             )}
-            <ScaleHint />
+            <p className={cn("px-1 text-xs leading-relaxed text-slate-500")}>{p.scaleNote}</p>
           </>
         )}
       </div>
     </div>
-  );
-}
-
-function ScaleHint() {
-  return (
-    <p className={cn("px-1 text-xs leading-relaxed text-slate-500")}>
-      Values assume 25 °C where pKw = 14.00. Activity coefficients are neglected (ideal dilute
-      behaviour).
-    </p>
   );
 }

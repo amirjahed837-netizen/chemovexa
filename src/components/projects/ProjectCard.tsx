@@ -1,11 +1,21 @@
+"use client";
+
 import Link from "next/link";
 import type { Project } from "@/config/projects";
-import { CATEGORY_LABEL } from "@/config/projects";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { StatusBadge } from "@/components/ui/Badge";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export function ProjectCard({ project, className }: { project: Project; className?: string }) {
+  const { t } = useI18n();
+
+  const catLabel: Record<string, string> = {
+    chemistry: t.pages.projects.categories.chemistry,
+    web: t.pages.projects.categories.web,
+    data: t.pages.projects.categories.data,
+  };
+
   return (
     <Link href={`/programming/projects/${project.slug}`} className="group block h-full">
       <GlassCard
@@ -18,7 +28,7 @@ export function ProjectCard({ project, className }: { project: Project; classNam
       >
         <div className="mb-4 flex items-center justify-between gap-2">
           <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-400">
-            {CATEGORY_LABEL[project.category]}
+            {catLabel[project.category]}
           </span>
           <StatusBadge status={project.status} />
         </div>
@@ -34,21 +44,21 @@ export function ProjectCard({ project, className }: { project: Project; classNam
         <p className="mt-1.5 text-sm leading-relaxed text-slate-400">{project.tagline}</p>
 
         <ul className="mt-4 flex flex-wrap gap-1.5">
-          {project.tech.map((t) => (
+          {project.tech.map((tech) => (
             <li
-              key={t}
+              key={tech}
               className="rounded border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-500"
             >
-              {t}
+              {tech}
             </li>
           ))}
         </ul>
 
         <div className="mt-auto flex items-center justify-between pt-5">
           <span className="font-mono text-xs text-slate-600">{project.year}</span>
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-cyan-300 transition-transform duration-300 group-hover:translate-x-1">
-            Case study
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4" aria-hidden="true">
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-cyan-300 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+            {t.ui.caseStudy}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4 rtl-flip" aria-hidden="true">
               <path d="M5 12h14m-6-6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
@@ -56,7 +66,7 @@ export function ProjectCard({ project, className }: { project: Project; classNam
 
         {project.featured && (
           <span className="absolute -top-2.5 right-5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-950 shadow-lg">
-            Featured
+            {t.ui.featured}
           </span>
         )}
       </GlassCard>

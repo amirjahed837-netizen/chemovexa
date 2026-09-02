@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { parseFormula, FormulaError, molarMass } from "@/lib/chem/formula";
 import { fmt, num } from "@/lib/chem/format";
+import { useI18n } from "@/lib/i18n";
 import { Field, TextInput, NumInput, ResultRow, MethodNote, ErrorNote } from "./shared";
 import type { Species } from "./types";
 
@@ -12,12 +13,14 @@ function SpeciesRow({
   onChange,
   showMass,
   last,
+  labels,
 }: {
   index: string;
   species: Species;
   onChange: (patch: Partial<Species>) => void;
   showMass: boolean;
   last?: boolean;
+  labels: { coeffFormula: string; mass: string };
 }) {
   return (
     <div className="grid grid-cols-[64px_1fr] gap-2.5 sm:grid-cols-[64px_1fr_110px]">
@@ -28,7 +31,7 @@ function SpeciesRow({
           placeholder="1"
         />
       </Field>
-      <Field label={last ? "\u00A0" : "coefficient · formula"}>
+      <Field label={last ? "\u00A0" : labels.coeffFormula}>
         <TextInput
           value={species.formula}
           onChange={(v) => onChange({ formula: v })}
@@ -37,7 +40,7 @@ function SpeciesRow({
       </Field>
       {showMass && (
         <div className="col-span-2 sm:col-span-1">
-          <Field label={last ? "\u00A0" : "mass (g)"}>
+          <Field label={last ? "\u00A0" : labels.mass}>
             <NumInput
               value={species.mass}
               onChange={(v) => onChange({ mass: v })}
@@ -63,7 +66,13 @@ type StoichData = {
 
 type StoichResult = { error: string; data: null } | { error: null; data: StoichData };
 
-function computeStoich(r1: Species, r2: Species, prod: Species, actual: string): StoichResult {
+function computeStoich(
+  r1: Species,
+  r2: Species,
+  prod: Species,
+  actual: string,
+  errors: { formulas: string; invalid: string; coeffs: string },
+): StoichResult {
   const rows = [
     { ...r1, role: "reagent" },
     { ...r2, role: "reagent" },
@@ -72,11 +81,11 @@ function computeStoich(r1: Species, r2: Species, prod: Species, actual: string):
 
   for (const row of rows) {
     try {
-      if (!row.formula.trim()) throw new FormulaError("Enter all three formulas.");
+      if (!row.formula.trim()) throw new FormulaError(errors.formulas);
       parseFormula(row.formula);
     } catch (e) {
       return {
-        error: e instanceof FormulaError ? e.message : "Invalid formula.",
+        error: e instanceof FormulaError ? e.message : errors.invalid,
         data: null,
       };
     }
@@ -85,7 +94,7 @@ function computeStoich(r1: Species, r2: Species, prod: Species, actual: string):
       const value = num(field);
       if (value === null || value < 0 || (field === row.coeff && value <= 0)) {
         return {
-          error: "Coefficients must be positive numbers; masses non-negative.",
+          error: errors.coeffs,
           data: null,
         };
       }
@@ -127,19 +136,25 @@ function computeStoich(r1: Species, r2: Species, prod: Species, actual: string):
 }
 
 export function Stoichiometry() {
+  const { t } = useI18n();
+  const s = t.pages.calculator.stoich;
   const [r1, setR1] = useState<Species>({ coeff: "1", formula: "Na2CO3", mass: "5.30" });
   const [r2, setR2] = useState<Species>({ coeff: "2", formula: "HCl", mass: "3.65" });
   const [prod, setProd] = useState<Species>({ coeff: "1", formula: "CO2", mass: "" });
   const [actual, setActual] = useState("");
 
-  const result = computeStoich(r1, r2, prod, actual);
+  const result = computeStoich(r1, r2, prod, actual, {
+    formulas: s.errFormulas,
+    invalid: s.errInvalid,
+    coeffs: s.errCoeffs,
+  });
   const d = result.data;
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="space-y-5">
         <div className="space-y-4 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-          <p className="font-mono text-xs text-slate-500">
+          <p className="font-mono text-xs text-slate-500" dir="ltr">
             <span className="text-cyan-300/80">ν₁</span> A +{" "}
             <span className="text-cyan-300/80">ν₂</span> B →{" "}
             <span className="text-cyan-300/80">ν₃</span> C
@@ -148,14 +163,16 @@ export function Stoichiometry() {
           <SpeciesRow
             index="A"
             species={r1}
-            onChange={(p) => setR1((s) => ({ ...s, ...p }))}
+            onChange={(p) => setR1((sp) => ({ ...sp, ...p }))}
             showMass
+            labels={s}
           />
           <SpeciesRow
             index="B"
             species={r2}
-            onChange={(p) => setR2((s) => ({ ...s, ...p }))}
+            onChange={(p) => setR2((sp) => ({ ...sp, ...p }))}
             showMass
+            labels={s}
           />
 
           <div className="flex items-center gap-2 font-mono text-cyan-400/70">
@@ -167,13 +184,14 @@ export function Stoichiometry() {
           <SpeciesRow
             index="C"
             species={prod}
-            onChange={(p) => setProd((s) => ({ ...s, ...p }))}
+            onChange={(p) => setProd((sp) => ({ ...sp, ...p }))}
             showMass={false}
             last
+            labels={s}
           />
 
           <div className="pt-1">
-            <Field label="Actual yield (g)" hint="optional → % yield">
+            <Field label={s.actualYield} hint={s.actualHint}>
               <NumInput value={actual} onChange={setActual} placeholder="e.g. 1.05" />
             </Field>
           </div>
@@ -192,18 +210,18 @@ export function Stoichiometry() {
           <>
             <ResultRow label={`n(A) — M ${fmt(d.M[0])} g/mol`} value={fmt(d.n1)} unit="mol" />
             <ResultRow label={`n(B) — M ${fmt(d.M[1])} g/mol`} value={fmt(d.n2)} unit="mol" />
-            <ResultRow label="Extent available" value={`${fmt(d.extent)} ×`} />
-            <ResultRow label="Limiting reagent" value={d.limitingName} highlight />
+            <ResultRow label={s.extent} value={`${fmt(d.extent)} ×`} />
+            <ResultRow label={s.limiting} value={d.limitingName} highlight />
             <ResultRow
-              label={`n(${prod.formula || "C"}) produced`}
+              label={`n(${prod.formula || "C"}) ${s.produced}`}
               value={fmt(d.nProduct)}
               unit="mol"
             />
-            <ResultRow label="Theoretical yield" value={fmt(d.mTheo)} unit="g" highlight />
+            <ResultRow label={s.theoretical} value={fmt(d.mTheo)} unit="g" highlight />
             {d.pctYield !== null && (
               <ResultRow
-                label="Percent yield"
-                value={d.pctYield > 100 ? ">100 — check data!" : fmt(d.pctYield)}
+                label={s.percent}
+                value={d.pctYield > 100 ? s.over100 : fmt(d.pctYield)}
                 unit="%"
               />
             )}

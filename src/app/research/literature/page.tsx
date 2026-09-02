@@ -1,17 +1,13 @@
-import type { Metadata } from "next";
-import { SOURCES, STATUS_LABEL } from "@/config/literature";
-import type { Source } from "@/config/literature";
+"use client";
+
+import { SOURCES } from "@/config/literature";
+import type { Source, SourceStatus } from "@/config/literature";
 import { PageHeader } from "@/components/pages/PageHeader";
 import { Container } from "@/components/ui/Container";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-
-export const metadata: Metadata = {
-  title: "Literature",
-  description:
-    "Annotated reading list — McMurry, Solomons, Levine, Miessler, Shriver & Atkins and the reference shelf behind this site.",
-};
 
 function Stars({ rating }: { rating: number }) {
   if (!rating) return null;
@@ -54,6 +50,7 @@ function BookSpine({ source }: { source: Source }) {
 }
 
 function SourceCard({ source }: { source: Source }) {
+  const { t } = useI18n();
   const isLink = Boolean(source.url);
   const Wrapper = isLink ? "a" : "div";
   return (
@@ -89,16 +86,16 @@ function SourceCard({ source }: { source: Source }) {
         )}
 
         <ul className="mt-auto flex flex-wrap gap-1.5 pt-4">
-          {source.topics.map((t) => (
-            <li key={t} className="rounded border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
-              #{t}
+          {source.topics.map((topic) => (
+            <li key={topic} className="rounded border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
+              #{topic}
             </li>
           ))}
         </ul>
 
         {isLink && (
-          <span className="mt-4 inline-flex items-center gap-1 font-mono text-[11px] text-cyan-400/80 transition-transform duration-300 group-hover:translate-x-1">
-            visit →
+          <span className="mt-4 inline-flex items-center gap-1 font-mono text-[11px] text-cyan-400/80 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+            {t.pages.literature.visit}
           </span>
         )}
       </GlassCard>
@@ -107,18 +104,23 @@ function SourceCard({ source }: { source: Source }) {
 }
 
 export default function LiteraturePage() {
+  const { t, fmt: interpolate } = useI18n();
+  const lit = t.pages.literature;
+
   const textbooks = SOURCES.filter((s) => s.kind === "textbook");
   const reading = SOURCES.filter((s) => s.status === "reading");
   const consult = SOURCES.filter((s) => s.status === "consult");
   const planned = SOURCES.filter((s) => s.status === "planned");
 
+  const sectionLabel: Record<SourceStatus, string> = {
+    reading: lit.sections.reading,
+    consult: lit.sections.consult,
+    planned: lit.sections.planned,
+  };
+
   return (
     <>
-      <PageHeader
-        eyebrow="Research · Library"
-        title="Literature & references"
-        description="The annotated library behind every claim on this site — the textbooks on my desk, the databases in my bookmarks, and what's queued next."
-      />
+      <PageHeader eyebrow={lit.eyebrow} title={lit.title} description={lit.description} />
 
       {/* bookshelf */}
       <Container className="pt-14 pb-6">
@@ -130,26 +132,24 @@ export default function LiteraturePage() {
               ))}
             </div>
             <div className="mt-1 h-2 rounded-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-            <p className="mt-3 text-center font-mono text-[11px] text-slate-600">
-              the shelf — click a spine to jump to its annotation
-            </p>
+            <p className="mt-3 text-center font-mono text-[11px] text-slate-600">{lit.shelf}</p>
           </div>
         </Reveal>
       </Container>
 
       {/* sections */}
       {[
-        { label: STATUS_LABEL.reading, items: reading },
-        { label: STATUS_LABEL.consult, items: consult },
-        { label: STATUS_LABEL.planned, items: planned },
+        { status: "reading" as SourceStatus, items: reading },
+        { status: "consult" as SourceStatus, items: consult },
+        { status: "planned" as SourceStatus, items: planned },
       ].map(
         (section) =>
           section.items.length > 0 && (
-            <Container key={section.label} className="py-8">
+            <Container key={section.status} className="py-8">
               <Reveal>
                 <h2 className="mb-6 flex items-center gap-2.5 font-mono text-xs uppercase tracking-widest text-slate-500">
                   <span className="inline-block size-1.5 rounded-full bg-cyan-300" />
-                  {section.label}
+                  {sectionLabel[section.status]}
                 </h2>
                 <div className="grid gap-5 md:grid-cols-2">
                   {section.items.map((s) => (
@@ -166,8 +166,7 @@ export default function LiteraturePage() {
       <Container className="pb-24">
         <Reveal>
           <p className="text-center font-mono text-xs text-slate-600">
-            {textbooks.length} textbooks · ratings are my own, annotations too — these will ground
-            the AI assistant in Step 9.
+            {interpolate(lit.footer, { n: textbooks.length })}
           </p>
         </Reveal>
       </Container>

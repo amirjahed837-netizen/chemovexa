@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { fmt, num } from "@/lib/chem/format";
 import { Field, NumInput, Select, ErrorNote } from "./shared";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type Unit = { value: string; label: string; factor?: number };
 
 type Category = {
   id: string;
-  label: string;
   baseLabel: string;
   units: Unit[];
 };
@@ -17,7 +17,6 @@ type Category = {
 const CATEGORIES: Category[] = [
   {
     id: "pressure",
-    label: "Pressure",
     baseLabel: "Pa",
     units: [
       { value: "Pa", label: "Pa", factor: 1 },
@@ -30,7 +29,6 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "energy",
-    label: "Energy",
     baseLabel: "J",
     units: [
       { value: "J", label: "joule", factor: 1 },
@@ -43,7 +41,6 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "volume",
-    label: "Volume",
     baseLabel: "L",
     units: [
       { value: "L", label: "litre", factor: 1 },
@@ -55,7 +52,6 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "mass",
-    label: "Mass",
     baseLabel: "g",
     units: [
       { value: "g", label: "gram", factor: 1 },
@@ -67,7 +63,6 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "amount",
-    label: "Amount",
     baseLabel: "mol",
     units: [
       { value: "mol", label: "mole", factor: 1 },
@@ -78,7 +73,6 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "conc",
-    label: "Concentration",
     baseLabel: "mol/L",
     units: [
       { value: "M", label: "molar (mol/L)", factor: 1 },
@@ -89,7 +83,6 @@ const CATEGORIES: Category[] = [
   },
   {
     id: "temp",
-    label: "Temperature",
     baseLabel: "K",
     units: [
       { value: "K", label: "kelvin" },
@@ -119,6 +112,8 @@ function convertValue(
 }
 
 export function UnitConverter() {
+  const { t } = useI18n();
+  const u = t.pages.calculator.units;
   const [catId, setCatId] = useState("pressure");
   const [raw, setRaw] = useState("1");
   const cat = CATEGORIES.find((c) => c.id === catId)!;
@@ -133,6 +128,16 @@ export function UnitConverter() {
 
   const value = num(raw);
   const output = value === null ? null : convertValue(cat, value, pair.from, pair.to);
+
+  const catLabel: Record<string, string> = {
+    pressure: u.categories.pressure,
+    energy: u.categories.energy,
+    volume: u.categories.volume,
+    mass: u.categories.mass,
+    amount: u.categories.amount,
+    conc: u.categories.conc,
+    temp: u.categories.temp,
+  };
 
   return (
     <div className="space-y-6">
@@ -150,27 +155,27 @@ export function UnitConverter() {
                 : "border-white/10 bg-white/[0.03] text-slate-400 hover:border-white/25 hover:text-slate-200",
             )}
           >
-            {c.label}
+            {catLabel[c.id]}
           </button>
         ))}
       </div>
 
       <div className="grid items-end gap-3 sm:grid-cols-[1fr_auto_1fr]">
         <div className="space-y-3">
-          <Field label="From">
+          <Field label={u.from}>
             <NumInput value={raw} onChange={setRaw} placeholder="value" />
           </Field>
           <Select
             value={pair.from}
             onChange={(v) => setPair({ from: v })}
-            options={cat.units.map((u) => ({ value: u.value, label: u.label }))}
+            options={cat.units.map((un) => ({ value: un.value, label: un.label }))}
           />
         </div>
 
         <button
           type="button"
           onClick={() => setPair({ from: pair.to, to: pair.from })}
-          aria-label="Swap units"
+          aria-label={u.swap}
           className="glass mx-auto flex size-10 items-center justify-center rounded-full border border-white/10 text-slate-400 transition hover:border-cyan-400/50 hover:text-cyan-300 sm:mb-1"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-4" aria-hidden="true">
@@ -179,7 +184,7 @@ export function UnitConverter() {
         </button>
 
         <div className="space-y-3">
-          <Field label="To">
+          <Field label={u.to}>
             <div className="flex h-11 items-center overflow-hidden rounded-lg border border-cyan-400/30 bg-cyan-400/[0.07] px-3.5 font-mono text-sm text-gradient">
               {output !== null && Number.isFinite(output)
                 ? fmt(output, 6)
@@ -191,17 +196,14 @@ export function UnitConverter() {
           <Select
             value={pair.to}
             onChange={(v) => setPair({ to: v })}
-            options={cat.units.map((u) => ({ value: u.value, label: u.label }))}
+            options={cat.units.map((un) => ({ value: un.value, label: un.label }))}
           />
         </div>
       </div>
 
-      {value === null && raw.trim() && <ErrorNote message="Enter a valid number." />}
+      {value === null && raw.trim() && <ErrorNote message={u.errNumber} />}
 
-      <p className="text-xs leading-relaxed text-slate-600">
-        Exact factors by definition where applicable (cal = 4.184 J, atm = 101 325 Pa,
-        torr ≈ mmHg). Temperature uses exact offset formulas.
-      </p>
+      <p className="text-xs leading-relaxed text-slate-600">{u.note}</p>
     </div>
   );
 }

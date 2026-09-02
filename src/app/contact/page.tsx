@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { profile } from "@/config/profile";
 import { PageHeader } from "@/components/pages/PageHeader";
 import { Container } from "@/components/ui/Container";
@@ -6,11 +7,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { StatusBadge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-
-export const metadata: Metadata = {
-  title: "CV / Contact",
-  description: "Get in touch — email, GitHub and CV.",
-};
+import { useI18n } from "@/lib/i18n";
 
 function MailIcon({ className }: { className?: string }) {
   return (
@@ -38,32 +35,32 @@ function PinIcon({ className }: { className?: string }) {
   );
 }
 
-const METHODS = [
-  {
-    label: "Email",
-    value: profile.email,
-    href: `mailto:${profile.email}`,
-    icon: MailIcon,
-    hint: "Best for anything formal or long-form",
-  },
-  {
-    label: "GitHub",
-    value: profile.github.replace("https://", ""),
-    href: profile.github,
-    icon: GithubIcon,
-    hint: "Code, issues and project history",
-    external: true,
-  },
-];
-
 export default function ContactPage() {
+  const { t } = useI18n();
+  const c = t.pages.contact;
+
+  const METHODS = [
+    {
+      label: c.methods.email,
+      value: profile.email,
+      href: `mailto:${profile.email}`,
+      icon: MailIcon,
+      hint: c.methods.emailHint,
+      external: false,
+    },
+    {
+      label: c.methods.github,
+      value: profile.github.replace("https://", ""),
+      href: profile.github,
+      icon: GithubIcon,
+      hint: c.methods.githubHint,
+      external: true,
+    },
+  ];
+
   return (
     <>
-      <PageHeader
-        eyebrow="CV · Contact"
-        title="Let's connect"
-        description="Questions, collaboration ideas, internship opportunities — or just want to talk about chemistry and code? My inbox is open."
-      />
+      <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.description} />
 
       <Container className="grid gap-5 py-16 md:grid-cols-3">
         {/* contact methods */}
@@ -94,9 +91,9 @@ export default function ContactPage() {
             <span className="mb-5 inline-flex size-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300">
               <PinIcon className="size-6" />
             </span>
-            <h2 className="font-display text-lg font-semibold text-white">Location</h2>
+            <h2 className="font-display text-lg font-semibold text-white">{c.location.title}</h2>
             <p className="mt-1 text-sm text-slate-300">{profile.location}</p>
-            <p className="mt-auto pt-4 text-xs text-slate-500">Open to remote & on-site</p>
+            <p className="mt-auto pt-4 text-xs text-slate-500">{c.location.hint}</p>
           </GlassCard>
         </Reveal>
 
@@ -104,14 +101,13 @@ export default function ContactPage() {
         <Reveal delay={120} className="md:col-span-3">
           <GlassCard className="flex flex-col gap-5 p-7 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="font-display text-xl font-semibold text-white">Curriculum Vitae</h2>
+              <h2 className="font-display text-xl font-semibold text-white">{c.cv.title}</h2>
               <p className="mt-1 max-w-xl text-sm leading-relaxed text-slate-400">
-                Full education, experience and skills — rendered live from structured data so it
-                never goes stale. One click to save as PDF.
+                {c.cv.description}
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap gap-3">
-              <ButtonLink href="/cv">View CV</ButtonLink>
+              <ButtonLink href="/cv">{t.ui.viewCVShort}</ButtonLink>
             </div>
           </GlassCard>
         </Reveal>
@@ -119,9 +115,7 @@ export default function ContactPage() {
         {/* future form note */}
         <Reveal delay={160} className="md:col-span-3">
           <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-dashed border-white/15 px-7 py-6 sm:flex-row sm:items-center">
-            <p className="text-sm text-slate-500">
-              A proper contact form (with spam protection) arrives with the backend service.
-            </p>
+            <p className="text-sm text-slate-500">{c.formNote}</p>
             <StatusBadge status="planned" step="Step 4+" />
           </div>
         </Reveal>

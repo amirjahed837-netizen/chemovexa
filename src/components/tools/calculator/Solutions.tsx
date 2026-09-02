@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { parseFormula, FormulaError, molarMass } from "@/lib/chem/formula";
 import { fmt, num } from "@/lib/chem/format";
+import { useI18n } from "@/lib/i18n";
 import {
   Field,
   TextInput,
@@ -29,44 +30,52 @@ function solveMolarity(
   molarity: string,
   volume: string,
   unit: string,
+  errors: { invalid: string; conc: string; volume: string; enterFormula: string },
 ): MolarityResult {
   try {
-    if (!formula.trim()) throw new FormulaError("Enter the solute formula.");
+    if (!formula.trim()) throw new FormulaError(errors.enterFormula);
     const M = molarMass(parseFormula(formula).counts);
     const c = num(molarity);
     const vMl = num(volume);
-    if (c === null || c <= 0) return { error: "Concentration must be > 0.", data: null };
-    if (vMl === null || vMl <= 0) return { error: "Volume must be > 0.", data: null };
+    if (c === null || c <= 0) return { error: errors.conc, data: null };
+    if (vMl === null || vMl <= 0) return { error: errors.volume, data: null };
     const vL = vMl * parseFloat(unit);
     const moles = c * vL;
     return { error: null, data: { M, c, vL, moles, mass: moles * M } };
   } catch (e) {
     return {
-      error: e instanceof FormulaError ? e.message : "Invalid formula.",
+      error: e instanceof FormulaError ? e.message : errors.invalid,
       data: null,
     };
   }
 }
 
 function MolarityMaker() {
+  const { t } = useI18n();
+  const s = t.pages.calculator.solutions;
   const [formula, setFormula] = useState("NaOH");
   const [molarity, setMolarity] = useState("0.100");
   const [volume, setVolume] = useState("250");
   const [unit, setUnit] = useState("0.001");
 
-  const result = solveMolarity(formula, molarity, volume, unit);
+  const result = solveMolarity(formula, molarity, volume, unit, {
+    enterFormula: s.fillExactly.replace("{field}", s.solute),
+    invalid: t.pages.calculator.stoich.errInvalid,
+    conc: `${s.target}: > 0`,
+    volume: `${s.finalVolume}: > 0`,
+  });
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="space-y-5">
-        <Field label="Solute formula" hint="molar mass computed automatically">
+        <Field label={s.solute} hint={s.soluteHint}>
           <TextInput value={formula} onChange={setFormula} placeholder="e.g. NaOH" />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Target concentration" hint="mol/L">
+          <Field label={s.target} hint="mol/L">
             <NumInput value={molarity} onChange={setMolarity} placeholder="0.100" />
           </Field>
-          <Field label="Final volume">
+          <Field label={s.finalVolume}>
             <div className="flex gap-2">
               <NumInput value={volume} onChange={setVolume} placeholder="250" />
               <div className="w-[86px] shrink-0">
@@ -82,18 +91,10 @@ function MolarityMaker() {
       <div className="space-y-2.5 self-start">
         {result.data && (
           <>
-            <ResultRow label="Molar mass of solute" value={fmt(result.data.M)} unit="g/mol" />
-            <ResultRow label="Amount of substance" value={fmt(result.data.moles)} unit="mol" />
-            <ResultRow
-              label="Weigh out"
-              value={fmt(result.data.mass)}
-              unit="g"
-              highlight
-            />
-            <p className="px-3.5 pt-1 text-xs leading-relaxed text-slate-500">
-              Dissolve completely in less than the final volume, then dilute to the mark — never
-              add solute to a full flask.
-            </p>
+            <ResultRow label={s.molarMass} value={fmt(result.data.M)} unit="g/mol" />
+            <ResultRow label={s.amount} value={fmt(result.data.moles)} unit="mol" />
+            <ResultRow label={s.weigh} value={fmt(result.data.mass)} unit="g" highlight />
+            <p className="px-3.5 pt-1 text-xs leading-relaxed text-slate-500">{s.weighTip}</p>
           </>
         )}
       </div>
@@ -111,6 +112,7 @@ function solveDilution(
   values: Record<DilutionField, string>,
   solve: DilutionField,
   vUnit: string,
+  errors: { fillExactly: string; clearField: string },
 ): DilutionResult {
   const filled: Partial<Record<DilutionField, number>> = {};
   for (const key of ["C1", "V1", "C2", "V2"] as DilutionField[]) {
@@ -119,12 +121,12 @@ function solveDilution(
   }
   if (Object.keys(filled).length !== 3) {
     return {
-      error: `Fill exactly three fields — ${solve} will be solved.`,
+      error: errors.fillExactly.replace("{field}", solve),
       solved: null,
     };
   }
   if (solve in filled) {
-    return { error: `Clear the field you want solved (${solve}).`, solved: null };
+    return { error: errors.clearField.replace("{field}", solve), solved: null };
   }
   const vu = parseFloat(vUnit);
   const C1 = filled.C1;
@@ -143,6 +145,8 @@ function solveDilution(
 }
 
 function Dilution() {
+  const { t, fmt: interpolate } = useI18n();
+  const s = t.pages.calculator.solutions;
   const [values, setValues] = useState<Record<DilutionField, string>>({
     C1: "1.0",
     V1: "",
@@ -153,24 +157,25 @@ function Dilution() {
   const [vUnit, setVUnit] = useState("0.001");
 
   const labels: Record<DilutionField, string> = {
-    C1: "Stock conc. C₁",
-    V1: "Stock vol. V₁",
-    C2: "Target conc. C₂",
-    V2: "Target vol. V₂",
+    C1: s.stockC,
+    V1: s.stockV,
+    C2: s.targetC,
+    V2: s.targetV,
   };
 
-  const result = solveDilution(values, solve, vUnit);
+  const result = solveDilution(values, solve, vUnit, {
+    fillExactly: s.fillExactly,
+    clearField: s.clearField,
+  });
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <div className="space-y-5">
-        <p className="text-sm text-slate-400">
-          Fill any three fields; pick which one to solve for.
-        </p>
+        <p className="text-sm text-slate-400">{s.fill3}</p>
         <SubTabs
           tabs={(["C1", "V1", "C2", "V2"] as DilutionField[]).map((k) => ({
             id: k,
-            label: `solve ${labels[k].split(" ")[1] ?? k}`,
+            label: `${s.solve} ${k}`,
           }))}
           active={solve}
           onChange={(id) => setSolve(id as DilutionField)}
@@ -181,11 +186,11 @@ function Dilution() {
             <Field
               key={key}
               label={labels[key]}
-              hint={key.includes("V") ? "see unit below" : "mol/L"}
+              hint={key.includes("V") ? s.volumeHint : "mol/L"}
             >
               <NumInput
                 value={values[key]}
-                onChange={(v) => setValues((s) => ({ ...s, [key]: v }))}
+                onChange={(v) => setValues((sp) => ({ ...sp, [key]: v }))}
                 placeholder={solve === key ? "= ?" : ""}
                 invalid={false}
               />
@@ -193,7 +198,7 @@ function Dilution() {
           ))}
         </div>
 
-        <Field label="Volume unit" hint="applies to V₁ & V₂">
+        <Field label={s.volumeUnit} hint={s.volumeHint}>
           <Select value={vUnit} onChange={setVUnit} options={VOLUMES} />
         </Field>
 
@@ -205,17 +210,19 @@ function Dilution() {
         {result.solved !== null && (
           <>
             <ResultRow
-              label={`Solved ${solve}`}
+              label={interpolate(s.solved, { field: solve })}
               value={fmt(result.solved)}
               unit={solve.startsWith("V") ? undefined : "mol/L"}
               highlight
             />
             <p className="px-3.5 pt-1 text-xs text-slate-500">
               {solve.startsWith("V")
-                ? `in the selected volume unit (${VOLUMES.find((o) => o.value === vUnit)?.label})`
-                : "in mol/L"}
+                ? interpolate(s.inUnit, {
+                    unit: VOLUMES.find((o) => o.value === vUnit)?.label ?? "",
+                  })
+                : s.inMol}
             </p>
-            <DilutionTip />
+            <p className="px-3.5 pt-1 text-xs leading-relaxed text-slate-500">{s.dilutionTip}</p>
           </>
         )}
       </div>
@@ -223,23 +230,16 @@ function Dilution() {
   );
 }
 
-function DilutionTip() {
-  return (
-    <p className="px-3.5 pt-1 text-xs leading-relaxed text-slate-500">
-      Pipette the stock volume, transfer to a volumetric flask, then dilute to the calibration
-      mark with solvent.
-    </p>
-  );
-}
-
 export function Solutions() {
+  const { t } = useI18n();
+  const s = t.pages.calculator.solutions;
   const [tab, setTab] = useState("molarity");
   return (
     <div className="space-y-8">
       <SubTabs
         tabs={[
-          { id: "molarity", label: "Make a solution" },
-          { id: "dilution", label: "Dilution C₁V₁=C₂V₂" },
+          { id: "molarity", label: s.make },
+          { id: "dilution", label: s.dilute },
         ]}
         active={tab}
         onChange={setTab}

@@ -1,9 +1,12 @@
+"use client";
+
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { DomainIcon } from "@/components/icons";
 import { SKILL_GROUPS } from "@/config/cv";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 function Tile({
@@ -46,15 +49,14 @@ function Tile({
 }
 
 export function SkillsGrid() {
+  const { t } = useI18n();
+  const s = t.pages.about.skills;
+
   return (
     <section className="py-16 sm:py-20">
       <Container>
         <Reveal>
-          <SectionHeading
-            eyebrow="Toolkit"
-            title="Skills, arranged like the periodic table"
-            description="Each tile is a tool I actually use — brighter tiles are the ones I reach for daily."
-          />
+          <SectionHeading eyebrow={s.eyebrow} title={s.title} description={s.description} />
         </Reveal>
 
         <div className="grid gap-5 lg:grid-cols-2">
@@ -69,7 +71,7 @@ export function SkillsGrid() {
                   </span>
                   <h3 className="font-display text-lg font-semibold text-white">{group.title}</h3>
                   <span className="ml-auto font-mono text-xs text-slate-500">
-                    {group.tiles.length} elements
+                    {group.tiles.length} {s.elements}
                   </span>
                 </div>
                 <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">

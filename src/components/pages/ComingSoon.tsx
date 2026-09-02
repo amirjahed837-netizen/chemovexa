@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Badge } from "@/components/ui/Badge";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * Shared shell for pages that are part of the roadmap but not built yet.
@@ -22,6 +25,8 @@ export function ComingSoon({
   step: string;
   planned: string[];
 }) {
+  const { t } = useI18n();
+
   return (
     <div className="bg-grid relative flex min-h-[calc(100svh-4rem)] items-center overflow-hidden py-28">
       <div
@@ -38,7 +43,7 @@ export function ComingSoon({
           <GlassCard className="p-8 sm:p-12">
             <Badge tone="cyan" className="mb-5">
               <span className="size-1.5 animate-pulse rounded-full bg-cyan-300" />
-              Under construction · {step}
+              {t.status.wip} · {step}
             </Badge>
 
             {eyebrow && (
@@ -51,42 +56,21 @@ export function ComingSoon({
             </h1>
             <p className="mt-4 leading-relaxed text-slate-400">{description}</p>
 
-            <h2 className="mt-8 font-mono text-xs uppercase tracking-widest text-slate-500">
-              Planned features
-            </h2>
-            <ul className="mt-3 space-y-2.5">
-              {planned.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-slate-300">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="mt-0.5 size-4 shrink-0 text-cyan-400/80"
-                    aria-hidden="true"
-                  >
-                    <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
-
             <div className="mt-10 flex flex-wrap gap-3">
               <ButtonLink href="/" variant="secondary" size="sm">
-                ← Back to home
+                {t.ui.backHome}
               </ButtonLink>
               <ButtonLink href="/contact" variant="ghost" size="sm">
-                Suggest a feature →
+                {t.ui.suggest}
               </ButtonLink>
             </div>
           </GlassCard>
         </Reveal>
 
         <p className="mt-8 text-center font-mono text-xs text-slate-600">
-          Follow the build log on{" "}
+          {t.ui.followBuildLog}{" "}
           <Link href="/programming/github" className="text-cyan-400/80 hover:text-cyan-300">
-            GitHub
+            {t.ui.onGithub}
           </Link>
         </p>
       </Container>

@@ -1,4 +1,9 @@
+"use client";
+
+import { useI18n } from "@/lib/i18n";
+
 export default function Loading() {
+  const { t } = useI18n();
   return (
     <div className="flex min-h-[40vh] items-center justify-center" aria-live="polite">
       <div className="flex flex-col items-center gap-4">
@@ -7,7 +12,7 @@ export default function Loading() {
           aria-hidden="true"
         />
         <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-500">
-          loading
+          {t.ui.loading}
         </span>
       </div>
     </div>

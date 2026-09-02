@@ -10,6 +10,8 @@ import { buildWriteup, roleOf } from "@/lib/chem/reaction";
 import { BOOK_REACTIONS } from "@/lib/chem/book-reactions";
 import { predictReaction } from "@/lib/chem/predict";
 import type { Prediction } from "@/lib/chem/predict";
+import { useI18n } from "@/lib/i18n";
+import { ROLE_LABEL_FA, TYPE_LABEL_FA, REACTION_TYPE_LABEL_FA } from "@/lib/i18n/roles";
 
 type SlotValue = string;
 
@@ -102,10 +104,14 @@ function EquationSide({
   values,
   onChange,
   label,
+  addLabel,
+  removeTitle,
 }: {
   values: SlotValue[];
   onChange: (v: SlotValue[]) => void;
   label: string;
+  addLabel: string;
+  removeTitle: string;
 }) {
   const setSlot = (i: number, v: string) => {
     const next = [...values];
@@ -127,7 +133,7 @@ function EquationSide({
               <button
                 type="button"
                 onClick={() => removeSlot(i)}
-                title="Remove this slot"
+                title={removeTitle}
                 className="text-slate-600 transition-colors hover:text-red-400"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3.5" aria-hidden="true">
@@ -153,7 +159,7 @@ function EquationSide({
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-3.5" aria-hidden="true">
             <path d="M12 5v14M5 12h14" strokeLinecap="round" />
           </svg>
-          add {label.toLowerCase()}
+          {addLabel}
         </button>
       )}
     </div>
@@ -162,14 +168,9 @@ function EquationSide({
 
 type Tab = "writeup" | "ionic" | "atoms" | "type";
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: "writeup", label: "What happens" },
-  { id: "ionic", label: "Ionic equations" },
-  { id: "atoms", label: "Atom audit" },
-  { id: "type", label: "Type & safety" },
-];
-
 function AiWriteup({ equation, auto }: { equation: string; auto: boolean }) {
+  const { t } = useI18n();
+  const l = t.pages.lab;
   const [text, setText] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
     auto ? "loading" : "idle",
@@ -223,7 +224,7 @@ function AiWriteup({ equation, auto }: { equation: string; auto: boolean }) {
           }
         }
         setStatus(acc ? "done" : "error");
-        if (!acc) setError("The AI returned an empty answer — try again.");
+        if (!acc) setError(l.aiEmpty);
       } catch (e) {
         if (e instanceof DOMException && e.name === "AbortError") return;
         setStatus("error");
@@ -238,7 +239,7 @@ function AiWriteup({ equation, auto }: { equation: string; auto: boolean }) {
     <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/[0.04] p-4">
       <div className="mb-2 flex items-center justify-between gap-3">
         <h4 className="font-mono text-[10px] uppercase tracking-widest text-cyan-300/80">
-          AI write-up — generated live for THIS reaction
+          {l.aiWriteup}
         </h4>
         <button
           type="button"
@@ -249,18 +250,15 @@ function AiWriteup({ equation, auto }: { equation: string; auto: boolean }) {
           disabled={status === "loading"}
           className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[11px] text-cyan-200 transition-colors hover:bg-cyan-400/20 disabled:opacity-40"
         >
-          {status === "loading" ? "writing…" : text ? "regenerate" : auto ? "retry" : "ask the AI →"}
+          {status === "loading" ? l.writing : text ? l.regenerate : auto ? l.retry : l.askAi}
         </button>
       </div>
 
       {status === "idle" && (
-        <p className="text-sm text-slate-500">
-          The curated library only covers famous reactions. For this one, the site&apos;s AI
-          assistant can write a full explanation — press the button.
-        </p>
+        <p className="text-sm text-slate-500">{l.aiIdle}</p>
       )}
 
-      {status === "loading" && !text && <p className="text-sm text-slate-500">Thinking…</p>}
+      {status === "loading" && !text && <p className="text-sm text-slate-500">{l.thinking}</p>}
 
       {text && <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">{text}</p>}
 
@@ -276,6 +274,8 @@ function ReactionRadar({
   prediction: Prediction | null;
   onLoad: (id: string) => void;
 }) {
+  const { t, fmt: interpolate } = useI18n();
+  const l = t.pages.lab;
   if (!prediction) return null;
   const dot =
     prediction.kind === "exact"
@@ -299,14 +299,14 @@ function ReactionRadar({
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-white">
-          {prediction.kind === "exact" ? "This is: " : "Predicted: "}
+          {prediction.kind === "exact" ? l.thisIs : l.predicted}
           {prediction.title}
         </p>
         <p className="truncate text-xs text-slate-400">{prediction.detail}</p>
       </div>
       {missing.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-wider text-slate-500">missing:</span>
+          <span className="text-[10px] uppercase tracking-wider text-slate-500">{l.missing}</span>
           {missing.slice(0, 4).map((m) => (
             <span key={m} className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[11px] text-slate-300">
               {m}
@@ -320,7 +320,7 @@ function ReactionRadar({
           onClick={() => onLoad(prediction.reactionId!)}
           className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[11px] text-cyan-200 transition-colors hover:bg-cyan-400/20"
         >
-          load full reaction →
+          {l.loadFull}
         </button>
       )}
     </div>
@@ -336,7 +336,20 @@ function WriteupPanel({
   right: SlotValue[];
   coeffs: Map<string, number> | null;
 }) {
+  const { t, locale } = useI18n();
+  const l = t.pages.lab;
   const [tab, setTab] = useState<Tab>("writeup");
+
+  function typeLabel(type: string): string {
+    return locale === "fa" ? (TYPE_LABEL_FA[type] ?? type) : type;
+  }
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "writeup", label: l.tabs.writeup },
+    { id: "ionic", label: l.tabs.ionic },
+    { id: "atoms", label: l.tabs.atoms },
+    { id: "type", label: l.tabs.type },
+  ];
 
   const writeup = useMemo(() => {
     if (!coeffs) return null;
@@ -386,10 +399,10 @@ function WriteupPanel({
                       : "border-amber-400/30 bg-amber-400/10 text-amber-300"
                   }`}
                 >
-                  {writeup.found ? "curated write-up" : "heuristic analysis"}
+                  {writeup.found ? l.curated : l.heuristic}
                 </span>
               </div>
-              <p className="text-sm font-medium text-cyan-200/90">{writeup.typeLabel}</p>
+              <p className="text-sm font-medium text-cyan-200/90">{typeLabel(writeup.typeLabel)}</p>
               {writeup.chapter && (
                 <p className="mt-1 font-mono text-[11px] text-slate-500">{writeup.chapter}</p>
               )}
@@ -397,21 +410,21 @@ function WriteupPanel({
 
             <section>
               <h4 className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                Mechanism — why it happens
+                {l.mechanism}
               </h4>
               <p className="text-sm leading-relaxed text-slate-300">{writeup.mechanism}</p>
             </section>
 
             <section>
               <h4 className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                What happens — the chemistry story
+                {l.whatHappens}
               </h4>
               <p className="text-sm leading-relaxed text-slate-300">{writeup.whatHappens}</p>
             </section>
 
             <section>
               <h4 className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                What you would see at the bench
+                {l.bench}
               </h4>
               <p className="text-sm leading-relaxed text-slate-300">{writeup.observation}</p>
             </section>
@@ -419,7 +432,7 @@ function WriteupPanel({
             {writeup.conditions && (
               <section>
                 <h4 className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                  Conditions
+                  {l.conditions}
                 </h4>
                 <p className="text-sm leading-relaxed text-slate-300">{writeup.conditions}</p>
               </section>
@@ -427,7 +440,7 @@ function WriteupPanel({
 
             <section>
               <h4 className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                Molar masses
+                {l.molarMasses}
               </h4>
               <div className="flex flex-wrap gap-2">
                 {writeup.molarMasses.map((m) => (
@@ -460,18 +473,18 @@ function WriteupPanel({
               <>
                 <div>
                   <h4 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                    Complete ionic equation
+                    {l.completeIonic}
                   </h4>
-                  <p className="rounded-lg border border-white/10 bg-black/30 px-4 py-3 font-mono text-sm text-slate-200">
+                  <p className="rounded-lg border border-white/10 bg-black/30 px-4 py-3 font-mono text-sm text-slate-200" dir="ltr">
                     {writeup.ionic.complete}
                   </p>
                 </div>
                 {writeup.ionic.net && (
                   <div>
                     <h4 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                      Net ionic equation
+                      {l.netIonic}
                     </h4>
-                    <p className="rounded-lg border border-violet-400/25 bg-violet-400/[0.07] px-4 py-3 font-mono text-sm text-violet-200">
+                    <p className="rounded-lg border border-violet-400/25 bg-violet-400/[0.07] px-4 py-3 font-mono text-sm text-violet-200" dir="ltr">
                       {writeup.ionic.net}
                     </p>
                   </div>
@@ -481,29 +494,22 @@ function WriteupPanel({
                 )}
               </>
             ) : (
-              <p className="text-sm leading-relaxed text-slate-400">
-                No curated ionic equations for this combination. Heuristic: soluble salts, strong
-                acids and strong bases split into ions; solids, gases and water stay whole.
-                Spectators are the ions that appear unchanged on both sides — cancel them to get
-                the net ionic equation.
-              </p>
+              <p className="text-sm leading-relaxed text-slate-400">{l.ionicFallback}</p>
             )}
           </div>
         )}
 
         {tab === "atoms" && (
           <div className="space-y-4">
-            <p className="text-sm text-slate-400">
-              Bookkeeping after balancing — atoms of each element on both sides must match:
-            </p>
+            <p className="text-sm text-slate-400">{l.atomsIntro}</p>
             <div className="overflow-hidden rounded-lg border border-white/10">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.03] text-left font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                    <th className="px-4 py-2.5">Element</th>
-                    <th className="px-4 py-2.5">Left</th>
-                    <th className="px-4 py-2.5">Right</th>
-                    <th className="px-4 py-2.5">Status</th>
+                    <th className="px-4 py-2.5">{l.thElement}</th>
+                    <th className="px-4 py-2.5">{l.thLeft}</th>
+                    <th className="px-4 py-2.5">{l.thRight}</th>
+                    <th className="px-4 py-2.5">{l.thStatus}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -517,9 +523,9 @@ function WriteupPanel({
                       <td className="px-4 py-2.5 font-mono text-slate-300">{row.right}</td>
                       <td className="px-4 py-2.5">
                         {row.ok ? (
-                          <span className="text-emerald-400">✓ conserved</span>
+                          <span className="text-emerald-400">{l.conserved}</span>
                         ) : (
-                          <span className="text-red-400">✗ mismatch</span>
+                          <span className="text-red-400">{l.mismatch}</span>
                         )}
                       </td>
                     </tr>
@@ -536,15 +542,15 @@ function WriteupPanel({
               <>
                 <div>
                   <h4 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                    Reaction type
+                    {l.reactionType}
                   </h4>
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-400/25 bg-violet-400/10 px-3 py-1 text-sm font-medium text-violet-200">
-                    {REACTION_TYPE_LABEL[classification.type]}
+                    {locale === "fa" ? (REACTION_TYPE_LABEL_FA[classification.type] ?? classification.type) : REACTION_TYPE_LABEL[classification.type]}
                   </span>
                 </div>
                 <div>
                   <h4 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                    Bench observation (heuristic)
+                    {l.benchHeuristic}
                   </h4>
                   <p className="text-sm leading-relaxed text-slate-300">
                     {classification.observation}
@@ -552,13 +558,11 @@ function WriteupPanel({
                 </div>
               </>
             ) : (
-              <p className="text-sm text-slate-400">
-                Enter reagents on both sides to classify the reaction.
-              </p>
+              <p className="text-sm text-slate-400">{l.classifyPrompt}</p>
             )}
             <div>
               <h4 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                Safety notes
+                {l.safety}
               </h4>
               {writeup.safety.length > 0 ? (
                 <ul className="space-y-1.5">
@@ -586,9 +590,7 @@ function WriteupPanel({
                   ))}
                 </ul>
               ) : (
-                <p className="text-xs text-slate-600">
-                  Standard PPE applies: goggles, gloves, lab coat.
-                </p>
+                <p className="text-xs text-slate-600">{l.safetyFallback}</p>
               )}
             </div>
           </div>
@@ -599,19 +601,23 @@ function WriteupPanel({
 }
 
 function RoleChips({ formula }: { formula: string }) {
+  const { locale } = useI18n();
   const f = formula.trim();
   if (!f) return null;
   const meta = findReagentMeta(f);
-  const { label, color } = roleOf(f);
+  const { role, label, color } = roleOf(f);
+  const displayLabel = locale === "fa" ? (ROLE_LABEL_FA[role] ?? label) : label;
   return (
     <div className="mt-1.5 flex items-center gap-1.5 text-[11px]">
-      <span className={`rounded-full border px-2 py-0.5 ${color}`}>{label}</span>
+      <span className={`rounded-full border px-2 py-0.5 ${color}`}>{displayLabel}</span>
       {meta && <span className="text-slate-600">{meta.name}</span>}
     </div>
   );
 }
 
 export function ReactionLab() {
+  const { t, fmt: interpolate } = useI18n();
+  const l = t.pages.lab;
   const [left, setLeft] = useState<SlotValue[]>(["HCl", "NaOH"]);
   const [right, setRight] = useState<SlotValue[]>(["NaCl", "H2O"]);
 
@@ -685,8 +691,10 @@ export function ReactionLab() {
       {/* book reactions library */}
       <details className="group rounded-xl border border-violet-400/20 bg-violet-400/[0.04]">
         <summary className="cursor-pointer list-none px-4 py-3 text-xs font-medium text-violet-200 transition-colors hover:text-violet-100">
-          <span className="font-display">McMurry 11e library</span>
-          <span className="ml-2 text-slate-500">— {BOOK_REACTIONS.length} reactions from the book, click to load any</span>
+          <span className="font-display">{l.bookLibrary}</span>
+          <span className="ml-2 text-slate-500">
+            {interpolate(l.bookLibraryHint, { n: BOOK_REACTIONS.length })}
+          </span>
           <span className="float-right text-slate-500 transition-transform group-open:rotate-90">›</span>
         </summary>
         <div className="grid gap-1.5 border-t border-white/5 p-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -715,7 +723,9 @@ export function ReactionLab() {
           <EquationSide
             values={left}
             onChange={setLeft}
-            label="Reactant"
+            label={l.reactant}
+            addLabel={l.addReactant}
+            removeTitle={l.removeSlot}
           />
         </div>
         <div className="hidden h-9 w-9 shrink-0 place-items-center rounded-full border border-cyan-400/30 bg-cyan-400/10 font-mono text-cyan-300 lg:grid lg:mt-7">
@@ -725,7 +735,9 @@ export function ReactionLab() {
           <EquationSide
             values={right}
             onChange={setRight}
-            label="Product"
+            label={l.product}
+            addLabel={l.addProduct}
+            removeTitle={l.removeSlot}
           />
         </div>
       </div>
@@ -733,7 +745,7 @@ export function ReactionLab() {
       {/* balanced equation */}
       <div className="rounded-2xl border border-cyan-400/25 bg-gradient-to-br from-cyan-400/[0.07] to-blue-500/[0.05] px-5 py-6 sm:px-8 sm:py-8">
         <h3 className="mb-4 font-mono text-[10px] uppercase tracking-[0.25em] text-cyan-300/80">
-          Balanced equation
+          {l.balanced}
         </h3>
 
         {error ? (
@@ -741,9 +753,7 @@ export function ReactionLab() {
             {error}
           </p>
         ) : !coeffs ? (
-          <p className="text-sm text-slate-500">
-            Enter at least one reactant and one product to balance the equation.
-          </p>
+          <p className="text-sm text-slate-500">{l.enterPrompt}</p>
         ) : (
           (() => {
             const parts: React.ReactNode[] = [];
@@ -782,8 +792,8 @@ export function ReactionLab() {
         )}
 
         {!error && coeffs && (
-          <p className="mt-4 font-mono text-[11px] text-slate-600">
-            solved by exact rational elimination · atoms conserved on both sides ✓
+          <p className="mt-4 font-mono text-[11px] text-slate-600" dir="ltr">
+            {l.solvedNote}
           </p>
         )}
       </div>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { PROJECTS, CATEGORY_LABEL } from "@/config/projects";
+import { PROJECTS } from "@/config/projects";
 import type { ProjectCategory } from "@/config/projects";
 import { ProjectCard } from "@/components/projects/ProjectCard";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type Filter = "all" | ProjectCategory;
@@ -11,9 +12,17 @@ type Filter = "all" | ProjectCategory;
 const FILTERS: Filter[] = ["all", "chemistry", "web", "data"];
 
 export function ProjectsBrowser() {
+  const { t } = useI18n();
+  const p = t.pages.projects;
   const [filter, setFilter] = useState<Filter>("all");
   const visible =
-    filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.category === filter);
+    filter === "all" ? PROJECTS : PROJECTS.filter((pr) => pr.category === filter);
+
+  const catLabel: Record<ProjectCategory, string> = {
+    chemistry: p.categories.chemistry,
+    web: p.categories.web,
+    data: p.categories.data,
+  };
 
   return (
     <div>
@@ -32,11 +41,11 @@ export function ProjectsBrowser() {
                 : "border-white/10 bg-white/[0.03] text-slate-400 hover:border-white/25 hover:text-slate-200",
             )}
           >
-            {f === "all" ? "All" : CATEGORY_LABEL[f]}
+            {f === "all" ? t.ui.all : catLabel[f]}
             <span className="ml-1.5 font-mono text-[10px] opacity-60">
               {f === "all"
                 ? PROJECTS.length
-                : PROJECTS.filter((p) => p.category === f).length}
+                : PROJECTS.filter((pr) => pr.category === f).length}
             </span>
           </button>
         ))}

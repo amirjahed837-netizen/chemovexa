@@ -2,18 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 type Source = { n: number; title: string; url: string; kind: string; snippet: string };
 type Msg = { role: "user" | "assistant"; content: string; sources?: Source[]; note?: string };
 
-const SUGGESTIONS = [
-  "Why is the H–O–H angle in water 104.5°?",
-  "How do I find pH at half-equivalence?",
-  "What does the Reaction Lab do?",
-  "Which books ground this site?",
-];
-
 function StatusPill() {
+  const { t, fmt } = useI18n();
   const [status, setStatus] = useState<{ llm: string | null; chunks: number } | null>(null);
   useEffect(() => {
     fetch("/api/assistant")
@@ -26,15 +21,15 @@ function StatusPill() {
   return (
     <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-[11px]">
       <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-0.5 text-emerald-200">
-        RAG active · {status.chunks} passages
+        {fmt(t.pages.assistant.ragActive, { n: status.chunks })}
       </span>
       {status.llm ? (
         <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-0.5 text-cyan-200">
-          generation: {status.llm}
+          {fmt(t.pages.assistant.generation, { m: status.llm })}
         </span>
       ) : (
         <span className="rounded-full border border-amber-400/25 bg-amber-400/10 px-2.5 py-0.5 text-amber-200">
-          retrieval-only — set AI_API_KEY for full generation
+          {t.pages.assistant.retrievalOnly}
         </span>
       )}
     </div>
@@ -42,6 +37,8 @@ function StatusPill() {
 }
 
 export function AssistantChat() {
+  const { t, locale } = useI18n();
+  const a = t.pages.assistant;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -64,14 +61,14 @@ export function AssistantChat() {
       const res = await fetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, history }),
+        body: JSON.stringify({ message, history, locale }),
       });
 
       const contentType = res.headers.get("content-type") ?? "";
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Request failed." }));
-        throw new Error(err.error ?? `Request failed (${res.status})`);
+        const err = await res.json().catch(() => ({ error: a.errInvalid }));
+        throw new Error(err.error ?? a.errInvalid);
       }
 
       if (contentType.includes("text/event-stream")) {
@@ -86,9 +83,9 @@ export function AssistantChat() {
           const lines = buffer.split("\n");
           buffer = lines.pop() ?? "";
           for (const line of lines) {
-            const t = line.trim();
-            if (!t.startsWith("data:")) continue;
-            const payload = t.slice(5).trim();
+            const tr = line.trim();
+            if (!tr.startsWith("data:")) continue;
+            const payload = tr.slice(5).trim();
             if (payload === "[DONE]") {
               done = true;
               break;
@@ -129,7 +126,7 @@ export function AssistantChat() {
       setMessages((m) => {
         const next = [...m];
         const last = next[next.length - 1];
-        last.content = e instanceof Error ? e.message : "Something went wrong.";
+        last.content = e instanceof Error ? e.message : a.errGeneric;
         return next;
       });
     } finally {
@@ -148,10 +145,8 @@ export function AssistantChat() {
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-cyan-400 opacity-60" />
             <span className="relative inline-flex size-2.5 rounded-full bg-cyan-300" />
           </span>
-          <span className="font-display text-sm font-semibold text-white">
-            Chemistry Assistant
-          </span>
-          <span className="font-mono text-[10px] text-slate-500">grounded in this site only</span>
+          <span className="font-display text-sm font-semibold text-white">{a.chatTitle}</span>
+          <span className="font-mono text-[10px] text-slate-500">{a.chatSubtitle}</span>
         </div>
 
         {/* messages */}
@@ -162,17 +157,11 @@ export function AssistantChat() {
           {messages.length === 0 && (
             <div className="flex h-full flex-col items-center justify-center gap-5 text-center">
               <div className="max-w-md space-y-2">
-                <p className="font-display text-lg font-semibold text-white">
-                  Ask the knowledge base.
-                </p>
-                <p className="text-sm leading-relaxed text-slate-500">
-                  Answers are retrieved from this site&apos;s real content — research notes,
-                  literature annotations and tool documentation — with citations. No generic
-                  chatbot filler.
-                </p>
+                <p className="font-display text-lg font-semibold text-white">{a.emptyTitle}</p>
+                <p className="text-sm leading-relaxed text-slate-500">{a.emptyDescription}</p>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
-                {SUGGESTIONS.map((s) => (
+                {a.suggestions.map((s) => (
                   <button
                     key={s}
                     type="button"
@@ -203,7 +192,7 @@ export function AssistantChat() {
                 {m.content ? (
                   <p className="whitespace-pre-wrap">{m.content}</p>
                 ) : (
-                  <span className="flex gap-1 py-1" aria-label="thinking">
+                  <span className="flex gap-1 py-1" aria-label={a.thinking}>
                     {[0, 1, 2].map((d) => (
                       <span
                         key={d}
@@ -217,7 +206,7 @@ export function AssistantChat() {
                 {m.sources && m.sources.length > 0 && (
                   <div className="space-y-1.5 border-t border-white/10 pt-2.5">
                     <p className="font-mono text-[9px] uppercase tracking-widest text-slate-500">
-                      sources {m.note ? `· ${m.note}` : ""}
+                      {a.sources} {m.note ? `· ${m.note}` : ""}
                     </p>
                     <ul className="space-y-1">
                       {m.sources.map((s) => (
@@ -251,7 +240,7 @@ export function AssistantChat() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about chemistry or this site…"
+            placeholder={a.placeholder}
             maxLength={1000}
             spellCheck={false}
             className="h-11 min-w-0 flex-1 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-sm text-slate-100 outline-none transition-colors placeholder:text-slate-600 focus:border-cyan-400/70"
@@ -260,9 +249,9 @@ export function AssistantChat() {
             type="submit"
             disabled={busy || !input.trim()}
             className="glow-cyan inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
-            aria-label="Send"
+            aria-label={a.send}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5 rtl-flip" aria-hidden="true">
               <path d="m22 2-7 20-4-9-9-4Z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
@@ -270,9 +259,7 @@ export function AssistantChat() {
       </div>
 
       <p className="text-center font-mono text-[11px] leading-relaxed text-slate-600">
-        retrieval: BM25 over notes + literature + tool docs · generation: OpenAI-compatible API
-        (optional) · full-PDF ingestion of the reference textbooks arrives with the FastAPI
-        backend
+        {a.chatFooter}
       </p>
     </div>
   );

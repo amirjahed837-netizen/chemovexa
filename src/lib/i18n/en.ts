@@ -1,0 +1,635 @@
+export const en = {
+  meta: { langName: "English", switchTo: "فارسی", switchAria: "Switch to Persian" },
+  status: { live: "Live", wip: "In progress", planned: "Planned" },
+  ui: {
+    explore: "explore",
+    openTool: "Open tool",
+    open: "Open →",
+    openFull: "Open full profile →",
+    try: "try",
+    loading: "loading",
+    backHome: "← Back to home",
+    viewCV: "View my CV",
+    viewCVShort: "View CV",
+    getInTouch: "Get in touch",
+    github: "GitHub",
+    githubArrow: "GitHub →",
+    email: "Email",
+    caseStudy: "Case study",
+    all: "All",
+    featured: "Featured",
+    search: "Search",
+    fetch: "Fetch",
+    load: "Load",
+    suggest: "Suggest a feature →",
+    moreAbout: "More about me",
+    library: "Reference library →",
+    everythingOnGithub: "Everything on GitHub →",
+    followBuildLog: "Follow the build log on",
+    onGithub: "GitHub",
+    method: "Method",
+    formula: "formula",
+    optional: "optional",
+    optionalField: "optional",
+  },
+  nav: {
+    home: "Home",
+    about: "About",
+    chemistry: "Chemistry",
+    programming: "Programming",
+    research: "Research",
+    aiAssistant: "AI Assistant",
+    cvContact: "CV / Contact",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    children: {
+      calculator: "Chemistry Calculator",
+      calculatorDesc: "Molar mass, stoichiometry, solutions & more",
+      explorer: "Molecular Explorer",
+      explorerDesc: "Interactive 3D molecular structures",
+      lab: "Reaction Lab",
+      labDesc: "Mix reagents & balance reactions interactively",
+      projects: "Projects",
+      projectsDesc: "Case studies with architecture notes",
+      github: "GitHub",
+      githubDesc: "Live activity from the GitHub API",
+      notes: "Research Notes",
+      notesDesc: "Study notes with math & chemical notation",
+      literature: "Literature",
+      literatureDesc: "Annotated books, papers & references",
+    },
+  },
+  home: {
+    hero: {
+      pill: "Portfolio under active development",
+      titleA: "Chemistry meets",
+      titleB: "Code.",
+      tagline: "Building computational tools for chemistry, research & AI.",
+      cta1: "Explore the tools",
+      cta2: "View projects",
+    },
+    domains: {
+      eyebrow: "Four disciplines, one interface",
+      title: "Where science becomes software",
+      description:
+        "Each area of this portfolio feeds the others — chemistry knowledge shapes the tools, code brings them to life, research keeps them rigorous, and AI ties it all together.",
+      items: {
+        chemistry: {
+          title: "Chemistry",
+          description: "Interactive labs, calculators and 3D molecular tools.",
+        },
+        programming: {
+          title: "Programming",
+          description: "Clean, typed, well-tested code and open source work.",
+        },
+        research: {
+          title: "Research",
+          description: "Organized notes, literature and scientific references.",
+        },
+        ai: {
+          title: "AI",
+          description: "An assistant built on top of real chemistry infrastructure.",
+        },
+      },
+    },
+    tools: {
+      eyebrow: "Real tools, not demos",
+      title: "Chemistry infrastructure, first",
+      description:
+        "Before adding AI on top, the goal is a set of working instruments — each one real, useful and built to last.",
+      items: {
+        calculator: {
+          label: "Chemistry Calculator",
+          description:
+            "Molar mass, stoichiometry, dilutions, pH and unit conversions — instant, client-side, exam-friendly.",
+        },
+        explorer: {
+          label: "Molecular Explorer",
+          description:
+            "Rotate, zoom and inspect 3D structures powered by 3Dmol.js — from water to proteins.",
+        },
+        lab: {
+          label: "Reaction Lab",
+          description:
+            "Pick reagents, watch balanced equations form and explore reaction mechanisms.",
+        },
+      },
+    },
+    science: {
+      eyebrow: "The idea",
+      titleA: "A chemist who writes",
+      titleB: "production-grade software.",
+      paragraph:
+        "Most chemistry websites are static PDFs. This one is different: every tool is engineered like real software — typed, tested and deployed — while staying true to the science behind it.",
+      checklist: [
+        "Structures parsed from real chemical formats (SMILES, MOL, PDB)",
+        "Calculations validated against textbook methods",
+        "Open source — every equation auditable in the repo",
+      ],
+    },
+    cta: {
+      eyebrow: "Open to collaboration",
+      titleA: "Have an idea at the intersection of",
+      titleB: "chemistry & code?",
+      description:
+        "Research projects, computational tools or scientific communication — let's talk.",
+      contact: "Get in touch",
+    },
+  },
+  footer: {
+    tagline: "Building computational tools for chemistry, research & AI.",
+    explore: "Explore",
+    tools: "Chemistry tools",
+    toolsList: {
+      calculator: "Chemistry Calculator",
+      explorer: "Molecular Explorer",
+      lab: "Reaction Lab",
+      assistant: "AI Assistant",
+    },
+    connect: "Connect",
+    cvContact: "CV / Contact",
+    copyright: "© {year} {name}. All rights reserved.",
+    techLine: "Next.js · TypeScript · Tailwind CSS",
+  },
+  pages: {
+    about: {
+      eyebrow: "About me",
+      availability: "Open to collaboration & internships",
+      roleSuffix: "",
+      bio: [
+        "I'm a chemistry student who discovered that a terminal can be as powerful as a fume hood. My days move between lecture notes on mechanisms and editor windows full of TypeScript — and I've found the two have more in common than most people think.",
+        "Both demand precision. Both reward understanding the system, not just memorizing rules. And both are more fun when you build things with them. That's why this portfolio exists: instead of just studying chemistry, I'm building software that does chemistry.",
+        "The long-term goal is sitting exactly at the intersection of these fields — computational chemistry, cheminformatics and AI systems grounded in real scientific data.",
+      ],
+      journey: {
+        eyebrow: "The path",
+        title: "From lab bench to terminal",
+        description:
+          "A timeline in two tracks — the formal chemistry education running alongside the self-taught software journey.",
+        education: "Education",
+        experience: "Experience & Projects",
+      },
+      why: {
+        titleA: "Why chemistry",
+        titleB: "× code?",
+        paragraphs: [
+          "Chemistry is full of patterns — periodicity itself is a data structure. When I started writing programs to check my own calculations, visualize mechanisms and organize lab notes, everything clicked faster. Software forced a precision that made my chemistry better; chemistry gave my code problems worth solving.",
+          "Most tools chemists use online are clunky, ad-covered or locked behind paywalls. I believe a student with a laptop deserves better instruments — fast, free, transparent about their methods. That's the standard I hold every tool on this site to.",
+          "And when AI entered the picture, it felt natural: an assistant that actually knows chemistry has to be built on top of real tools and real literature. So that's exactly what this site is becoming — the infrastructure first, the intelligence after.",
+        ],
+        beyond: "Beyond the desk",
+      },
+      skills: {
+        eyebrow: "Toolkit",
+        title: "Skills, arranged like the periodic table",
+        description:
+          "Each tile is a tool I actually use — brighter tiles are the ones I reach for daily.",
+        elements: "elements",
+      },
+      now: {
+        title: "Now",
+      },
+    },
+    cv: {
+      title: "CV",
+      backToAbout: "← About",
+      printTip: "tip: the print dialog can save this as PDF",
+      savePdf: "Save as PDF",
+      doc: {
+        profile: "Profile",
+        education: "Education",
+        experience: "Experience & Projects",
+        skills: "Skills",
+        certifications: "Certifications",
+        languages: "Languages",
+        interests: "Interests",
+        footer: "Generated from structured data — always up to date at this site.",
+        current: "current",
+      },
+    },
+    contact: {
+      eyebrow: "CV · Contact",
+      title: "Let's connect",
+      description:
+        "Questions, collaboration ideas, internship opportunities — or just want to talk about chemistry and code? My inbox is open.",
+      methods: {
+        email: "Email",
+        emailHint: "Best for anything formal or long-form",
+        github: "GitHub",
+        githubHint: "Code, issues and project history",
+      },
+      location: {
+        title: "Location",
+        hint: "Open to remote & on-site",
+      },
+      cv: {
+        title: "Curriculum Vitae",
+        description:
+          "Full education, experience and skills — rendered live from structured data so it never goes stale. One click to save as PDF.",
+      },
+      formNote: "A proper contact form (with spam protection) arrives with the backend service.",
+    },
+    chemistry: {
+      eyebrow: "Chemistry",
+      title: "Tools that do real chemistry",
+      description:
+        "Not screenshots of science — working instruments. Each tool below is being engineered with validated methods and modern web technology.",
+      liveNow: "Live now:",
+      liveNowText:
+        "an AI assistant grounded <em>in these tools</em> — AI over real chemistry infrastructure.",
+    },
+    calculator: {
+      eyebrow: "Chemistry · Tool",
+      title: "Chemistry Calculator",
+      description:
+        "Five instruments in one — every calculation shows its method, every result is instant.",
+      tabs: {
+        molar: "Molar Mass",
+        stoich: "Stoichiometry",
+        solutions: "Solutions",
+        ph: "Acids & Bases",
+        units: "Units",
+      },
+      facts: [
+        {
+          title: "Validated methods",
+          body: "Atomic masses follow IUPAC 2021 conventional values. Weak acid/base equilibria are solved exactly — no hidden shortcuts that break at low concentration.",
+        },
+        {
+          title: "Understands real notation",
+          body: "The parser handles nested brackets K4[Fe(CN)6], hydrates CuSO4·5H2O, charges SO4^2− and leading multipliers like 5H2O.",
+        },
+        {
+          title: "Private by design",
+          body: "Every calculation runs in your browser — nothing is sent to any server. Works offline once loaded; perfect for exams and the lab bench.",
+        },
+      ],
+      molar: {
+        field: "Chemical formula",
+        hint: "brackets ( ) [ ] · hydrates · charges with ^",
+        placeholder: "e.g. Ca(OH)2 or CuSO4·5H2O",
+        mrOf: "M<sub>r</sub> of",
+        totalAtoms: "Total atoms per formula unit",
+        method: "M = Σ (atomic mass × count) over all elements in the formula",
+        composition: "Mass composition",
+      },
+      stoich: {
+        coeffFormula: "coefficient · formula",
+        mass: "mass (g)",
+        actualYield: "Actual yield (g)",
+        actualHint: "optional → % yield",
+        extent: "Extent available",
+        limiting: "Limiting reagent",
+        produced: "produced",
+        theoretical: "Theoretical yield",
+        percent: "Percent yield",
+        over100: ">100 — check data!",
+        errFormulas: "Enter all three formulas.",
+        errInvalid: "Invalid formula.",
+        errCoeffs: "Coefficients must be positive numbers; masses non-negative.",
+      },
+      solutions: {
+        solute: "Solute formula",
+        soluteHint: "molar mass computed automatically",
+        target: "Target concentration",
+        finalVolume: "Final volume",
+        molarMass: "Molar mass of solute",
+        amount: "Amount of substance",
+        weigh: "Weigh out",
+        weighTip:
+          "Dissolve completely in less than the final volume, then dilute to the mark — never add solute to a full flask.",
+        dilute: "Dilution C₁V₁=C₂V₂",
+        make: "Make a solution",
+        stockC: "Stock conc. C₁",
+        stockV: "Stock vol. V₁",
+        targetC: "Target conc. C₂",
+        targetV: "Target vol. V₂",
+        fill3: "Fill any three fields; pick which one to solve for.",
+        solve: "solve",
+        fillExactly: "Fill exactly three fields — {field} will be solved.",
+        clearField: "Clear the field you want solved ({field}).",
+        volumeUnit: "Volume unit",
+        volumeHint: "applies to V₁ & V₂",
+        solved: "Solved {field}",
+        inUnit: "in the selected volume unit ({unit})",
+        inMol: "in mol/L",
+        dilutionTip:
+          "Pipette the stock volume, transfer to a volumetric flask, then dilute to the calibration mark with solvent.",
+      },
+      ph: {
+        system: "System",
+        strongAcid: "Strong acid",
+        strongBase: "Strong base",
+        weakAcid: "Weak acid (Ka)",
+        weakBase: "Weak base (Kb)",
+        buffer: "Buffer (pKa)",
+        concentration: "Concentration",
+        concHintFull: "fully dissociates",
+        concHintFormal: "formal concentration",
+        kValue: "{k} value",
+        kHint: "scientific notation ok",
+        haveKa: "I have K{sub} instead of pK{sub}",
+        conjugateBase: "[A⁻] conjugate base",
+        weakAcidField: "[HA] weak acid",
+        acidic: "acidic",
+        basic: "basic",
+        approxNote: "exact solution used — the √(Ka·C) shortcut deviates >5% here",
+        scaleNote:
+          "Values assume 25 °C where pKw = 14.00. Activity coefficients are neglected (ideal dilute behaviour).",
+      },
+      units: {
+        from: "From",
+        to: "To",
+        swap: "Swap units",
+        errNumber: "Enter a valid number.",
+        note: "Exact factors by definition where applicable (cal = 4.184 J, atm = 101 325 Pa, torr ≈ mmHg). Temperature uses exact offset formulas.",
+        categories: {
+          pressure: "Pressure",
+          energy: "Energy",
+          volume: "Volume",
+          mass: "Mass",
+          amount: "Amount",
+          conc: "Concentration",
+          temp: "Temperature",
+        },
+      },
+    },
+    explorer: {
+      eyebrow: "Chemistry · Tool",
+      title: "3D Molecular Explorer",
+      description:
+        "Real 3D geometry, rendered in real time. Drag to rotate, scroll to zoom — then switch styles to see why chemists draw the same molecule three different ways.",
+      searchPlaceholder: "Search molecules…",
+      noMatches: "No matches.",
+      loadAny: "Load any molecule",
+      fetchHint: "Fetch a 3D structure from <b>PubChem</b> by compound name:",
+      pubchemPlaceholder: "caffeine, aspirin…",
+      pasteHint: "…or paste raw <b>MOL/SDF</b> or <b>PDB</b> data:",
+      pastedTitle: "Pasted structure",
+      backToLibrary: "back to library",
+      renderNote: "Structures are rendered locally with",
+      labels: "Labels",
+      labelsTitle: "Toggle element labels",
+      spin: "Spin",
+      spinTitle: "Toggle auto-rotate",
+      ballstick: "Ball & Stick",
+      stick: "Sticks",
+      spacefill: "Space-filling",
+      customNote: "Custom structure loaded — pick a molecule from the library to return.",
+      lookingUp: "Looking up \"{q}\" on PubChem…",
+      loaded: "Loaded \"{q}\" from PubChem.",
+      err404: "No 3D structure found for that name.",
+      errStatus: "PubChem responded with {status}.",
+      errNoStructure: "Response did not contain a structure.",
+      errNetwork:
+        "{msg} (network restrictions may block PubChem — try the paste box instead)",
+      errLookup: "Lookup failed.",
+      categories: {
+        inorganic: "Inorganic",
+        hydrocarbon: "Hydrocarbon",
+        organic: "Organic",
+        aromatic: "Aromatic",
+      },
+    },
+    lab: {
+      eyebrow: "Chemistry · Tool",
+      title: "Interactive Reaction Lab",
+      description:
+        "Pick reagents from the shelf — or type any formula — and the lab balances the equation for you, classifies the reaction, and tells you what you'd see at the bench.",
+      reactant: "Reactant",
+      product: "Product",
+      addReactant: "add reactant",
+      addProduct: "add product",
+      removeSlot: "Remove this slot",
+      balanced: "Balanced equation",
+      enterPrompt: "Enter at least one reactant and one product to balance the equation.",
+      solvedNote: "solved by exact rational elimination · atoms conserved on both sides ✓",
+      bookLibrary: "McMurry 11e library",
+      bookLibraryHint: "— {n} reactions from the book, click to load any",
+      tabs: {
+        writeup: "What happens",
+        ionic: "Ionic equations",
+        atoms: "Atom audit",
+        type: "Type & safety",
+      },
+      aiWriteup: "AI write-up — generated live for THIS reaction",
+      writing: "writing…",
+      regenerate: "regenerate",
+      retry: "retry",
+      askAi: "ask the AI →",
+      aiIdle:
+        "The curated library only covers famous reactions. For this one, the site's AI assistant can write a full explanation — press the button.",
+      thinking: "Thinking…",
+      aiEmpty: "The AI returned an empty answer — try again.",
+      curated: "curated write-up",
+      heuristic: "heuristic analysis",
+      mechanism: "Mechanism — why it happens",
+      whatHappens: "What happens — the chemistry story",
+      bench: "What you would see at the bench",
+      conditions: "Conditions",
+      molarMasses: "Molar masses",
+      completeIonic: "Complete ionic equation",
+      netIonic: "Net ionic equation",
+      ionicFallback:
+        "No curated ionic equations for this combination. Heuristic: soluble salts, strong acids and strong bases split into ions; solids, gases and water stay whole. Spectators are the ions that appear unchanged on both sides — cancel them to get the net ionic equation.",
+      atomsIntro:
+        "Bookkeeping after balancing — atoms of each element on both sides must match:",
+      thElement: "Element",
+      thLeft: "Left",
+      thRight: "Right",
+      thStatus: "Status",
+      conserved: "✓ conserved",
+      mismatch: "✗ mismatch",
+      reactionType: "Reaction type",
+      benchHeuristic: "Bench observation (heuristic)",
+      classifyPrompt: "Enter reagents on both sides to classify the reaction.",
+      safety: "Safety notes",
+      safetyFallback: "Standard PPE applies: goggles, gloves, lab coat.",
+      thisIs: "This is: ",
+      predicted: "Predicted: ",
+      missing: "missing:",
+      loadFull: "load full reaction →",
+    },
+    research: {
+      eyebrow: "Research",
+      title: "Notes worth keeping",
+      description:
+        "Science compounds when knowledge is organized. This hub will hold structured notes, literature reviews and a reference library.",
+      notes: {
+        label: "Research Notes",
+        description:
+          "Structured study notes rendered with real math and chemical notation — VSEPR tables, titration analysis and thermodynamics reading notes.",
+      },
+      literature: {
+        label: "Literature",
+        description:
+          "An annotated library: the textbooks on my desk — McMurry's Organic Chemistry, Levine's Physical Chemistry — plus the databases I trust.",
+      },
+    },
+    notes: {
+      eyebrow: "Research · Notes",
+      title: "Digital lab notebook",
+      description:
+        "Markdown notes typeset with real math and chemical notation — written while studying, kept because organized knowledge compounds.",
+      footer: "notes live as .md files in the repo · rendered at build time with KaTeX + mhchem",
+    },
+    literature: {
+      eyebrow: "Research · Library",
+      title: "Literature & references",
+      description:
+        "The annotated library behind every claim on this site — the textbooks on my desk, the databases in my bookmarks, and what's queued next.",
+      shelf: "the shelf — click a spine to jump to its annotation",
+      visit: "visit →",
+      footer:
+        "{n} textbooks · ratings are my own, annotations too — these will ground the AI assistant in Step 9.",
+      sections: {
+        reading: "Currently reading",
+        consult: "Reference shelf",
+        planned: "On the wishlist",
+      },
+    },
+    programming: {
+      eyebrow: "Programming",
+      title: "Code as a scientific instrument",
+      description:
+        "Software craftsmanship in service of science — typed, tested and documented like it matters. Because it does.",
+      projects: {
+        label: "Projects",
+        description:
+          "Case studies of real work — what was built, why it matters and how it works under the hood.",
+      },
+      github: {
+        label: "GitHub",
+        description:
+          "Live repositories and stats pulled straight from the GitHub API on every visit.",
+      },
+    },
+    projects: {
+      eyebrow: "Programming · Showcase",
+      title: "Project showcase",
+      description:
+        "Every project is a small argument that chemistry and software belong together. Open a case study to see what it does, why it exists and how it's built.",
+      categories: {
+        chemistry: "Chemistry",
+        web: "Web",
+        data: "Data & AI",
+      },
+    },
+    github: {
+      eyebrow: "Programming · Open source",
+      title: "GitHub activity",
+      description:
+        "Pulled straight from the GitHub REST API every time you visit — no caching tricks, no manual updates.",
+      topRepos: "Top repositories",
+      noDescription: "No description provided.",
+      noRepos: "No original repositories yet — first push incoming.",
+      errNotFound: "GitHub profile not found",
+      errNotFoundDesc:
+        "The configured username \"{user}\" doesn't exist yet — once you update it in the site config, this page fills itself in automatically.",
+      errRate: "Couldn't reach the GitHub API",
+      errRateDesc:
+        "The public API allows 60 requests per hour per IP and the limit was hit. Try again a bit later, or browse directly on GitHub.",
+      errNetwork: "Couldn't reach the GitHub API",
+      errNetworkDesc:
+        "A network problem interrupted the request. You can still browse everything directly on GitHub.",
+      openOnGithub: "Open github.com/{user} →",
+      footer: "fetched live from api.github.com · unauthenticated · 60 req/hour",
+      today: "today",
+      yesterday: "yesterday",
+      daysAgo: "{n}d ago",
+      monthsAgo: "{n}mo ago",
+      yearsAgo: "{n}y ago",
+      repos: "repos",
+      followers: "followers",
+      following: "following",
+    },
+    assistant: {
+      eyebrow: "AI · Built last, on purpose",
+      title: "Chemistry Assistant",
+      description:
+        "The intelligence layer goes on top of real infrastructure: every answer is retrieved from this site's actual notes, book annotations and tool documentation — with citations you can click.",
+      chatTitle: "Chemistry Assistant",
+      chatSubtitle: "grounded in this site only",
+      emptyTitle: "Ask the knowledge base.",
+      emptyDescription:
+        "Answers are retrieved from this site's real content — research notes, literature annotations and tool documentation — with citations. No generic chatbot filler.",
+      placeholder: "Ask about chemistry or this site…",
+      send: "Send",
+      thinking: "thinking",
+      sources: "sources",
+      ragActive: "RAG active · {n} passages",
+      generation: "generation: {m}",
+      retrievalOnly: "retrieval-only — set AI_API_KEY for full generation",
+      chatFooter:
+        "retrieval: BM25 over notes + literature + tool docs · generation: OpenAI-compatible API (optional) · full-PDF ingestion of the reference textbooks arrives with the FastAPI backend",
+      errInvalid: "Request failed.",
+      errGeneric: "Something went wrong.",
+      suggestions: [
+        "Why is the H–O–H angle in water 104.5°?",
+        "How do I find pH at half-equivalence?",
+        "What does the Reaction Lab do?",
+        "Which books ground this site?",
+      ],
+    },
+  },
+  notFound: {
+    eyebrow: "Error 404",
+    titleA: "404 — substance",
+    titleB: "not found",
+    description:
+      "The page you were looking for isn't here. It may have been moved, or the URL might be off by a digit (or two).",
+    browseNotes: "or browse research notes →",
+  },
+  errorPage: {
+    eyebrow: "Something went wrong",
+    title: "The reaction didn't balance",
+    description:
+      "A client-side error was thrown. You can retry, or head back to a known-safe page.",
+    digest: "digest:",
+    retry: "Try again",
+    home: "Home",
+  },
+  cvData: {
+    education: [
+      {
+        period: "2023 — اکنون",
+        title: "کارشناسی شیمی",
+        org: "دانشگاه تحصیلات تکمیلی آذربایجان — دانشکده شیمی",
+        detail:
+          "دروس اصلی: شیمی آلی و سنتز، شیمی فیزیک، شیمی تجزیه، طیف‌سنجی (NMR · IR · MS) و ترمودینامیک. همیشه جذب جنبهٔ کمیِ هر درس می‌شدم.",
+      },
+      {
+        period: "2020 — 2023",
+        title: "دبیرستان — ریاضی و فیزیک",
+        org: "دبیرستان",
+        detail:
+          "جایی که دو وسواس شروع شد: یک کتاب المپیاد شیمی و یک آموزش پایتون — که موازی خوانده شدند.",
+      },
+    ],
+    experience: [
+      {
+        period: "2026 — اکنون",
+        title: "توسعه‌دهنده مستقل — ابزارهای شیمی",
+        org: "پروژه‌های شخصی · متن‌باز",
+        detail:
+          "طراحی و ساخت ابزارهای وب برای شیمی: ماشین‌حساب‌هایی با روش‌های معتبر، تجسم سه‌بعدی تعاملی مولکول‌ها و ابزارهای کاوش واکنش. این پرتفوی خانهٔ همهٔ آن‌هاست.",
+      },
+      {
+        period: "2025 — اکنون",
+        title: "مطالعهٔ خودخوانانه — برنامه‌نویسی علمی",
+        org: "دوره‌ها و کتاب‌های آنلاین",
+        detail:
+          "اکوسیستم پایتون برای علم: NumPy، pandas و matplotlib؛ مبانی یادگیری ماشین؛ کموانفورماتیک با RDKit؛ ساخت API با FastAPI.",
+      },
+      {
+        period: "2024 — 2025",
+        title: "پروژه‌های درسی دانشگاهی",
+        org: "دوره‌های آزمایشگاهی دانشگاه",
+        detail:
+          "گزارش‌های آزمایشگاه به مینی‌پروژه‌های نرم‌افزاری تبدیل شدند — صفحه‌گسترده‌ها اسکریپت پایتون شدند و منحنی‌های دستی تیتراسیون به داده‌های نموداری.",
+      },
+    ],
+  },
+};
+
+export type Dictionary = typeof en;

@@ -1,3 +1,5 @@
+"use client";
+
 import { profile } from "@/config/profile";
 import {
   EDUCATION,
@@ -7,6 +9,7 @@ import {
   LANGUAGES,
   INTERESTS,
 } from "@/config/cv";
+import { useI18n } from "@/lib/i18n";
 
 function CvSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -25,12 +28,14 @@ function CvEntry({
   org,
   detail,
   current,
+  currentLabel,
 }: {
   period: string;
   title: string;
   org: string;
   detail?: string;
   current?: boolean;
+  currentLabel?: string;
 }) {
   return (
     <article className="mb-5 last:mb-0">
@@ -40,7 +45,7 @@ function CvEntry({
       </div>
       <p className="mt-0.5 text-sm cv-muted">
         {org}
-        {current && <span className="cv-accent ml-2 text-xs font-medium">● current</span>}
+        {current && <span className="cv-accent ml-2 text-xs font-medium">● {currentLabel}</span>}
       </p>
       {detail && <p className="mt-1.5 text-[13px] leading-relaxed cv-muted">{detail}</p>}
     </article>
@@ -48,6 +53,13 @@ function CvEntry({
 }
 
 export function CVDocument() {
+  const { t, locale } = useI18n();
+  const d = t.pages.cv.doc;
+
+  // Persian locale uses translated CV content; English uses the config data
+  const education = locale === "fa" ? t.cvData.education : EDUCATION;
+  const experience = locale === "fa" ? t.cvData.experience : EXPERIENCE;
+
   return (
     <div className="cv-doc glass rounded-2xl border border-white/10 p-8 shadow-2xl sm:p-11">
       {/* header */}
@@ -67,25 +79,31 @@ export function CVDocument() {
         </p>
       </header>
 
-      <CvSection title="Profile">
-        <p className="text-sm leading-relaxed cv-muted">
-          {profile.bio.join(" ")}
-        </p>
+      <CvSection title={d.profile}>
+        <p className="text-sm leading-relaxed cv-muted">{profile.bio.join(" ")}</p>
       </CvSection>
 
-      <CvSection title="Education">
-        {EDUCATION.map((item) => (
-          <CvEntry key={item.title + item.period} {...item} />
+      <CvSection title={d.education}>
+        {education.map((item) => (
+          <CvEntry
+            key={item.title + item.period}
+            {...item}
+            currentLabel={d.current}
+          />
         ))}
       </CvSection>
 
-      <CvSection title="Experience & Projects">
-        {EXPERIENCE.map((item) => (
-          <CvEntry key={item.title + item.period} {...item} />
+      <CvSection title={d.experience}>
+        {experience.map((item) => (
+          <CvEntry
+            key={item.title + item.period}
+            {...item}
+            currentLabel={d.current}
+          />
         ))}
       </CvSection>
 
-      <CvSection title="Skills">
+      <CvSection title={d.skills}>
         <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
           {SKILL_GROUPS.map((group) => (
             <div key={group.title}>
@@ -109,7 +127,7 @@ export function CVDocument() {
         </div>
       </CvSection>
 
-      <CvSection title="Certifications">
+      <CvSection title={d.certifications}>
         <ul className="space-y-1.5">
           {CERTIFICATIONS.map((cert) => (
             <li key={cert.title} className="flex flex-wrap items-baseline justify-between gap-x-4 text-sm">
@@ -123,7 +141,7 @@ export function CVDocument() {
         </ul>
       </CvSection>
 
-      <CvSection title="Languages">
+      <CvSection title={d.languages}>
         <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
           {LANGUAGES.map((lang) => (
             <li key={lang.name} className="text-sm">
@@ -134,14 +152,12 @@ export function CVDocument() {
         </ul>
       </CvSection>
 
-      <CvSection title="Interests">
+      <CvSection title={d.interests}>
         <p className="text-sm cv-muted">{INTERESTS.join(" · ")}</p>
       </CvSection>
 
       <footer className="cv-line mt-9 border-t pt-4">
-        <p className="font-mono text-[10px] cv-muted">
-          Generated from structured data — always up to date at this site.
-        </p>
+        <p className="font-mono text-[10px] cv-muted">{d.footer}</p>
       </footer>
     </div>
   );

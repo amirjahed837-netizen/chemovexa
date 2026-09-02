@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { useI18n } from "@/lib/i18n";
 
-/**
- * Header block shared by section landing pages.
- */
 export function PageHeader({
   eyebrow,
   title,
@@ -14,7 +14,7 @@ export function PageHeader({
   eyebrow: string;
   title: string;
   description: string;
-  children?: ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <div className="relative overflow-hidden border-b border-white/5 pb-14 pt-32 sm:pb-16 sm:pt-36">

@@ -1,6 +1,9 @@
+"use client";
+
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { useI18n } from "@/lib/i18n";
 
 const STACK_CHIPS = ["Next.js", "TypeScript", "Tailwind", "3Dmol.js", "RDKit", "Python", "FastAPI", "PostgreSQL"];
 
@@ -47,6 +50,9 @@ function CodeWindow() {
 }
 
 export function ScienceMeetsCode() {
+  const { t } = useI18n();
+  const s = t.home.science;
+
   return (
     <section className="relative py-16 pb-28">
       <Container>
@@ -54,24 +60,17 @@ export function ScienceMeetsCode() {
           <Reveal>
             <div>
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-cyan-300/90">
-                The idea
+                {s.eyebrow}
               </span>
               <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                A chemist who writes{" "}
-                <span className="text-gradient">production-grade software.</span>
+                {s.titleA} <span className="text-gradient">{s.titleB}</span>
               </h2>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-400">
-                Most chemistry websites are static PDFs. This one is different: every tool is
-                engineered like real software — typed, tested and deployed — while staying true to
-                the science behind it.
+                {s.paragraph}
               </p>
 
               <ul className="mt-7 space-y-3">
-                {[
-                  "Structures parsed from real chemical formats (SMILES, MOL, PDB)",
-                  "Calculations validated against textbook methods",
-                  "Open source — every equation auditable in the repo",
-                ].map((item) => (
+                {s.checklist.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-slate-300">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="mt-0.5 size-4 shrink-0 text-cyan-400" aria-hidden="true">
                       <path d="m5 13 4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
@@ -94,10 +93,10 @@ export function ScienceMeetsCode() {
 
               <div className="mt-9 flex flex-wrap gap-3">
                 <ButtonLink href="/about" variant="secondary">
-                  More about me
+                  {t.ui.moreAbout}
                 </ButtonLink>
                 <ButtonLink href="/research/literature" variant="ghost">
-                  Reference library →
+                  {t.ui.library}
                 </ButtonLink>
               </div>
             </div>

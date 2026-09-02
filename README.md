@@ -157,3 +157,12 @@ The chemistry engines aren't demo code — they're unit-tested during developmen
 8. ✅ AI Chemistry Assistant
 9. ✅ RAG over scientific resources (BM25 + OpenAI-compatible streaming)
 10. ✅ Deploy · SEO · Performance
+
+---
+
+## CHEMOVEXA
+
+> Interactive chemistry tools — 3D molecular explorer, reaction lab, calculators,
+> and an AI assistant grounded in real chemistry engines.
+
+**Live:** https://chemovexa.vercel.app

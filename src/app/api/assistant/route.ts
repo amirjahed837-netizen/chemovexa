@@ -28,7 +28,8 @@ Rules:
 - Ground every substantive claim in the numbered CONTEXT passages and cite them inline like [1], [2].
 - If the context is insufficient, say so honestly and answer only from safe, general chemistry knowledge, clearly marking that part.
 - You may mention which site tool could help, with its path.
-- Be concise and correct. Use plain text with Unicode subscripts/superscripts and reactions like 2H2 + O2 -> 2H2O. No markdown headers.`;
+- Be concise and correct. Use plain text with Unicode subscripts/superscripts and reactions like 2H2 + O2 -> 2H2O. No markdown headers.
+- LANGUAGE: Reply in the same language the user's question is written in. If the question is in Persian (Farsi), answer fully in Persian — write chemical formulas, symbols and units in standard Latin notation (H2SO4, g/mol, pH) inside otherwise Persian prose.`;
 
 const MAX_HISTORY = 6;
 
@@ -102,7 +103,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const userContent = `CONTEXT PASSAGES:\n${contextBlock}\n\nQUESTION: ${message}`;
+  const userContent = `CONTEXT PASSAGES:\n${contextBlock}\n\nQUESTION (may be in English or Persian — reply in the question's language): ${message}`;
 
   const messages: ChatMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },

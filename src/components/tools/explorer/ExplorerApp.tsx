@@ -10,6 +10,7 @@ import {
 } from "@/components/tools/explorer/MoleculeViewer";
 import type { ViewerStyleKey } from "@/components/tools/explorer/MoleculeViewer";
 import { useI18n } from "@/lib/i18n";
+import { MOLECULE_NAME_FA, MOLECULE_DESC_FA } from "@/lib/i18n/data-fa";
 import { cn } from "@/lib/utils";
 
 type CustomModel = { title: string; data: string; format: string };
@@ -21,7 +22,7 @@ function prettyFormula(f: string): React.ReactNode {
 }
 
 export function ExplorerApp() {
-  const { t, fmt: interpolate } = useI18n();
+  const { t, locale, fmt: interpolate } = useI18n();
   const e = t.pages.explorer;
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(MOLECULES[0].id);
@@ -38,6 +39,11 @@ export function ExplorerApp() {
   const [pubchemMsg, setPubchemMsg] = useState("");
 
   const selected = MOLECULES.find((m) => m.id === selectedId) ?? MOLECULES[0];
+  const selectedName =
+    locale === "fa" ? (MOLECULE_NAME_FA[selected.id] ?? selected.name) : selected.name;
+  const selectedInfo = locale === "fa" ? MOLECULE_DESC_FA[selected.id] : undefined;
+  const localizedName = (m: (typeof MOLECULES)[number]) =>
+    locale === "fa" ? (MOLECULE_NAME_FA[m.id] ?? m.name) : m.name;
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return MOLECULES;
@@ -136,7 +142,7 @@ export function ExplorerApp() {
                     : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white",
                 )}
               >
-                <span className="font-medium">{m.name}</span>
+                <span className="font-medium">{localizedName(m)}</span>
                 <span className="font-mono text-xs text-slate-500">{m.formula}</span>
               </button>
             </li>
@@ -315,7 +321,7 @@ export function ExplorerApp() {
         {!custom ? (
           <div className="glass rounded-2xl border border-white/10 p-6">
             <div className="flex flex-wrap items-center gap-3">
-              <h3 className="font-display text-xl font-bold text-white">{selected.name}</h3>
+              <h3 className="font-display text-xl font-bold text-white">{selectedName}</h3>
               <span className="font-mono text-sm text-cyan-300/90">
                 {prettyFormula(selected.formula)}
               </span>
@@ -324,13 +330,13 @@ export function ExplorerApp() {
               </span>
             </div>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400">
-              {selected.description}
+              {selectedInfo?.description ?? selected.description}
             </p>
             <ul className="mt-4 flex flex-wrap gap-2">
-              {selected.facts.map((f) => (
+              {(selectedInfo?.facts ?? selected.facts).map((f) => (
                 <li
                   key={f}
-                  className="rounded-md border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-slate-300"
+                  className="rounded-md border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-slate-300 ltr-embed"
                 >
                   {f}
                 </li>

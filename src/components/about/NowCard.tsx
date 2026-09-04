@@ -4,9 +4,11 @@ import { NOW } from "@/config/cv";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { useI18n } from "@/lib/i18n";
+import { NOW_FA } from "@/lib/i18n/data-fa";
 
 export function NowCard({ className }: { className?: string }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const items = locale === "fa" ? NOW_FA : NOW;
 
   return (
     <Reveal delay={150} className={className}>
@@ -21,7 +23,7 @@ export function NowCard({ className }: { className?: string }) {
           </h3>
         </div>
         <ul className="space-y-3.5">
-          {NOW.map((item) => (
+          {items.map((item) => (
             <li key={item.label + item.value} className="flex items-start gap-3">
               <span className="w-16 shrink-0 pt-0.5 font-mono text-[11px] uppercase tracking-wider text-cyan-300/70">
                 {item.label}

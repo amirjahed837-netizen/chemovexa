@@ -10,6 +10,7 @@ import {
   INTERESTS,
 } from "@/config/cv";
 import { useI18n } from "@/lib/i18n";
+import { SKILL_NAME_FA } from "@/lib/i18n/data-fa";
 
 function CvSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -59,6 +60,19 @@ export function CVDocument() {
   // Persian locale uses translated CV content; English uses the config data
   const education = locale === "fa" ? t.cvData.education : EDUCATION;
   const experience = locale === "fa" ? t.cvData.experience : EXPERIENCE;
+  const certFa: Record<string, string> = {
+    "Laboratory Safety Training": "آموزش ایمنی آزمایشگاه",
+    "English Proficiency — C1": "تسلط به زبان انگلیسی — C1",
+  };
+  const interestsFa = [
+    "شیمی محاسباتی",
+    "کموانفورماتیک",
+    "هوش مصنوعی برای علوم",
+    "تجسم مولکولی",
+    "متن‌باز",
+    "علم‌رسانی",
+  ];
+  const interests = locale === "fa" ? interestsFa : INTERESTS;
 
   return (
     <div className="cv-doc glass rounded-2xl border border-white/10 p-8 shadow-2xl sm:p-11">
@@ -108,7 +122,14 @@ export function CVDocument() {
           {SKILL_GROUPS.map((group) => (
             <div key={group.title}>
               <h3 className="text-xs font-semibold uppercase tracking-wider cv-strong">
-                {group.title}
+                {locale === "fa"
+                  ? ({
+                      Chemistry: "شیمی",
+                      Programming: "برنامه‌نویسی",
+                      "Data & AI": "داده و هوش مصنوعی",
+                      "Scientific Tools": "ابزارهای علمی",
+                    }[group.title] ?? group.title)
+                  : group.title}
               </h3>
               <ul className="mt-1.5 flex flex-wrap gap-1.5">
                 {group.tiles.map((tile) => (
@@ -118,7 +139,7 @@ export function CVDocument() {
                       tile.level === "core" ? "cv-accent font-medium" : ""
                     }`}
                   >
-                    {tile.name}
+                    {locale === "fa" ? (SKILL_NAME_FA[tile.name] ?? tile.name) : tile.name}
                   </li>
                 ))}
               </ul>
@@ -132,7 +153,9 @@ export function CVDocument() {
           {CERTIFICATIONS.map((cert) => (
             <li key={cert.title} className="flex flex-wrap items-baseline justify-between gap-x-4 text-sm">
               <span>
-                <span className="cv-strong">{cert.title}</span>{" "}
+                <span className="cv-strong">
+                  {locale === "fa" ? (certFa[cert.title] ?? cert.title) : cert.title}
+                </span>{" "}
                 <span className="cv-muted">— {cert.issuer}</span>
               </span>
               <span className="font-mono text-xs cv-muted">{cert.year}</span>
@@ -145,15 +168,25 @@ export function CVDocument() {
         <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
           {LANGUAGES.map((lang) => (
             <li key={lang.name} className="text-sm">
-              <span className="cv-strong">{lang.name}</span>{" "}
-              <span className="cv-muted">· {lang.level}</span>
+              <span className="cv-strong">
+                {locale === "fa"
+                  ? ({ Persian: "فارسی", English: "انگلیسی" }[lang.name] ?? lang.name)
+                  : lang.name}
+              </span>{" "}
+              <span className="cv-muted">
+                ·{" "}
+                {locale === "fa"
+                  ? ({ Native: "زبان مادری", "Professional — C1": "حرفه‌ای — C1" }[lang.level] ??
+                    lang.level)
+                  : lang.level}
+              </span>
             </li>
           ))}
         </ul>
       </CvSection>
 
       <CvSection title={d.interests}>
-        <p className="text-sm cv-muted">{INTERESTS.join(" · ")}</p>
+        <p className="text-sm cv-muted">{interests.join(locale === "fa" ? " · " : " · ")}</p>
       </CvSection>
 
       <footer className="cv-line mt-9 border-t pt-4">

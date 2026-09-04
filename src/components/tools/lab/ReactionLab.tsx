@@ -11,7 +11,15 @@ import { BOOK_REACTIONS } from "@/lib/chem/book-reactions";
 import { predictReaction } from "@/lib/chem/predict";
 import type { Prediction } from "@/lib/chem/predict";
 import { useI18n } from "@/lib/i18n";
-import { ROLE_LABEL_FA, TYPE_LABEL_FA, REACTION_TYPE_LABEL_FA } from "@/lib/i18n/roles";
+import {
+  ROLE_LABEL_FA,
+  TYPE_LABEL_FA,
+  REACTION_TYPE_LABEL_FA,
+} from "@/lib/i18n/roles";
+import {
+  REACTION_TITLE_FA,
+  TYPE_LABEL_FA_EXTRA,
+} from "@/lib/i18n/data-fa";
 
 type SlotValue = string;
 
@@ -341,7 +349,12 @@ function WriteupPanel({
   const [tab, setTab] = useState<Tab>("writeup");
 
   function typeLabel(type: string): string {
-    return locale === "fa" ? (TYPE_LABEL_FA[type] ?? type) : type;
+    if (locale !== "fa") return type;
+    return TYPE_LABEL_FA[type] ?? TYPE_LABEL_FA_EXTRA[type] ?? type;
+  }
+  function rxTitle(id: string, fallback: string): string {
+    if (locale !== "fa") return fallback;
+    return REACTION_TITLE_FA[id] ?? fallback;
   }
 
   const TABS: { id: Tab; label: string }[] = [
@@ -391,7 +404,9 @@ function WriteupPanel({
           <div className="space-y-5">
             <div>
               <div className="mb-2 flex flex-wrap items-center gap-2">
-                <h3 className="font-display text-lg font-bold text-white">{writeup.title}</h3>
+                <h3 className="font-display text-lg font-bold text-white">
+                  {rxTitle(writeup.id ?? "", writeup.title)}
+                </h3>
                 <span
                   className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${
                     writeup.found
@@ -616,10 +631,15 @@ function RoleChips({ formula }: { formula: string }) {
 }
 
 export function ReactionLab() {
-  const { t, fmt: interpolate } = useI18n();
+  const { t, locale, fmt: interpolate } = useI18n();
   const l = t.pages.lab;
   const [left, setLeft] = useState<SlotValue[]>(["HCl", "NaOH"]);
   const [right, setRight] = useState<SlotValue[]>(["NaCl", "H2O"]);
+
+  function rxTitle(id: string, fallback: string): string {
+    if (locale !== "fa") return fallback;
+    return REACTION_TITLE_FA[id] ?? fallback;
+  }
 
   function applyPreset(i: number) {
     const p = PRESETS[i];
@@ -705,7 +725,9 @@ export function ReactionLab() {
               onClick={() => loadBookReaction(r.id)}
               className="rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-left transition-colors hover:border-violet-400/40 hover:bg-violet-400/[0.06]"
             >
-              <span className="block truncate text-xs text-slate-200">{r.title}</span>
+              <span className="block truncate text-xs text-slate-200">
+                {rxTitle(r.id, r.title)}
+              </span>
               <span className="mt-0.5 block truncate font-mono text-[10px] text-slate-600">
                 {r.left.join(" + ")} → {r.right.join(" + ")}
               </span>

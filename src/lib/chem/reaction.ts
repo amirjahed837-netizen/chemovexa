@@ -401,6 +401,7 @@ function worstCaseExplanation(formulas: string[]): string {
 
 export type ReactionWriteup = {
   found: boolean;
+  id?: string;
   title: string;
   typeLabel: string;
   chapter?: string;
@@ -457,6 +458,7 @@ export function buildWriteup(
   if (known) {
     return {
       found: true,
+      id: known.id,
       title: known.title,
       typeLabel: known.typeLabel,
       chapter: known.chapter,

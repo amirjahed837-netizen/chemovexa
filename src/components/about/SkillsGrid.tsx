@@ -7,6 +7,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { DomainIcon } from "@/components/icons";
 import { SKILL_GROUPS } from "@/config/cv";
 import { useI18n } from "@/lib/i18n";
+import { SKILL_NAME_FA, SKILL_GROUP_TITLE_FA } from "@/lib/i18n/data-fa";
 import { cn } from "@/lib/utils";
 
 function Tile({
@@ -14,11 +15,13 @@ function Tile({
   name,
   level,
   index,
+  displayName,
 }: {
   symbol: string;
   name: string;
   level?: "core" | "familiar";
   index: number;
+  displayName: string;
 }) {
   return (
     <li
@@ -42,15 +45,19 @@ function Tile({
         {symbol}
       </span>
       <span className="line-clamp-2 text-[11px] leading-tight text-slate-400 group-hover:text-slate-300">
-        {name}
+        {displayName}
       </span>
     </li>
   );
 }
-
 export function SkillsGrid() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const s = t.pages.about.skills;
+
+  const skillName = (name: string) =>
+    locale === "fa" ? (SKILL_NAME_FA[name] ?? name) : name;
+  const groupTitle = (title: string) =>
+    locale === "fa" ? (SKILL_GROUP_TITLE_FA[title] ?? title) : title;
 
   return (
     <section className="py-16 sm:py-20">
@@ -69,14 +76,19 @@ export function SkillsGrid() {
                   >
                     <DomainIcon name={group.icon} className="size-5" />
                   </span>
-                  <h3 className="font-display text-lg font-semibold text-white">{group.title}</h3>
+                  <h3 className="font-display text-lg font-semibold text-white">{groupTitle(group.title)}</h3>
                   <span className="ml-auto font-mono text-xs text-slate-500">
                     {group.tiles.length} {s.elements}
                   </span>
                 </div>
                 <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                   {group.tiles.map((tile, i) => (
-                    <Tile key={tile.symbol + tile.name} {...tile} index={i} />
+                    <Tile
+                      key={tile.symbol + tile.name}
+                      {...tile}
+                      index={i}
+                      displayName={skillName(tile.name)}
+                    />
                   ))}
                 </ul>
               </GlassCard>

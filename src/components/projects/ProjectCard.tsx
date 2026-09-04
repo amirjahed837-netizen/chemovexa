@@ -5,10 +5,12 @@ import type { Project } from "@/config/projects";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { StatusBadge } from "@/components/ui/Badge";
 import { useI18n } from "@/lib/i18n";
+import { PROJECT_FA } from "@/lib/i18n/data-fa";
 import { cn } from "@/lib/utils";
 
 export function ProjectCard({ project, className }: { project: Project; className?: string }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const fa = locale === "fa" ? PROJECT_FA[project.slug] : undefined;
 
   const catLabel: Record<string, string> = {
     chemistry: t.pages.projects.categories.chemistry,
@@ -39,9 +41,9 @@ export function ProjectCard({ project, className }: { project: Project; classNam
             project.featured ? "text-xl" : "text-lg",
           )}
         >
-          {project.title}
+          {fa?.title ?? project.title}
         </h3>
-        <p className="mt-1.5 text-sm leading-relaxed text-slate-400">{project.tagline}</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-slate-400">{fa?.tagline ?? project.tagline}</p>
 
         <ul className="mt-4 flex flex-wrap gap-1.5">
           {project.tech.map((tech) => (

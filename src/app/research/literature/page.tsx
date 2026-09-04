@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { useI18n } from "@/lib/i18n";
+import { LITERATURE_FA } from "@/lib/i18n/data-fa";
 import { cn } from "@/lib/utils";
 
 function Stars({ rating }: { rating: number }) {
@@ -50,7 +51,8 @@ function BookSpine({ source }: { source: Source }) {
 }
 
 function SourceCard({ source }: { source: Source }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const info = locale === "fa" ? LITERATURE_FA[source.id] : undefined;
   const isLink = Boolean(source.url);
   const Wrapper = isLink ? "a" : "div";
   return (
@@ -76,12 +78,12 @@ function SourceCard({ source }: { source: Source }) {
           <Stars rating={source.rating ?? 0} />
         </div>
 
-        <p className="text-sm leading-relaxed text-slate-400">{source.why}</p>
+        <p className="text-sm leading-relaxed text-slate-400">{info?.why ?? source.why}</p>
 
-        {source.progress && (
+        {(info?.progress ?? source.progress) && (
           <p className="mt-3 inline-flex items-center gap-1.5 self-start rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-0.5 font-mono text-[11px] text-emerald-200">
             <span className="size-1.5 animate-pulse rounded-full bg-emerald-300" />
-            {source.progress}
+            {info?.progress ?? source.progress}
           </p>
         )}
 

@@ -46,3 +46,7 @@ yarn-error.log*
 .DS_Store
 
 .vercel
+
+# reference PDFs & extracted text (user's own lecture notes — not for the repo)
+ref-pdfs/
+ref-text/

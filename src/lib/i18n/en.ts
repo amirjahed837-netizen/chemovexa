@@ -49,6 +49,8 @@ export const en = {
       explorerDesc: "Interactive 3D molecular structures",
       lab: "Reaction Lab",
       labDesc: "Mix reagents & balance reactions interactively",
+      mechanisms: "Mechanism Library",
+      mechanismsDesc: "Every organic mechanism, step by step",
       projects: "Projects",
       projectsDesc: "Case studies with architecture notes",
       github: "GitHub",
@@ -112,6 +114,11 @@ export const en = {
           label: "Reaction Lab",
           description:
             "Pick reagents, watch balanced equations form and explore reaction mechanisms.",
+        },
+        mechanisms: {
+          label: "Mechanism Library",
+          description:
+            "Every core organic mechanism — step by step, bilingual, from the reference notes.",
         },
       },
     },
@@ -449,6 +456,24 @@ export const en = {
       predicted: "Predicted: ",
       missing: "missing:",
       loadFull: "load full reaction →",
+    },
+    mechanisms: {
+      eyebrow: "Chemistry · Reference",
+      title: "Organic Mechanism Library",
+      description:
+        "Every core mechanism of organic chemistry — distilled from the reference notes (alkenes & alkynes, benzene & aromatics, aldehydes & ketones, carboxylic acids) and McMurry 11e. Each one: the general equation, every step, why it happens, and worked examples.",
+      allTopics: "All topics",
+      allFamilies: "All families",
+      searchPlaceholder: "Search mechanisms (e.g. Markovnikov, bromonium, enolate)…",
+      noResults: "No mechanism matches.",
+      stepsLabel: "Steps",
+      keyPointsLabel: "Key points",
+      conditionsLabel: "Conditions",
+      examplesLabel: "Worked examples",
+      sourceLabel: "source",
+      relatedLabel: "Run it in the lab",
+      openLab: "run this reaction in the Lab →",
+      summaryLabel: "summary",
     },
     research: {
       eyebrow: "Research",

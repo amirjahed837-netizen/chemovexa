@@ -32,20 +32,26 @@ export function ChemistryHubClient() {
       description: t.home.tools.items.lab.description,
       icon: "lab" as const,
     },
+    {
+      href: "/chemistry/mechanisms",
+      label: t.home.tools.items.mechanisms.label,
+      description: t.home.tools.items.mechanisms.description,
+      icon: "mech" as const,
+    },
   ];
 
   return (
     <>
       <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.description} />
 
-      <Container className="grid gap-5 py-16 md:grid-cols-3">
+      <Container className="grid gap-5 py-16 md:grid-cols-2 xl:grid-cols-4">
         {toolList.map((tool, i) => (
           <Reveal key={tool.href} delay={i * 100}>
             <Link href={tool.href} className="group block h-full">
               <GlassCard interactive className="flex h-full flex-col p-6">
                 <div className="mb-5 flex items-start justify-between">
                   <span className="inline-flex size-12 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300 transition-transform duration-300 group-hover:scale-110 text-lg">
-                    {tool.icon === "calc" ? "🧮" : tool.icon === "molecule" ? "⚛" : "⚗"}
+                    {tool.icon === "calc" ? "🧮" : tool.icon === "molecule" ? "⚛" : tool.icon === "mech" ? "🧩" : "⚗"}
                   </span>
                   <StatusBadge status="live" />
                 </div>

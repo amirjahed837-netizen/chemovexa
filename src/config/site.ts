@@ -48,6 +48,12 @@ export const NAV_ITEMS: NavItem[] = [
         description: "Mix reagents & balance reactions interactively",
         status: "live",
       },
+      {
+        label: "Mechanism Library",
+        href: "/chemistry/mechanisms",
+        description: "Every organic mechanism, step by step",
+        status: "live",
+      },
     ],
   },
   {

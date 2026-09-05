@@ -5,14 +5,15 @@ import type { DAtom, DBond, DConnector, DFrame, MechanismDiagram } from "@/lib/c
 import { getDiagram } from "@/lib/chem/mechanisms/diagrams";
 import { cn } from "@/lib/utils";
 
-/** ---- geometry pipeline ----------------------------------------------------
- * 1. relax: pull atoms along over-long bonds so nothing exceeds MAX_BOND
- * 2. measure real label boxes via getBBox (exact, incl. charges/subscripts)
- * 3. trim bonds/arrows/lone-pairs to the measured box edges → bonds always
- *    visually touch their atoms; nothing floats or overshoots.
+/** ---- geometry pipeline v3 -------------------------------------------------
+ * 1. relax: ALL bonds (incl. dashed/forming) pulled toward BOND_LEN target —
+ *    both min and max clamp, so nothing is stretched or cramped.
+ * 2. measure exact label boxes via getBBox.
+ * 3. bonds/arrows/lone-pairs trimmed to measured edges.
+ * 4. charges auto-positioned next to their atom (no floating text).
  * ------------------------------------------------------------------------- */
 
-const MAX_BOND = 88;
+const BOND_LEN = 72; // target visual length for every bond
 const FONT = 14;
 
 type Pt = { x: number; y: number };
@@ -20,34 +21,46 @@ type Box = { w: number; h: number };
 
 function relax(atoms: DAtom[], bonds: DBond[]) {
   const p = new Map<string, Pt>(atoms.map((a) => [a.id, { x: a.x, y: a.y }]));
+  const anchor = new Set<string>();
+  // atoms involved in dashed (forming/breaking) bonds between two fragments
+  // keep them put — the DASH GAP is the chemistry (distance being crossed)
+  bonds.forEach((b) => {
+    if (b.dash) {
+      anchor.add(b.a);
+      anchor.add(b.b);
+    }
+  });
   const deg = new Map<string, number>();
   bonds.forEach((b) => {
     deg.set(b.a, (deg.get(b.a) ?? 0) + 1);
     deg.set(b.b, (deg.get(b.b) ?? 0) + 1);
   });
-  for (let iter = 0; iter < 4; iter++) {
+  for (let iter = 0; iter < 6; iter++) {
     for (const b of bonds) {
+      if (b.dash) continue; // dashed bonds keep their intended gap
       const A = p.get(b.a);
       const B = p.get(b.b);
       if (!A || !B) continue;
-      const d = Math.hypot(B.x - A.x, B.y - A.y);
-      if (d <= MAX_BOND) continue;
-      const excess = d - MAX_BOND;
-      const wA = 1 / (deg.get(b.a) ?? 1);
-      const wB = 1 / (deg.get(b.b) ?? 1);
+      const d = Math.hypot(B.x - A.x, B.y - A.y) || 1e-9;
+      const err = d - BOND_LEN;
+      if (Math.abs(err) < 1) continue;
+      const wA = anchor.has(b.a) ? 0 : 1 / (deg.get(b.a) ?? 1);
+      const wB = anchor.has(b.b) ? 0 : 1 / (deg.get(b.b) ?? 1);
+      const tot = wA + wB;
+      if (tot === 0) continue;
       const ux = (B.x - A.x) / d;
       const uy = (B.y - A.y) / d;
-      A.x += ux * excess * wA;
-      A.y += uy * excess * wA;
-      B.x -= ux * excess * wB;
-      B.y -= uy * excess * wB;
+      A.x += (ux * err * wA) / tot;
+      A.y += (uy * err * wA) / tot;
+      B.x -= (ux * err * wB) / tot;
+      B.y -= (uy * err * wB) / tot;
     }
   }
   return p;
 }
 
-/** intersection of ray from `from` toward `to` with the atom's label box + pad */
-function edgePoint(from: Pt, box: Box | undefined, to: Pt, pad: number, bare = false): Pt {
+/** intersection of ray from atom toward target with the atom's label box + pad */
+function edgePoint(from: Pt, box: Box | undefined, to: Pt, pad: number): Pt {
   const hw = (box ? box.w / 2 : 6) + pad;
   const hh = (box ? box.h / 2 : 8) + pad;
   const dx = to.x - from.x;
@@ -73,39 +86,71 @@ const PINK = "var(--mech-pink)";
 const TEAL = "var(--mech-teal)";
 const SLATE = "var(--mech-slate)";
 
-function Frame({ frame }: { frame: DFrame }) {
+function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
   const [boxes, setBoxes] = useState<Record<string, Box>>({});
   const textRefs = useRef<Map<string, SVGTextElement>>(new Map());
 
   const layout = useMemo(() => {
     const pos = relax(frame.atoms, frame.bonds);
     const atoms = frame.atoms.map((a) => ({ ...a, ...pos.get(a.id)! }));
-    const labels = (frame.labels ?? []).map((l) => ({ ...l, ...pos.has(`@${l.x}`) ? l : l }));
-    // annotations: move with the centroid shift of nearest atom (approx: scale about centroid)
+
+    // shift annotations with the centroid
     let cx = 0;
     let cy = 0;
+    let ox = 0;
+    let oy = 0;
     atoms.forEach((a) => {
       cx += a.x;
       cy += a.y;
     });
-    cx /= atoms.length;
-    cy /= atoms.length;
-    let ox = 0;
-    let oy = 0;
     frame.atoms.forEach((a) => {
       ox += a.x;
       oy += a.y;
     });
+    cx /= atoms.length;
+    cy /= atoms.length;
     ox /= frame.atoms.length;
     oy /= frame.atoms.length;
     const sx = cx - ox;
     const sy = cy - oy;
-    const labels2 = (frame.labels ?? []).map((l) => ({ ...l, x: l.x + sx, y: l.y + sy }));
+    const labels = (frame.labels ?? []).map((l) => ({ ...l, x: l.x + sx, y: l.y + sy }));
     const condition = frame.condition
       ? { ...frame.condition, x: frame.condition.x + sx, y: frame.condition.y + sy }
       : undefined;
 
-    // tight viewBox from atom positions (estimate; refined visually by padding)
+    // charges become their own positioned labels (attached to atom corner)
+    const chargeLabels: { x: number; y: number; text: string; atomId: string }[] = [];
+    atoms.forEach((a) => {
+      if (!a.charge || a.bare) return;
+      // place at upper-right unless bond occupies that quadrant, then upper-left
+      const neighbors = frame.bonds
+        .filter((b) => b.a === a.id || b.b === a.id)
+        .map((b) => pos.get(b.a === a.id ? b.b : b.a))
+        .filter(Boolean) as Pt[];
+      const hasBondToward = (dx: number, dy: number) =>
+        neighbors.some((n) => {
+          const ndx = n.x - a.x;
+          const ndy = n.y - a.y;
+          const dot = ndx * dx + ndy * dy;
+          const nl = Math.hypot(ndx, ndy) || 1;
+          return dot > 0 && Math.abs(ndx / nl - dx) < 0.5 && Math.abs(ndy / nl - dy) < 0.5;
+        });
+      let qx = 1;
+      let qy = -1;
+      if (hasBondToward(1, -0.4)) {
+        qx = -1;
+        if (hasBondToward(-1, -0.4)) qy = 1;
+      }
+      const off = 13;
+      chargeLabels.push({
+        x: a.x + qx * off,
+        y: a.y + qy * off,
+        text: a.charge,
+        atomId: a.id,
+      });
+    });
+
+    // tight viewBox
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
@@ -116,21 +161,21 @@ function Frame({ frame }: { frame: DFrame }) {
       minY = Math.min(minY, y - h);
       maxY = Math.max(maxY, y + h);
     };
-    atoms.forEach((a) => consider(a.x, a.y, 34, 16));
-    labels2.forEach((l) => consider(l.x, l.y, (l.text.length * (l.size ?? 11) * 0.55) / 2 + 4, 9));
+    atoms.forEach((a) => consider(a.x, a.y, 36, 16));
+    chargeLabels.forEach((c) => consider(c.x, c.y, 10, 8));
+    labels.forEach((l) => consider(l.x, l.y, (l.text.length * (l.size ?? 11) * 0.55) / 2 + 4, 9));
     if (condition) consider(condition.x, condition.y, 26, 10);
-    const pad = 14;
-    const capH = frame.caption ? 18 : 6;
+    const pad = 12;
+    const capH = frame.caption ? 17 : 5;
     const vb = {
       x: Math.floor(minX - pad),
       y: Math.floor(minY - pad),
       w: Math.ceil(maxX - minX + pad * 2),
       h: Math.ceil(maxY - minY + pad * 2 + capH),
     };
-    return { atoms, labels: labels2, condition, vb };
+    return { atoms, labels, condition, chargeLabels, vb };
   }, [frame]);
 
-  // measure exact text boxes after paint (two passes: immediate + post-font-load)
   useLayoutEffect(() => {
     const measure = () => {
       const next: Record<string, Box> = {};
@@ -145,13 +190,17 @@ function Frame({ frame }: { frame: DFrame }) {
       setBoxes((prev) => ({ ...prev, ...next }));
     };
     measure();
-    const t = setTimeout(measure, 350); // after webfont swap
+    const t = setTimeout(measure, 350);
     return () => clearTimeout(t);
   }, [layout]);
 
-  const { atoms, labels, condition, vb } = layout;
-  const boxOf = (id: string): Box | undefined =>
-    atoms.find((a) => a.id === id)?.bare ? { w: 8, h: 12 } : boxes[id];
+  const { atoms, labels, condition, chargeLabels, vb } = layout;
+  const boxOf = (id: string): Box | undefined => {
+    const a = atoms.find((x) => x.id === id);
+    if (!a) return undefined;
+    if (a.bare) return { w: 8, h: 12 };
+    return boxes[id];
+  };
   const posOf = (id: string): Pt | undefined => atoms.find((a) => a.id === id);
 
   const bondMid = (key: string): Pt | undefined => {
@@ -166,11 +215,13 @@ function Frame({ frame }: { frame: DFrame }) {
 
   const ready = frame.bonds.every((b) => boxOf(b.a) && boxOf(b.b));
 
+  const captionText = frame.caption ? (locale === "fa" ? frame.caption.fa : frame.caption.en) : null;
+
   return (
     <svg
       viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
       className="mech-frame"
-      style={{ maxHeight: 240 }}
+      style={{ maxHeight: 250 }}
       role="img"
     >
       <defs>
@@ -182,7 +233,7 @@ function Frame({ frame }: { frame: DFrame }) {
         </marker>
       </defs>
 
-      {/* bonds (only once boxes measured → exact trims) */}
+      {/* bonds */}
       {ready &&
         frame.bonds.map((b, i) => {
           const A = posOf(b.a);
@@ -233,7 +284,7 @@ function Frame({ frame }: { frame: DFrame }) {
           );
         })}
 
-      {/* curved electron-push arrows */}
+      {/* curved arrows */}
       {ready &&
         (frame.curves ?? []).map((c, i) => {
           const from = resolve(c.from);
@@ -257,10 +308,9 @@ function Frame({ frame }: { frame: DFrame }) {
           );
         })}
 
-      {/* atoms: lone pairs, radicals, labels */}
+      {/* atoms */}
       {atoms.map((a, i) => {
         const box = a.bare ? { w: 8, h: 12 } : boxes[a.id];
-        const showLabel = !a.bare;
         return (
           <g key={`a${i}`}>
             {a.lp && box &&
@@ -283,7 +333,7 @@ function Frame({ frame }: { frame: DFrame }) {
             {a.rad && box && (
               <circle cx={a.x + box.w / 2 + 4} cy={a.y - box.h * 0.2} r={2.1} fill={INK} />
             )}
-            {showLabel && (
+            {!a.bare && (
               <text
                 ref={(el) => {
                   if (el) textRefs.current.set(a.id, el);
@@ -298,16 +348,26 @@ function Frame({ frame }: { frame: DFrame }) {
                 style={{ fontFamily: "var(--font-mono, ui-monospace, monospace)" }}
               >
                 {a.el}
-                {a.charge && (
-                  <tspan fill={PINK} fontSize={10.5} dx={1.5} dy={-4}>
-                    {a.charge}
-                  </tspan>
-                )}
               </text>
             )}
           </g>
         );
       })}
+
+      {/* charges — drawn attached to their atom corner */}
+      {chargeLabels.map((c, i) => (
+        <text
+          key={`q${i}`}
+          x={c.x}
+          y={c.y}
+          textAnchor="middle"
+          fontSize={11}
+          fontWeight={700}
+          fill={PINK}
+        >
+          {c.text}
+        </text>
+      ))}
 
       {/* annotation labels */}
       {labels.map((lb, i) => (
@@ -331,7 +391,7 @@ function Frame({ frame }: { frame: DFrame }) {
         </text>
       )}
 
-      {frame.caption && (
+      {captionText && (
         <text
           x={vb.x + vb.w / 2}
           y={vb.y + vb.h - 5}
@@ -341,7 +401,7 @@ function Frame({ frame }: { frame: DFrame }) {
           fill={TEAL}
           className="mech-caption"
         >
-          {frame.caption.en}
+          {captionText}
         </text>
       )}
     </svg>
@@ -391,7 +451,7 @@ export function DiagramPanel({ mechId, locale }: { mechId: string; locale: strin
           <div className="mech-frames">
             {diagram.frames.map((f, i) => (
               <div className="mech-frame-wrap" key={i}>
-                <Frame frame={f} />
+                <Frame frame={f} locale={locale} />
                 {i < diagram.frames.length - 1 && diagram.connectors?.[i] && (
                   <ConnectorGlyph c={diagram.connectors[i]} />
                 )}

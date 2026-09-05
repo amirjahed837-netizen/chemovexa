@@ -10,7 +10,7 @@ export type DAtom = {
   el: string; // element symbol (or multi-char label like "OEt", "CH3")
   x: number;
   y: number;
-  charge?: "+" | "-" | "2+" | "2-" | "δ+" | "δ-";
+  charge?: "+" | "-" | "2+" | "2-" | "δ+" | "δ-" | "−" | "δ−";
   /** lone pairs drawn as dot-pairs around the atom; angle in degrees (0=right, CCW) */
   lp?: { n?: number; angles: number[] };
   /** radical dot */

@@ -20,6 +20,8 @@ import {
   mechSource,
 } from "@/lib/chem/mechanisms";
 import type { Mechanism, FamilyId, TopicId } from "@/lib/chem/mechanisms";
+import { getDiagram } from "@/lib/chem/mechanisms/diagrams";
+import { DiagramPanel } from "@/components/tools/mechanisms/DiagramPanel";
 import { cn } from "@/lib/utils";
 
 type FamilyFilter = FamilyId | "all";
@@ -233,6 +235,13 @@ function MechanismCard({
             {title}
           </h3>
         </button>
+
+        {/* arrow-pushing diagram (textbook style) — always LTR */}
+        {getDiagram(mech.id) && (
+          <div className="mt-4">
+            <DiagramPanel mechId={mech.id} locale={locale} />
+          </div>
+        )}
 
         <p className="mt-2 text-sm leading-relaxed text-slate-400">{summary}</p>
 

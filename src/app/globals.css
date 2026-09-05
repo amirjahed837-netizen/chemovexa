@@ -512,3 +512,126 @@ html[dir="rtl"] body {
   font-feature-settings: "ss01";
 }
 */
+
+/* ---------------------- Mechanism diagrams (textbook) ---------------------- */
+
+.mech-diagram {
+  --mech-panel: #faf6ec;
+  --mech-ink: #1e293b;
+  --mech-pink: #d63384;
+  --mech-teal: #0d9488;
+  --mech-slate: #64748b;
+}
+
+html[dir="rtl"] .mech-diagram {
+  /* keep the diagram panel exactly as the textbook renders it */
+  direction: ltr;
+}
+
+.mech-diagram-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: linear-gradient(to bottom, rgba(13, 148, 136, 0.12), rgba(13, 148, 136, 0.04));
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  border-bottom: none;
+  padding: 0.55rem 0.9rem;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.mech-diagram-toggle:hover {
+  background: linear-gradient(to bottom, rgba(13, 148, 136, 0.18), rgba(13, 148, 136, 0.06));
+}
+
+.mech-diagram-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mech-teal);
+}
+
+.mech-bracket {
+  color: var(--mech-teal);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.mech-diagram-chev {
+  color: var(--mech-slate);
+  font-size: 0.85rem;
+}
+
+.mech-diagram-body {
+  background: var(--mech-panel);
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  border-radius: 0 0 0.75rem 0.75rem;
+  padding: 0.5rem 0.75rem 0.6rem;
+}
+
+.mech-frames {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mech-frame-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mech-frame {
+  width: 100%;
+  height: auto;
+  background: transparent;
+}
+
+.mech-atom {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 15px;
+}
+
+.mech-caption {
+  font-family: var(--font-sans, sans-serif);
+}
+
+.mech-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.05rem 0 0.15rem;
+}
+
+.mech-connector-note {
+  font-size: 0.62rem;
+  font-style: italic;
+  color: var(--mech-pink);
+}
+
+.mech-connector-glyph {
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--mech-ink);
+}
+
+.mech-footnote {
+  margin-top: 0.35rem;
+  border-top: 1px dashed rgba(100, 116, 139, 0.35);
+  padding-top: 0.4rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--mech-slate);
+  direction: ltr;
+  text-align: left;
+}
+
+html[dir="rtl"] .mech-footnote {
+  direction: rtl;
+  text-align: right;
+}
+

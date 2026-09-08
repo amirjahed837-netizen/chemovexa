@@ -1,310 +1,677 @@
 import type { MechanismDiagram } from "./diagram-types";
 
-/** Acyl (carboxylic acid derivatives) diagrams. */
+/** Static mechanism data; see README.md for renderer and projection assumptions. */
 export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
   "acyl-substitution-general": {
-    title: { en: "Acyl substitution — addition THEN elimination", fa: "جانشینی اسیدیل — اول افزودن، بعد حذف" },
-    footnote: {
-      en: "The leaving group is what makes this different from aldehyde/ketone addition. Ladder: Cl > OCOR > OR > NH₂.",
-      fa: "گروه خارج‌شونده همان چیزی است که این را از افزایش آلدهید/کتون جدا می‌کند. نردبان: Cl > OCOR > OR > NH₂.",
+    "title": {
+      "en": "Nucleophilic acyl substitution",
+      "fa": "استخلاف هسته‌خواهی آسیل"
     },
-    frames: [
+    "footnote": {
+      "en": "Methoxide adds to acetyl chloride, forming a tetrahedral intermediate; oxygen then reforms C=O as chloride leaves. This addition-elimination differs from ordinary aldehyde/ketone addition because an acyl leaving group is present. Typical derivative reactivity decreases from acid chloride to anhydride to ester to amide, but protonation, nucleophile and conditions determine the actual leaving group.",
+      "fa": "متوکسید به استیل‌کلرید اضافه می‌شود و میانجی چهاروجهی می‌سازد؛ سپس اکسیژن ⁦C=O⁩ را بازمی‌سازد و کلرید خارج می‌شود. وجود گروه خارج‌شوندهٔ آسیلی، این افزایش-حذف را از افزایش معمول به آلدهید یا کتون متمایز می‌کند. واکنش‌پذیری معمول مشتق‌ها از اسیدکلرید به انیدرید، استر و آمید کاهش می‌یابد، اما پروتون‌گیری، هسته‌خواه و شرایط، گروه خارج‌شوندهٔ واقعی را تعیین می‌کنند."
+    },
+    "frames": [
       {
-        caption: { en: "1 — Nu adds to C=O", fa: "۱ — Nu به C=O اضافه می‌شود" },
-        atoms: [
-          { id: "r", el: "R", x: 150, y: 85 },
-          { id: "c", el: "C", x: 240, y: 85, bare: true },
-          { id: "o", el: "O", x: 240, y: 30, lp: { n: 2, angles: [10, 170] } },
-          { id: "l", el: "L", x: 340, y: 85 },
-          { id: "nu", el: "Nu⁻", x: 175, y: 150 },
+        "caption": {
+          "en": "Methoxide attacks the acyl carbon.",
+          "fa": "متوکسید به کربن آسیل حمله می‌کند."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "Cl", "x": 292.354, "y": 126.0, "lp": {"n": 3, "angles": [120, 30, 210]}},
+          {"id": "nu", "el": "OCH₃", "x": 330, "y": 65, "charge": "−", "lp": {"n": 3, "angles": [150, 0, 210]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o", order: 2 }, { a: "c", b: "l" },
-          { a: "nu", b: "c", dash: true },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "nu", "b": "c", "dash": true}
         ],
-        curves: [
-          { from: "nu", to: "c", bulge: -30 },
-          { from: "bond:c:o", to: "o", bulge: -25 },
-        ],
-        labels: [{ x: 130, y: 180, text: "tetrahedral intermediate forms", color: "pink", size: 10, italic: true }],
+        "curves": [
+          {"from": "nu", "to": "c", "bulge": -28},
+          {"from": "bond:c:o", "to": "o", "bulge": -26}
+        ]
       },
       {
-        caption: { en: "2 — the tetrahedral intermediate", fa: "۲ — واسط چهاروجهی" },
-        atoms: [
-          { id: "r", el: "R", x: 150, y: 85 },
-          { id: "c", el: "C", x: 240, y: 85, bare: true },
-          { id: "o", el: "O⁻", x: 240, y: 30, lp: { n: 3, angles: [10, 90, 170] } },
-          { id: "l", el: "L", x: 340, y: 85 },
-          { id: "nu", el: "Nu", x: 240, y: 140 },
+        "caption": {
+          "en": "O forms C=O; chloride leaves.",
+          "fa": "اکسیژن ⁦C=O⁩ می‌سازد و کلرید می‌رود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "−", "lp": {"n": 3, "angles": [105, 240, 0]}},
+          {"id": "r", "el": "CH₃", "x": 162.342, "y": 114.625},
+          {"id": "g", "el": "Cl", "x": 297.658, "y": 114.625, "lp": {"n": 3, "angles": [105, 195, 15]}},
+          {"id": "nu", "el": "OCH₃", "x": 230, "y": 162, "lp": {"n": 2, "angles": [180, 90]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o" }, { a: "c", b: "l" }, { a: "c", b: "nu" },
+        "bonds": [
+          {"a": "c", "b": "o"},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "c", "b": "nu"}
         ],
-        labels: [{ x: 240, y: 180, text: "sp³ carbon — all four attached", color: "slate", size: 10, italic: true }],
+        "curves": [
+          {"from": "o", "to": "bond:c:o", "bulge": 26},
+          {"from": "bond:c:g", "to": "g", "bulge": -26}
+        ]
       },
       {
-        caption: { en: "3 — L⁻ leaves, C=O rebuilt", fa: "۳ — L⁻ خارج می‌شود، C=O بازمی‌سازد" },
-        atoms: [
-          { id: "r", el: "R", x: 170, y: 85 },
-          { id: "c", el: "C", x: 260, y: 85, bare: true },
-          { id: "o", el: "O", x: 260, y: 30 },
-          { id: "nu", el: "Nu", x: 350, y: 85 },
-          { id: "l", el: "L⁻", x: 400, y: 140, lp: { n: 4, angles: [45, 135, 225, 315] } },
+        "caption": {
+          "en": "Elimination gives methyl acetate and chloride.",
+          "fa": "حذف، متیل‌استات و کلرید تولید می‌کند."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "OCH₃", "x": 292.354, "y": 126.0, "lp": {"n": 2, "angles": [120, 30]}},
+          {"id": "cl", "el": "Cl", "x": 400, "y": 90, "charge": "−", "lp": {"n": 4, "angles": [180, 105, 255, 0]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o", order: 2 }, { a: "c", b: "nu" },
-        ],
-        curves: [{ from: "bond:c:l", to: "l", bulge: 30 }],
-        labels: [{ x: 300, y: 40, text: "ladder position decides who leaves", color: "pink", size: 10, italic: true }],
-      },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"}
+        ]
+      }
     ],
-    connectors: ["⇌", "→"],
+    "connectors": ["→", "→"]
   },
-
   "acyl-fischer-esterification": {
-    title: { en: "Fischer esterification — every step reversible", fa: "استری‌شدن فیشر — هر مرحله برگشت‌پذیر" },
-    footnote: {
-      en: "Excess alcohol or water removal pushes the equilibrium — Le Chatelier is the yield knob.",
-      fa: "الکل اضافه یا برداشتن آب تعادل را جلو می‌برد — لو شاتلیه دستگیرهٔ بازده است.",
+    "title": {
+      "en": "Fischer esterification with methanol",
+      "fa": "استری‌شدن فیشر با متانول"
     },
-    frames: [
+    "footnote": {
+      "en": "Carbonyl protonation enables methanol addition. Solvent-mediated proton transfer changes the acid OH into OH₂⁺ and neutralizes the incoming methanol oxygen; collapse expels water and gives protonated ester. Final deprotonation regenerates acid. OHCH₃ denotes O bonded internally to H and CH₃; when also bonded to acyl carbon it is oxonium. All steps are reversible; excess alcohol or water removal favors ester.",
+      "fa": "پروتون‌گیری کربونیل، افزایش متانول را تسهیل می‌کند. انتقال پروتون با کمک حلال، ⁦OH⁩ اسید را به ⁦OH₂⁺⁩ تبدیل و اکسیژن متانول ورودی را خنثی می‌کند؛ فروریزش میانجی، آب را خارج می‌کند و استر پروتون‌گرفته می‌دهد. پروتون‌زدایی پایانی، اسید را بازتولید می‌کند. ⁦OHCH₃⁩ یعنی اکسیژن با ⁦H⁩ و ⁦CH₃⁩ داخلی؛ وقتی به کربن آسیل هم متصل باشد، اکسونیوم است. مراحل برگشت‌پذیرند و الکل اضافی یا خارج‌کردن آب، تشکیل استر را تقویت می‌کند."
+    },
+    "frames": [
       {
-        caption: { en: "1 — protonation activates C=O", fa: "۱ — پروتون‌گیری C=O را فعال می‌کند" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 150, y: 85 },
-          { id: "c", el: "C", x: 240, y: 85, bare: true },
-          { id: "oh", el: "OH", x: 240, y: 140 },
-          { id: "o", el: "O", x: 240, y: 30, dim: true },
-          { id: "h", el: "H⁺", x: 330, y: 55 },
+        "caption": {
+          "en": "Hydronium protonates carbonyl O.",
+          "fa": "هیدرونیوم به ⁦O⁩ کربونیل پروتون می‌دهد."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "OH", "x": 292.354, "y": 126.0, "lp": {"n": 2, "angles": [120, 30]}},
+          {"id": "hp", "el": "H", "x": 332, "y": 18},
+          {"id": "w", "el": "OH₂", "x": 404, "y": 18, "charge": "+", "lp": {"n": 1, "angles": [150]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "oh" }, { a: "c", b: "o", order: 2 },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "hp", "b": "w"}
         ],
-        curves: [{ from: "h", to: "o", bulge: -30 }],
-        labels: [{ x: 330, y: 25, text: "carbon now far more δ+", color: "pink", size: 10, italic: true }],
+        "curves": [
+          {"from": "o", "to": "hp", "bulge": 28},
+          {"from": "bond:hp:w", "to": "w", "bulge": 26}
+        ]
       },
       {
-        caption: { en: "2 — alcohol attacks", fa: "۲ — الکل حمله می‌کند" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 130, y: 85 },
-          { id: "c", el: "C", x: 220, y: 85, bare: true },
-          { id: "oh", el: "OH", x: 220, y: 140 },
-          { id: "o", el: "OH⁺", x: 220, y: 30, dim: true },
-          { id: "oet", el: "OEt", x: 320, y: 125, lp: { n: 2, angles: [20, 110] } },
-          { id: "h2", el: "H", x: 370, y: 95 },
+        "caption": {
+          "en": "Methanol attacks the activated carbonyl.",
+          "fa": "متانول به کربونیل فعال‌شده حمله می‌کند."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "OH", "x": 230, "y": 18, "charge": "+", "lp": {"n": 1, "angles": [105]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "OH", "x": 292.354, "y": 126.0, "lp": {"n": 2, "angles": [120, 30]}},
+          {"id": "nu", "el": "OCH₃", "x": 330, "y": 65, "lp": {"n": 2, "angles": [0, 180]}},
+          {"id": "hm", "el": "H", "x": 402, "y": 65}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "oh" }, { a: "c", b: "o" },
-          { a: "oet", b: "h2" }, { a: "oet", b: "c", dash: true },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "nu", "b": "hm"},
+          {"a": "nu", "b": "c", "dash": true}
         ],
-        curves: [{ from: "oet", to: "c", bulge: -35 }],
+        "curves": [
+          {"from": "nu", "to": "c", "bulge": -28},
+          {"from": "bond:c:o", "to": "o", "bulge": -26}
+        ]
       },
       {
-        caption: { en: "3 — water leaves", fa: "۳ — آب خارج می‌شود" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 130, y: 85 },
-          { id: "c", el: "C", x: 220, y: 85, bare: true },
-          { id: "oh2", el: "OH₂⁺", x: 220, y: 140 },
-          { id: "o", el: "O", x: 220, y: 30, dim: true },
-          { id: "oet", el: "OEt", x: 315, y: 90 },
-          { id: "h2", el: "H", x: 360, y: 60 },
+        "caption": {
+          "en": "Addition creates an oxonium ion.",
+          "fa": "افزایش، یون اکسونیوم می‌سازد."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "bare": true},
+          {"id": "o", "el": "OH", "x": 230, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "r", "el": "CH₃", "x": 162.342, "y": 114.625},
+          {"id": "g", "el": "OH", "x": 297.658, "y": 114.625, "lp": {"n": 2, "angles": [105, 195]}},
+          {"id": "nu", "el": "OHCH₃", "x": 230, "y": 162, "charge": "+", "lp": {"n": 1, "angles": [180]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "oh2", dash: true }, { a: "c", b: "o" }, { a: "c", b: "oet" },
-          { a: "oet", b: "h2" },
-        ],
-        curves: [
-          { from: "bond:c:oh2", to: "oh2", bulge: 30 },
-          { from: "oet", to: "bond:c:oh2", bulge: -30 },
-        ],
-        labels: [{ x: 220, y: 175, text: "H₂O out — deprotonate → ester", color: "slate", size: 10 }],
+        "bonds": [
+          {"a": "c", "b": "o"},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "c", "b": "nu"}
+        ]
       },
       {
-        caption: { en: "ethyl acetate + H⁺ back", fa: "اتیل استات + H⁺ برمی‌گردد" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 160, y: 85 },
-          { id: "c", el: "C", x: 250, y: 85, bare: true },
-          { id: "o", el: "O", x: 250, y: 30, dim: true },
-          { id: "o", el: "O", x: 340, y: 85, dim: true },
-          { id: "et", el: "Et", x: 410, y: 85 },
+        "caption": {
+          "en": "A proton relay prepares water to leave.",
+          "fa": "انتقال پروتون، آب را آمادهٔ خروج می‌کند."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "bare": true},
+          {"id": "o", "el": "OH", "x": 230, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "r", "el": "CH₃", "x": 162.342, "y": 114.625},
+          {"id": "g", "el": "OH₂", "x": 297.658, "y": 114.625, "charge": "+", "lp": {"n": 1, "angles": [165]}},
+          {"id": "nu", "el": "OCH₃", "x": 230, "y": 162, "lp": {"n": 2, "angles": [180, 90]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o", order: 2 }, { a: "c", b: "o2" },
+        "bonds": [
+          {"a": "c", "b": "o"},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "c", "b": "nu"}
         ],
-        labels: [{ x: 300, y: 130, text: "fruity smell — the nose detects it", color: "pink", size: 10, italic: true }],
+        "curves": [
+          {"from": "o", "to": "bond:c:o", "bulge": 26},
+          {"from": "bond:c:g", "to": "g", "bulge": -26}
+        ],
+        "labels": [
+          {"x": 410, "y": 28, "text": "After proton transfer;", "size": 10, "color": "slate"},
+          {"x": 410, "y": 42, "text": "collapse arrows shown", "size": 10, "color": "slate"}
+        ]
       },
+      {
+        "caption": {
+          "en": "Water deprotonates the protonated ester.",
+          "fa": "آب از استر پروتون‌گرفته پروتون می‌گیرد."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 210, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 210, "y": 18, "charge": "+", "lp": {"n": 1, "angles": [240]}},
+          {"id": "hp", "el": "H", "x": 282, "y": 18},
+          {"id": "w", "el": "OH₂", "x": 387, "y": 18, "lp": {"n": 2, "angles": [0, 180]}},
+          {"id": "r", "el": "CH₃", "x": 147.646, "y": 126},
+          {"id": "g", "el": "OCH₃", "x": 272.354, "y": 126, "lp": {"n": 2, "angles": [120, 30]}}
+        ],
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "o", "b": "hp"},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"}
+        ],
+        "curves": [
+          {"from": "w", "to": "hp", "bulge": -26},
+          {"from": "bond:hp:o", "to": "o", "bulge": 28}
+        ]
+      },
+      {
+        "caption": {
+          "en": "Ester forms and acid is regenerated.",
+          "fa": "استر تشکیل و اسید بازتولید می‌شود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "OCH₃", "x": 292.354, "y": 126.0, "lp": {"n": 2, "angles": [120, 30]}}
+        ],
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "CH₃COOH + CH₃OH ⇌ CH₃COOCH₃ + H₂O", "size": 10, "color": "slate"}
+        ]
+      }
     ],
-    connectors: ["⇌", "⇌", "⇌"],
+    "connectors": ["⇌", "⇌", "→several", "⇌", "⇌"]
   },
-
   "acyl-socl2-chloride": {
-    title: { en: "SOCl₂ — two gases escape, done", fa: "SOCl₂ — دو گاز خارج می‌شوند، تمام" },
-    footnote: {
-      en: "Chlorosulfite intermediate; Cl⁻ displaces it; SO₂ + HCl bubble off — Le Chatelier drags to completion.",
-      fa: "واسط کلروسولفیت؛ Cl⁻ جایش را می‌گیرد؛ SO₂ + HCL حباب می‌زنند — لو شاتلیه تا کامل شدن می‌کشد.",
+    "title": {
+      "en": "Acid chloride formation with thionyl chloride",
+      "fa": "تشکیل اسیدکلرید با تیونیل‌کلرید"
     },
-    frames: [
+    "footnote": {
+      "en": "An oxygen-activation representation gives an acyl chlorosulfite, RCO-O-S(=O)Cl; the essential acyl C-O-S bridge is retained. Chloride adds to the acyl carbon, tetrahedral collapse expels chlorosulfite, and SO₂ formation regenerates chloride. Actual activation can involve carbonyl-oxygen attack and proton/oxygen bookkeeping equivalent to the OH-attack representation shown; conditions affect the detailed path. SOCl and OSOCl abbreviate intact fragments, not carbon-sulfur bonds.",
+      "fa": "در نمایش فعال‌سازی از راه اکسیژن، آسیل‌کلروسولفیت ⁦RCO-O-S(=O)Cl⁩ تشکیل می‌شود؛ پل ضروری ⁦C-O-S⁩ حفظ شده است. کلرید به کربن آسیل اضافه می‌شود، فروریزش میانجی کلروسولفیت را خارج می‌کند و تشکیل ⁦SO₂⁩، کلرید را بازتولید می‌کند. فعال‌سازی واقعی می‌تواند با حملهٔ اکسیژن کربونیل و انتقال پروتون همراه باشد؛ نمایش حملهٔ ⁦OH⁩، مسیر هم‌ارزِ حسابداری اتصال‌ها را نشان می‌دهد و جزئیات به شرایط بستگی دارند. ⁦SOCl⁩ و ⁦OSOCl⁩ قطعه‌های فشرده‌اند، نه پیوند مستقیم کربن-گوگرد."
+    },
+    "frames": [
       {
-        caption: { en: "1 — chlorosulfite forms", fa: "۱ — ساخت کلروسولفیت" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 130, y: 85 },
-          { id: "c", el: "C", x: 215, y: 85, bare: true },
-          { id: "o", el: "O", x: 215, y: 30, dim: true },
-          { id: "s", el: "S", x: 310, y: 115, dim: true },
-          { id: "ocl", el: "Cl", x: 365, y: 85, dim: true },
-          { id: "o2", el: "O", x: 310, y: 165, dim: true },
+        "caption": {
+          "en": "A carboxyl oxygen attacks sulfur; chloride departs.",
+          "fa": "اکسیژن کربوکسیل به گوگرد حمله می‌کند و کلرید جدا می‌شود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 110, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 110, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "r", "el": "CH₃", "x": 47.646, "y": 126},
+          {"id": "oh", "el": "OH", "x": 172.354, "y": 126, "lp": {"n": 2, "angles": [195, 15]}},
+          {"id": "s", "el": "SOCl", "x": 277.354, "y": 126},
+          {"id": "cl", "el": "Cl", "x": 349.354, "y": 126, "lp": {"n": 3, "angles": [90, 0, 180]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o", order: 2 },
-          { a: "c", b: "s", dash: true }, { a: "s", b: "ocl" }, { a: "s", b: "o2", order: 2 },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "oh"},
+          {"a": "s", "b": "cl"},
+          {"a": "oh", "b": "s", "dash": true}
         ],
-        curves: [{ from: "c", to: "s", bulge: -35 }],
-        labels: [{ x: 220, y: 185, text: "acid OH attacks sulfur", color: "pink", size: 10, italic: true }],
+        "curves": [
+          {"from": "oh", "to": "s", "bulge": -28},
+          {"from": "bond:cl:s", "to": "cl", "bulge": -26}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "SOCl-Cl = SOCl₂; S=O and one S-Cl condensed", "size": 10, "color": "slate"}
+        ]
       },
       {
-        caption: { en: "2 — Cl⁻ displaces", fa: "۲ — جابه‌جایی با Cl⁻" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 130, y: 85 },
-          { id: "c", el: "C", x: 215, y: 85, bare: true },
-          { id: "o", el: "O", x: 215, y: 30, dim: true },
-          { id: "os", el: "OSOCl", x: 310, y: 115, dim: true },
-          { id: "cl", el: "Cl⁻", x: 390, y: 55 },
+        "caption": {
+          "en": "Chloride removes H to give the acyl chlorosulfite.",
+          "fa": "کلرید با گرفتن ⁦H⁩، آسیل‌کلروسولفیت را تشکیل می‌دهد."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 120, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 120, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "r", "el": "CH₃", "x": 57.646, "y": 126},
+          {"id": "bridge", "el": "O", "x": 182.354, "y": 126, "charge": "+", "lp": {"n": 1, "angles": [195]}},
+          {"id": "s", "el": "SOCl", "x": 254.354, "y": 126},
+          {"id": "hp", "el": "H", "x": 182.354, "y": 54},
+          {"id": "cl", "el": "Cl", "x": 359.354, "y": 54, "charge": "−", "lp": {"n": 4, "angles": [180, 105, 255, 0]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o", order: 2 }, { a: "c", b: "os" }, { a: "c", b: "cl", dash: true },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "bridge"},
+          {"a": "bridge", "b": "s"},
+          {"a": "bridge", "b": "hp"}
         ],
-        curves: [{ from: "cl", to: "c", bulge: -35 }],
+        "curves": [
+          {"from": "cl", "to": "hp", "bulge": -28},
+          {"from": "bond:bridge:hp", "to": "bridge", "bulge": 26}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "→ RCO-O-S(=O)Cl + HCl", "size": 10, "color": "slate"}
+        ]
       },
       {
-        caption: { en: "3 — gases escape → acid chloride", fa: "۳ — خروج گازها ← اسید کلراید" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 170, y: 85 },
-          { id: "c", el: "C", x: 260, y: 85, bare: true },
-          { id: "o", el: "O", x: 260, y: 30, dim: true },
-          { id: "cl", el: "Cl", x: 350, y: 85 },
+        "caption": {
+          "en": "Chloride attacks the acyl carbon.",
+          "fa": "کلرید به کربن آسیل حمله می‌کند."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "OSOCl", "x": 292.354, "y": 126.0, "lp": {"n": 2, "angles": [120, 30]}},
+          {"id": "nu", "el": "Cl", "x": 330, "y": 65, "charge": "−", "lp": {"n": 4, "angles": [150, 0, 210, 90]}}
         ],
-        bonds: [{ a: "r", b: "c" }, { a: "c", b: "o", order: 2 }, { a: "c", b: "cl" }],
-        labels: [
-          { x: 260, y: 140, text: "↑ SO₂ + HCl (fumes)", color: "pink", size: 11, italic: true },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "nu", "b": "c", "dash": true}
         ],
+        "curves": [
+          {"from": "nu", "to": "c", "bulge": -28},
+          {"from": "bond:c:o", "to": "o", "bulge": -26}
+        ]
       },
+      {
+        "caption": {
+          "en": "Collapse expels chlorosulfite.",
+          "fa": "کلروسولفیت خارج می‌شود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "−", "lp": {"n": 3, "angles": [105, 240, 0]}},
+          {"id": "r", "el": "CH₃", "x": 162.342, "y": 114.625},
+          {"id": "g", "el": "OSOCl", "x": 297.658, "y": 114.625, "lp": {"n": 2, "angles": [105, 195]}},
+          {"id": "nu", "el": "Cl", "x": 230, "y": 162, "lp": {"n": 3, "angles": [180, 90, 270]}}
+        ],
+        "bonds": [
+          {"a": "c", "b": "o"},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "c", "b": "nu"}
+        ],
+        "curves": [
+          {"from": "o", "to": "bond:c:o", "bulge": 26},
+          {"from": "bond:c:g", "to": "g", "bulge": -26}
+        ]
+      },
+      {
+        "caption": {
+          "en": "Fragmentation releases SO₂ and Cl⁻.",
+          "fa": "شکستن میانجی، ⁦SO₂⁩ و ⁦Cl⁻⁩ آزاد می‌کند."
+        },
+        "atoms": [
+          {"id": "ox", "el": "O", "x": 174, "y": 90, "charge": "−", "lp": {"n": 3, "angles": [195, 255, 0]}},
+          {"id": "s", "el": "S", "x": 246, "y": 90, "lp": {"n": 1, "angles": [180]}},
+          {"id": "o", "el": "O", "x": 282, "y": 27.646, "lp": {"n": 2, "angles": [30, 300]}},
+          {"id": "cl", "el": "Cl", "x": 318, "y": 90, "lp": {"n": 3, "angles": [90, 0, 180]}}
+        ],
+        "bonds": [
+          {"a": "ox", "b": "s"},
+          {"a": "s", "b": "o", "order": 2},
+          {"a": "s", "b": "cl"}
+        ],
+        "curves": [
+          {"from": "ox", "to": "bond:ox:s", "bulge": -26},
+          {"from": "bond:cl:s", "to": "cl", "bulge": -26}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "[OS(O)Cl]⁻ → SO₂ + Cl⁻", "size": 10, "color": "slate"}
+        ]
+      },
+      {
+        "caption": {
+          "en": "Acetyl chloride forms as gases escape.",
+          "fa": "با خروج گازها، استیل‌کلرید تشکیل می‌شود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "Cl", "x": 292.354, "y": 126.0, "lp": {"n": 3, "angles": [120, 30, 210]}}
+        ],
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "CH₃COOH + SOCl₂ → CH₃COCl + SO₂ + HCl", "size": 10, "color": "slate"}
+        ]
+      }
     ],
-    connectors: ["→", "→"],
+    "connectors": ["→", "→", "→", "→", "→"]
   },
-
   "acyl-hydrolysis-family": {
-    title: { en: "Ester hydrolysis — acid (reversible) vs base (one-way)", fa: "هیدرولیز استر — اسیدی (برگشت‌پذیر) در برابر بازی (یک‌طرفه)" },
-    footnote: {
-      en: "Base route is irreversible because the carboxylate anion can't be attacked again — that's soap chemistry.",
-      fa: "مسیر بازی برگشت‌ناپذیر است چون آنیون کربوکسیلات دیگر قابل حمله نیست — این شیمی صابون است.",
+    "title": {
+      "en": "Ester hydrolysis: base route and acid comparison",
+      "fa": "هیدرولیز استر: مسیر بازی و مقایسه با مسیر اسیدی"
     },
-    frames: [
+    "footnote": {
+      "en": "Base-promoted hydrolysis proceeds by hydroxide addition, methoxide elimination and acid-base trapping as carboxylate. The favorable final deprotonation makes saponification effectively irreversible under these conditions; it does not mean carboxylate can never react. Base is consumed overall. Acid hydrolysis is the reversible reverse of Fischer esterification and follows protonated intermediates, not the anionic route shown here.",
+      "fa": "هیدرولیز بازی با افزایش هیدروکسید، خروج متوکسید و تثبیت محصول به صورت کربوکسیلات پیش می‌رود. پروتون‌زدایی مطلوب پایانی، صابونی‌شدن را در این شرایط عملاً برگشت‌ناپذیر می‌کند؛ این به معنای واکنش‌ناپذیری مطلق کربوکسیلات نیست. باز در مجموع مصرف می‌شود. هیدرولیز اسیدی، وارونِ برگشت‌پذیر استری‌شدن فیشر است و از میانجی‌های پروتون‌گرفته می‌گذرد، نه مسیر آنیونی نشان‌داده‌شده."
+    },
+    "frames": [
       {
-        caption: { en: "1 — OH⁻ attacks", fa: "۱ — حملهٔ OH⁻" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 130, y: 85 },
-          { id: "c", el: "C", x: 215, y: 85, bare: true },
-          { id: "o", el: "O", x: 215, y: 30, dim: true },
-          { id: "ome", el: "OMe", x: 305, y: 85 },
-          { id: "oh", el: "OH⁻", x: 175, y: 150 },
+        "caption": {
+          "en": "Hydroxide adds to the ester carbonyl.",
+          "fa": "هیدروکسید به کربونیل استر اضافه می‌شود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "OCH₃", "x": 292.354, "y": 126.0, "lp": {"n": 2, "angles": [120, 30]}},
+          {"id": "nu", "el": "OH", "x": 330, "y": 65, "charge": "−", "lp": {"n": 3, "angles": [150, 0, 210]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o", order: 2 }, { a: "c", b: "ome" },
-          { a: "oh", b: "c", dash: true },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "nu", "b": "c", "dash": true}
         ],
-        curves: [
-          { from: "oh", to: "c", bulge: -30 },
-          { from: "bond:c:o", to: "o", bulge: -25 },
-        ],
+        "curves": [
+          {"from": "nu", "to": "c", "bulge": -28},
+          {"from": "bond:c:o", "to": "o", "bulge": -26}
+        ]
       },
       {
-        caption: { en: "2 — tetrahedral, OMe⁻ leaves", fa: "۲ — چهاروجهی، خروج OMe⁻" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 130, y: 85 },
-          { id: "c", el: "C", x: 215, y: 85, bare: true },
-          { id: "o", el: "O⁻", x: 215, y: 30, dim: true },
-          { id: "ome", el: "OMe", x: 305, y: 85, dim: true },
-          { id: "oh", el: "OH", x: 215, y: 140 },
+        "caption": {
+          "en": "C=O reforms as methoxide leaves.",
+          "fa": "⁦C=O⁩ تشکیل و متوکسید خارج می‌شود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "−", "lp": {"n": 3, "angles": [105, 240, 0]}},
+          {"id": "r", "el": "CH₃", "x": 162.342, "y": 114.625},
+          {"id": "g", "el": "OCH₃", "x": 297.658, "y": 114.625, "lp": {"n": 2, "angles": [105, 195]}},
+          {"id": "nu", "el": "OH", "x": 230, "y": 162, "lp": {"n": 2, "angles": [180, 90]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o" }, { a: "c", b: "ome" }, { a: "c", b: "oh" },
+        "bonds": [
+          {"a": "c", "b": "o"},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "c", "b": "nu"}
         ],
-        curves: [{ from: "bond:c:ome", to: "ome", bulge: 25 }],
+        "curves": [
+          {"from": "o", "to": "bond:c:o", "bulge": 26},
+          {"from": "bond:c:g", "to": "g", "bulge": -26}
+        ]
       },
       {
-        caption: { en: "3 — acid → instantly carboxylate", fa: "۳ — اسید ← فوراً کربوکسیلات" },
-        atoms: [
-          { id: "r", el: "CH₃", x: 150, y: 85 },
-          { id: "c", el: "C", x: 240, y: 85, bare: true },
-          { id: "o", el: "O", x: 240, y: 30, dim: true },
-          { id: "oh", el: "OH", x: 240, y: 140, dim: true },
-          { id: "ome", el: "MeO⁻", x: 340, y: 120 },
+        "caption": {
+          "en": "Methoxide removes the carboxylic acid proton.",
+          "fa": "متوکسید، پروتون اسید کربوکسیلیک را می‌گیرد."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 190, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 190, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "r", "el": "CH₃", "x": 127.646, "y": 126},
+          {"id": "oh", "el": "O", "x": 252.354, "y": 126, "lp": {"n": 2, "angles": [195, 15]}},
+          {"id": "hp", "el": "H", "x": 324.354, "y": 126},
+          {"id": "base", "el": "OCH₃", "x": 429.354, "y": 126, "charge": "−", "lp": {"n": 3, "angles": [180, 105, 255]}}
         ],
-        bonds: [
-          { a: "r", b: "c" }, { a: "c", b: "o", order: 2 }, { a: "c", b: "oh" },
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "oh"},
+          {"a": "oh", "b": "hp"}
         ],
-        curves: [{ from: "bond:c:oh", to: "ome", bulge: -30 }],
-        labels: [{ x: 245, y: 180, text: "RCOO⁻ — shielded, no re-attack: one-way!", color: "pink", size: 10, italic: true }],
+        "curves": [
+          {"from": "base", "to": "hp", "bulge": -28},
+          {"from": "bond:hp:oh", "to": "oh", "bulge": -28}
+        ]
       },
+      {
+        "caption": {
+          "en": "Deprotonation gives carboxylate.",
+          "fa": "پروتون‌زدایی، کربوکسیلات می‌دهد."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "r", "el": "CH₃", "x": 167.646, "y": 126.0},
+          {"id": "g", "el": "O", "x": 292.354, "y": 126.0, "charge": "−", "lp": {"n": 3, "angles": [165, 240, 105]}}
+        ],
+        "bonds": [
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "+ CH₃OH; one carboxylate resonance contributor", "size": 10, "color": "slate"}
+        ]
+      }
     ],
-    connectors: ["→", "→"],
+    "connectors": ["→", "→", "→"]
   },
-
   "acyl-claisen": {
-    title: { en: "Claisen — ester enolate + ester, full base needed", fa: "کلایزن — انولات استر + استر، باز کامل لازم است" },
-    footnote: {
-      en: "The LAST deprotonation (active CH₂, pKa ~11) makes it irreversible — hence one FULL equivalent of NaOEt.",
-      fa: "دی‌پروتونه شدن آخر (CH₂ فعال با pKa حدود ۱۱) واکنش را برگشت‌ناپذیر می‌کند — برای همین یک هم‌ارز کامل NaOEt.",
+    "title": {
+      "en": "Claisen condensation of ethyl acetate",
+      "fa": "تراکم کلایزن اتیل‌استات"
     },
-    frames: [
+    "footnote": {
+      "en": "Ethoxide forms the ester enolate, whose carbon attacks a second ester. Tetrahedral collapse expels ethoxide; strong stabilization of the β-keto ester enolate drives the final deprotonation, so a stoichiometric equivalent of base is needed in the classical self-Claisen. Acid workup restores the neutral β-keto ester. Use a matching alkoxide to avoid ester exchange. CO₂Et and CH₂CO₂Et retain the donor ester; carbon-anion drawings are resonance contributors.",
+      "fa": "اتوکسید، انولات استر را می‌سازد و کربن آن به استر دوم حمله می‌کند. فروریزش میانجی، اتوکسید را خارج می‌کند؛ پایداری زیاد انولاتِ بتاکتواستر، پروتون‌زدایی نهایی را پیش می‌برد، بنابراین خودتراکمی کلاسیک کلایزن به یک هم‌ارز استوکیومتری باز نیاز دارد. فرآوری اسیدی، بتاکتواستر خنثی را بازمی‌گرداند. آلکوکسید هم‌نوعِ گروه استر، تبادل استری را کاهش می‌دهد. ⁦CO₂Et⁩ و ⁦CH₂CO₂Et⁩ گروه استر دهنده را حفظ می‌کنند و نمایش آنیون کربنی، یک ساختار رزونانسی است."
+    },
+    "frames": [
       {
-        caption: { en: "1 — ester enolate", fa: "۱ — انولات استر" },
-        atoms: [
-          { id: "c1", el: "C", x: 160, y: 85, bare: true },
-          { id: "c2", el: "C", x: 250, y: 85, bare: true },
-          { id: "o", el: "O", x: 250, y: 30, dim: true },
-          { id: "oet", el: "OEt", x: 335, y: 85 },
-          { id: "h", el: "H", x: 115, y: 120 },
+        "caption": {
+          "en": "Ethoxide removes α-H to form the ester enolate.",
+          "fa": "اتوکسید، ⁦H⁩ آلفا را می‌گیرد و انولات استر تشکیل می‌شود."
+        },
+        "atoms": [
+          {"id": "base", "el": "OEt", "x": 40, "y": 130, "charge": "−", "lp": {"n": 3, "angles": [180, 105, 255]}},
+          {"id": "ha", "el": "H", "x": 145, "y": 130},
+          {"id": "ca", "el": "CH₂", "x": 217, "y": 130},
+          {"id": "c", "el": "C", "x": 279.354, "y": 94},
+          {"id": "o", "el": "O", "x": 279.354, "y": 22, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "et", "el": "OEt", "x": 341.708, "y": 130, "lp": {"n": 2, "angles": [120, 30]}}
         ],
-        bonds: [
-          { a: "c1", b: "c2" }, { a: "c2", b: "o", order: 2 }, { a: "c2", b: "oet" }, { a: "c1", b: "h" },
+        "bonds": [
+          {"a": "ha", "b": "ca"},
+          {"a": "ca", "b": "c"},
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "et"}
         ],
-        curves: [{ from: "bond:c1:h", to: "c1", bulge: -30 }],
-        condition: { x: 100, y: 55, text: "EtO⁻" },
+        "curves": [
+          {"from": "base", "to": "ha", "bulge": -26},
+          {"from": "bond:ca:ha", "to": "ca", "bulge": 28}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "Carbon-anion resonance contributor shown next", "size": 10, "color": "slate"}
+        ]
       },
       {
-        caption: { en: "2 — attacks another ester", fa: "۲ — به استر دیگر حمله می‌کند" },
-        atoms: [
-          { id: "ca", el: "C", x: 150, y: 85, charge: "δ-", bare: true },
-          { id: "oa", el: "O⁻", x: 60, y: 55, dim: true },
-          { id: "cb", el: "C", x: 290, y: 85, bare: true },
-          { id: "ob", el: "O", x: 290, y: 30, dim: true },
-          { id: "oet", el: "OEt", x: 380, y: 85 },
+        "caption": {
+          "en": "Enolate carbon attacks a second ester molecule.",
+          "fa": "کربن انولات به مولکول دوم استر حمله می‌کند."
+        },
+        "atoms": [
+          {"id": "donor", "el": "CO₂Et", "x": 120, "y": 90},
+          {"id": "ca", "el": "CH₂", "x": 192, "y": 90, "charge": "−", "lp": {"n": 1, "angles": [180]}},
+          {"id": "c", "el": "C", "x": 297, "y": 90, "charge": "δ+"},
+          {"id": "o", "el": "O", "x": 297, "y": 18, "charge": "δ−", "lp": {"n": 2, "angles": [105, 240]}},
+          {"id": "r", "el": "CH₃", "x": 359.354, "y": 126},
+          {"id": "et", "el": "OEt", "x": 234.646, "y": 126, "lp": {"n": 2, "angles": [240, 330]}}
         ],
-        bonds: [
-          { a: "ca", b: "oa", order: 2, dash: true },
-          { a: "cb", b: "ob", order: 2 }, { a: "cb", b: "oet" },
-          { a: "ca", b: "cb", dash: true },
+        "bonds": [
+          {"a": "donor", "b": "ca"},
+          {"a": "c", "b": "o", "order": 2},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "et"},
+          {"a": "ca", "b": "c", "dash": true}
         ],
-        curves: [{ from: "ca", to: "cb", bulge: -40 }],
+        "curves": [
+          {"from": "ca", "to": "c", "bulge": -28},
+          {"from": "bond:c:o", "to": "o", "bulge": -26}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "CO₂Et is the intact donor ester group", "size": 10, "color": "slate"}
+        ]
       },
       {
-        caption: { en: "3 — β-keto ester, EtO⁻ out", fa: "۳ — β-کتو استر، خروج EtO⁻" },
-        atoms: [
-          { id: "c1", el: "C", x: 130, y: 85 },
-          { id: "o1", el: "O", x: 130, y: 30, dim: true },
-          { id: "c2", el: "CH₂", x: 230, y: 85 },
-          { id: "c3", el: "C", x: 330, y: 85, bare: true },
-          { id: "o3", el: "O", x: 330, y: 30, dim: true },
-          { id: "oet", el: "OEt", x: 415, y: 85 },
+        "caption": {
+          "en": "Collapse expels ethoxide.",
+          "fa": "اتوکسید از میانجی خارج می‌شود."
+        },
+        "atoms": [
+          {"id": "c", "el": "C", "x": 230, "y": 90, "bare": true},
+          {"id": "o", "el": "O", "x": 230, "y": 18, "charge": "−", "lp": {"n": 3, "angles": [105, 240, 0]}},
+          {"id": "r", "el": "CH₃", "x": 162.342, "y": 114.625},
+          {"id": "g", "el": "OEt", "x": 297.658, "y": 114.625, "lp": {"n": 2, "angles": [105, 195]}},
+          {"id": "nu", "el": "CH₂CO₂Et", "x": 230, "y": 162}
         ],
-        bonds: [
-          { a: "c1", b: "o1", order: 2 }, { a: "c1", b: "c2" },
-          { a: "c2", b: "c3" }, { a: "c3", b: "o3", order: 2 }, { a: "c3", b: "oet" },
+        "bonds": [
+          {"a": "c", "b": "o"},
+          {"a": "c", "b": "r"},
+          {"a": "c", "b": "g"},
+          {"a": "c", "b": "nu"}
         ],
-        labels: [{ x: 230, y: 140, text: "active CH₂ — deprotonated instantly (pKa 11)", color: "pink", size: 10, italic: true }],
+        "curves": [
+          {"from": "o", "to": "bond:c:o", "bulge": 26},
+          {"from": "bond:c:g", "to": "g", "bulge": -26}
+        ]
       },
+      {
+        "caption": {
+          "en": "Ethoxide removes the acidic proton between carbonyls.",
+          "fa": "اتوکسید، پروتون اسیدی بین دو کربونیل را می‌گیرد."
+        },
+        "atoms": [
+          {"id": "r", "el": "CH₃", "x": 48, "y": 126},
+          {"id": "c1", "el": "C", "x": 110.354, "y": 90, "bare": true},
+          {"id": "o1", "el": "O", "x": 110.354, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "ca", "el": "CH", "x": 172.708, "y": 126},
+          {"id": "c2", "el": "C", "x": 235.062, "y": 90, "bare": true},
+          {"id": "o2", "el": "O", "x": 235.062, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "et", "el": "OEt", "x": 297.416, "y": 126, "lp": {"n": 2, "angles": [120, 30]}},
+          {"id": "hp", "el": "H", "x": 172.708, "y": 54},
+          {"id": "base", "el": "OEt", "x": 395, "y": 54, "charge": "−", "lp": {"n": 3, "angles": [180, 105, 255]}}
+        ],
+        "bonds": [
+          {"a": "r", "b": "c1"},
+          {"a": "c1", "b": "o1", "order": 2},
+          {"a": "c1", "b": "ca"},
+          {"a": "ca", "b": "c2"},
+          {"a": "c2", "b": "o2", "order": 2},
+          {"a": "c2", "b": "et"},
+          {"a": "ca", "b": "hp"}
+        ],
+        "curves": [
+          {"from": "base", "to": "hp", "bulge": -28},
+          {"from": "bond:ca:hp", "to": "ca", "bulge": -28}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "β-Keto ester pKₐ ≈ 11; base is consumed overall", "size": 10, "color": "slate"}
+        ]
+      },
+      {
+        "caption": {
+          "en": "Acid workup protonates the stabilized product enolate.",
+          "fa": "فرآوری اسیدی، انولات پایدار محصول را پروتون‌دار می‌کند."
+        },
+        "atoms": [
+          {"id": "r", "el": "CH₃", "x": 48, "y": 126},
+          {"id": "c1", "el": "C", "x": 110.354, "y": 90, "bare": true},
+          {"id": "o1", "el": "O", "x": 110.354, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "ca", "el": "CH", "x": 172.708, "y": 126, "charge": "−", "lp": {"n": 1, "angles": [180]}},
+          {"id": "c2", "el": "C", "x": 235.062, "y": 90, "bare": true},
+          {"id": "o2", "el": "O", "x": 235.062, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "et", "el": "OEt", "x": 297.416, "y": 126, "lp": {"n": 2, "angles": [120, 30]}},
+          {"id": "hp", "el": "H", "x": 360, "y": 45},
+          {"id": "w", "el": "OH₂", "x": 432, "y": 45, "charge": "+", "lp": {"n": 1, "angles": [150]}}
+        ],
+        "bonds": [
+          {"a": "r", "b": "c1"},
+          {"a": "c1", "b": "o1", "order": 2},
+          {"a": "c1", "b": "ca"},
+          {"a": "ca", "b": "c2"},
+          {"a": "c2", "b": "o2", "order": 2},
+          {"a": "c2", "b": "et"},
+          {"a": "hp", "b": "w"}
+        ],
+        "curves": [
+          {"from": "ca", "to": "hp", "bulge": -40},
+          {"from": "bond:hp:w", "to": "w", "bulge": -26}
+        ]
+      },
+      {
+        "caption": {
+          "en": "Workup gives ethyl acetoacetate.",
+          "fa": "فرآوری پایانی، اتیل‌استواستات می‌دهد."
+        },
+        "atoms": [
+          {"id": "r", "el": "CH₃", "x": 48, "y": 126},
+          {"id": "c1", "el": "C", "x": 110.354, "y": 90, "bare": true},
+          {"id": "o1", "el": "O", "x": 110.354, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "ca", "el": "CH₂", "x": 172.708, "y": 126},
+          {"id": "c2", "el": "C", "x": 235.062, "y": 90, "bare": true},
+          {"id": "o2", "el": "O", "x": 235.062, "y": 18, "lp": {"n": 2, "angles": [0, 90]}},
+          {"id": "et", "el": "OEt", "x": 297.416, "y": 126, "lp": {"n": 2, "angles": [120, 30]}}
+        ],
+        "bonds": [
+          {"a": "r", "b": "c1"},
+          {"a": "c1", "b": "o1", "order": 2},
+          {"a": "c1", "b": "ca"},
+          {"a": "ca", "b": "c2"},
+          {"a": "c2", "b": "o2", "order": 2},
+          {"a": "c2", "b": "et"}
+        ],
+        "labels": [
+          {"x": 260, "y": 175, "text": "CH₃COCH₂CO₂Et; β-keto ester", "size": 10, "color": "slate"}
+        ]
+      }
     ],
-    connectors: ["⇌", "⇌"],
-  },
+    "connectors": ["⇌", "⇌", "→", "→", "→"]
+  }
 };

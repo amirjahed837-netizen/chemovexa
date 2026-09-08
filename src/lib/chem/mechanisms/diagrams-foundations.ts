@@ -145,7 +145,6 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
         curves: [
           { from: "b", to: "hb", bulge: -26 },
           { from: "bond:hb:c1", to: "bond:c1:c2", bulge: -32 },
-          { from: "bond:c1:c2", to: "bond:c2:x", bulge: -32 },
           { from: "bond:c2:x", to: "x", bulge: -26 },
         ],
         labels: [

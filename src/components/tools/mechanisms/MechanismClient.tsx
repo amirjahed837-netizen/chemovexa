@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -27,13 +27,13 @@ import { cn } from "@/lib/utils";
 type FamilyFilter = FamilyId | "all";
 
 export function MechanismClient() {
-  const { t, locale } = useI18n();
+  const { t, locale, fmt } = useI18n();
   const m = t.pages.mechanisms;
 
   const [topic, setTopic] = useState<TopicId | "all">("all");
   const [family, setFamily] = useState<FamilyFilter>("all");
   const [query, setQuery] = useState("");
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openIds, setOpenIds] = useState<Set<string>>(new Set());
 
   const familiesPresent = useMemo(() => {
     const set = new Set<FamilyId>();
@@ -48,8 +48,12 @@ export function MechanismClient() {
       if (family !== "all" && x.family !== family) return false;
       if (!q) return true;
       const hay = [
-        x.en.title, x.fa.title, x.en.summary, x.fa.summary,
-        ...x.tags.en, ...x.tags.fa,
+        x.en.title,
+        x.fa.title,
+        x.en.summary,
+        x.fa.summary,
+        ...x.tags.en,
+        ...x.tags.fa,
         ...x.examples.map((e) => e.equation),
       ]
         .join(" ")
@@ -65,6 +69,33 @@ export function MechanismClient() {
       items: filtered.filter((x) => x.topic === tp),
     })).filter((g) => g.items.length > 0);
   }, [filtered]);
+
+  const hasFilters = topic !== "all" || family !== "all" || query.trim() !== "";
+  const allOpen = openIds.size >= MECHANISMS.length;
+  const anyOpen = openIds.size > 0;
+
+  const clearFilters = useCallback(() => {
+    setTopic("all");
+    setFamily("all");
+    setQuery("");
+  }, []);
+
+  const expandAll = useCallback(() => {
+    setOpenIds(new Set(MECHANISMS.map((x) => x.id)));
+  }, []);
+
+  const collapseAll = useCallback(() => {
+    setOpenIds(new Set());
+  }, []);
+
+  const toggleOne = useCallback((id: string) => {
+    setOpenIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   const eqDir = "ltr"; // equations always LTR
 
@@ -84,9 +115,14 @@ export function MechanismClient() {
       <Container className="pb-8">
         <Reveal delay={100}>
           <GlassCard className="flex flex-col gap-4 p-5">
-            <div className="flex flex-wrap items-center gap-2">
+            <div
+              className="flex flex-wrap items-center gap-2"
+              role="group"
+              aria-label={m.filterByTopic}
+            >
               <button
                 onClick={() => setTopic("all")}
+                aria-pressed={topic === "all"}
                 className={cn(
                   "rounded-full border px-3.5 py-1.5 text-xs font-medium transition",
                   topic === "all"
@@ -102,6 +138,7 @@ export function MechanismClient() {
                   <button
                     key={tp}
                     onClick={() => setTopic(tp)}
+                    aria-pressed={topic === tp}
                     className={cn(
                       "rounded-full border px-3.5 py-1.5 text-xs font-medium transition",
                       topic === tp
@@ -118,6 +155,7 @@ export function MechanismClient() {
               <select
                 value={family}
                 onChange={(e) => setFamily(e.target.value as FamilyFilter)}
+                aria-label={m.allFamilies}
                 className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-400/50"
               >
                 <option value="all">{m.allFamilies}</option>
@@ -127,15 +165,47 @@ export function MechanismClient() {
                   </option>
                 ))}
               </select>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={m.searchPlaceholder}
-                className="flex-1 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-xs text-slate-200 outline-none placeholder:text-slate-500 focus:border-cyan-400/50"
-              />
-              <span className="shrink-0 font-mono text-[11px] text-slate-500">
-                {filtered.length}/{MECHANISMS.length}
+              <div className="relative flex-1">
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  type="search"
+                  placeholder={m.searchPlaceholder}
+                  aria-label={m.searchPlaceholder}
+                  className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-xs text-slate-200 outline-none placeholder:text-slate-500 focus:border-cyan-400/50"
+                />
+                {query && (
+                  <button
+                    onClick={() => setQuery("")}
+                    aria-label={m.clearFilters}
+                    className="absolute inset-y-0 end-0 me-1.5 rounded px-2 text-slate-500 hover:text-cyan-200"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              <span
+                className="shrink-0 font-mono text-[11px] text-slate-500"
+                aria-live="polite"
+              >
+                {fmt(m.filteredCount, { count: filtered.length, total: MECHANISMS.length })}
               </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={expandAll}
+                  disabled={allOpen}
+                  className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-cyan-400/40 hover:text-cyan-200 disabled:opacity-40"
+                >
+                  {m.expandAll}
+                </button>
+                <button
+                  onClick={collapseAll}
+                  disabled={!anyOpen}
+                  className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-cyan-400/40 hover:text-cyan-200 disabled:opacity-40"
+                >
+                  {m.collapseAll}
+                </button>
+              </div>
             </div>
           </GlassCard>
         </Reveal>
@@ -144,10 +214,23 @@ export function MechanismClient() {
       {/* cards grouped by topic */}
       <Container className="pb-20">
         {grouped.length === 0 ? (
-          <p className="py-10 text-center text-sm text-slate-500">{m.noResults}</p>
+          <div className="py-10 text-center">
+            <p className="text-sm text-slate-400">{m.noResults}</p>
+            {hasFilters && (
+              <>
+                <p className="mt-1.5 text-xs text-slate-500">{m.noResultsHint}</p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-4 rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-xs font-medium text-cyan-200 transition hover:bg-cyan-400/20"
+                >
+                  {m.clearFilters}
+                </button>
+              </>
+            )}
+          </div>
         ) : (
           grouped.map((g) => (
-            <section key={g.topic} className="mb-12">
+            <section key={g.topic} className="mb-12 scroll-mt-28">
               <h2 className="mb-5 flex items-baseline gap-3 font-display text-xl font-bold text-white">
                 {TOPIC_LABEL[g.topic][locale as "en" | "fa"]}
                 <span className="font-mono text-xs font-normal text-slate-500">
@@ -155,13 +238,12 @@ export function MechanismClient() {
                 </span>
               </h2>
               <div className="grid gap-5 lg:grid-cols-2">
-                {g.items.map((mech, i) => (
+                {g.items.map((mech) => (
                   <MechanismCard
                     key={mech.id}
                     mech={mech}
-                    index={i}
-                    open={openId === mech.id}
-                    onToggle={() => setOpenId(openId === mech.id ? null : mech.id)}
+                    open={openIds.has(mech.id)}
+                    onToggle={() => toggleOne(mech.id)}
                     locale={locale}
                     m={m}
                   />
@@ -183,7 +265,6 @@ function MechanismCard({
   m,
 }: {
   mech: Mechanism;
-  index: number;
   open: boolean;
   onToggle: () => void;
   locale: string;
@@ -196,9 +277,10 @@ function MechanismCard({
     relatedLabel: string;
     openLab: string;
     summaryLabel: string;
+    expand: string;
+    collapse: string;
   };
 }) {
-  const { t } = useI18n();
   const title = mechTitle(mech, locale);
   const summary = mechSummary(mech, locale);
   const steps = mechSteps(mech, locale);
@@ -207,6 +289,8 @@ function MechanismCard({
   const source = mechSource(mech, locale);
   const rtl = locale === "fa";
   const eqDir = "ltr"; // equations always LTR
+  const sectionId = `mech-${mech.id}`;
+  const titleId = `mech-title-${mech.id}`;
 
   return (
     <Reveal delay={(mech.id.length % 3) * 60}>
@@ -230,8 +314,13 @@ function MechanismCard({
           ))}
         </div>
 
-        <button onClick={onToggle} className="text-start">
-          <h3 className="font-display text-lg font-bold text-white transition-colors hover:text-cyan-200">
+        <button
+          onClick={onToggle}
+          aria-expanded={open}
+          aria-controls={sectionId}
+          className="text-start"
+        >
+          <h3 id={titleId} className="font-display text-lg font-bold text-white transition-colors hover:text-cyan-200">
             {title}
           </h3>
         </button>
@@ -254,7 +343,7 @@ function MechanismCard({
         </div>
 
         {open && (
-          <div className="mt-5 space-y-5">
+          <div id={sectionId} className="mt-5 space-y-5">
             {/* steps */}
             <div>
               <h4 className="mb-2.5 font-mono text-[11px] uppercase tracking-widest text-slate-500">
@@ -334,9 +423,11 @@ function MechanismCard({
             </span>
             <button
               onClick={onToggle}
+              aria-expanded={open}
+              aria-controls={sectionId}
               className="text-xs font-medium text-cyan-300 hover:text-cyan-200"
             >
-              {open ? "−" : "+"} {m.stepsLabel.split(" ")[0]}
+              {open ? "−" : "+"} {open ? m.collapse : m.expand}
             </button>
           </div>
         </div>

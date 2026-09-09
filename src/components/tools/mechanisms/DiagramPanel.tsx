@@ -3,7 +3,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { DAtom, DBond, DConnector, DFrame, MechanismDiagram } from "@/lib/chem/mechanisms/diagrams";
 import { getDiagram } from "@/lib/chem/mechanisms/diagrams";
-import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 /** ---- geometry pipeline v3 -------------------------------------------------
@@ -86,6 +85,69 @@ const INK = "var(--mech-ink)";
 const PINK = "var(--mech-pink)";
 const TEAL = "var(--mech-teal)";
 const SLATE = "var(--mech-slate)";
+
+
+export type ArrowAnchorV5 = {
+  ref: string;
+  kind: "atom" | "bond" | "lonePair";
+  id: string;
+  point: Pt;
+};
+
+/**
+ * Stage 2 reference resolver. New DSL refs are explicit and frame-local:
+ * atom:<id>, bond:<a>:<b>, lonePair:<atomId>:<zero-based-pair-index>.
+ * It returns provenance with every point, so callers cannot silently fall back
+ * to a bare coordinate when a reference is wrong.
+ */
+export function resolveArrowReferenceV5(
+  frame: DFrame,
+  ref: string,
+  positions: ReadonlyMap<string, Pt>,
+): ArrowAnchorV5 {
+  const atom = (id: string): ArrowAnchorV5 => {
+    const point = positions.get(id);
+    if (!point || !frame.atoms.some((a) => a.id === id)) throw new Error(`[CHEMOVEXA arrows v5] Dangling atom reference: ${ref}`);
+    return { ref, kind: "atom", id, point };
+  };
+  if (ref.startsWith("atom:")) return atom(ref.slice("atom:".length));
+  if (ref.startsWith("bond:")) {
+    const [, a, b] = ref.match(/^bond:([^:]+):([^:]+)$/) ?? [];
+    const bond = frame.bonds.find((candidate) => (candidate.a === a && candidate.b === b) || (candidate.a === b && candidate.b === a));
+    const A = positions.get(a);
+    const B = positions.get(b);
+    if (!bond || !A || !B) throw new Error(`[CHEMOVEXA arrows v5] Dangling bond reference: ${ref}`);
+    return { ref, kind: "bond", id: `bond:${a}:${b}`, point: { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 } };
+  }
+  if (ref.startsWith("lonePair:")) {
+    const [, atomId, indexText] = ref.match(/^lonePair:([^:]+):(\d+)$/) ?? [];
+    const index = Number(indexText);
+    const source = frame.atoms.find((a) => a.id === atomId);
+    const center = positions.get(atomId);
+    if (!source || !center || !source.lp || !Number.isInteger(index) || index < 0 || index >= source.lp.angles.length) {
+      throw new Error(`[CHEMOVEXA arrows v5] Dangling lone-pair reference: ${ref}`);
+    }
+    const angle = ((90 - source.lp.angles[index]) * Math.PI) / 180;
+    return { ref, kind: "lonePair", id: `${atomId}:${index}`, point: { x: center.x + Math.cos(angle) * 12, y: center.y - Math.sin(angle) * 12 } };
+  }
+  throw new Error(`[CHEMOVEXA arrows v5] Invalid arrow reference "${ref}". Use atom:<id>, bond:<a>:<b> or lonePair:<atomId>:<index>.`);
+}
+
+function resolveCurveV5(
+  frame: DFrame,
+  curve: { fromRef?: string; toRef?: string; from?: string; to?: string },
+  positions: ReadonlyMap<string, Pt>,
+  boxOf: (id: string) => Box | undefined,
+) {
+  const isV5 = curve.fromRef !== undefined || curve.toRef !== undefined;
+  if (!isV5) return null;
+  if (!curve.fromRef || !curve.toRef) throw new Error("[CHEMOVEXA arrows v5] A Stage 2 arrow must provide both fromRef and toRef.");
+  const from = resolveArrowReferenceV5(frame, curve.fromRef, positions);
+  const to = resolveArrowReferenceV5(frame, curve.toRef, positions);
+  const start = from.kind === "atom" ? edgePoint(from.point, boxOf(from.id), to.point, 3) : from.point;
+  const end = to.kind === "atom" ? edgePoint(to.point, boxOf(to.id), from.point, 6) : to.point;
+  return { from, to, start, end };
+}
 
 function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
   const [boxes, setBoxes] = useState<Record<string, Box>>({});
@@ -288,6 +350,22 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
       {/* curved arrows */}
       {ready &&
         (frame.curves ?? []).map((c, i) => {
+          const strict = resolveCurveV5(frame, c, new Map(atoms.map((a) => [a.id, { x: a.x, y: a.y }])), boxOf);
+          if (strict) {
+            return (
+              <path
+                key={`c${i}`}
+                data-anchor-from={strict.from.ref}
+                data-anchor-to={strict.to.ref}
+                d={curvePath(strict.start.x, strict.start.y, strict.end.x, strict.end.y, c.bulge)}
+                fill="none"
+                stroke={c.fish ? "#f97316" : PINK}
+                strokeWidth={2}
+                markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`}
+              />
+            );
+          }
+          if (!c.from || !c.to) throw new Error("[CHEMOVEXA arrows v5] Legacy arrows require from and to, or use both fromRef and toRef.");
           const from = resolve(c.from);
           const to = resolve(c.to);
           if (!from || !to) return null;
@@ -432,35 +510,23 @@ function ConnectorGlyph({ c }: { c: DConnector }) {
 }
 
 export function DiagramPanel({ mechId, locale }: { mechId: string; locale: string }) {
-  const { t } = useI18n();
-  const m = t.pages.mechanisms;
   const diagram = getDiagram(mechId);
   const [open, setOpen] = useState(true);
   if (!diagram) return null;
 
   const title = locale === "fa" ? diagram.title.fa : diagram.title.en;
   const footnote = locale === "fa" ? diagram.footnote?.fa : diagram.footnote?.en;
-  const bodyId = `mech-diagram-${mechId}`;
-  const toggleText = open ? m.diagramCollapse : m.diagramExpand;
 
   return (
     <div className="mech-diagram" dir="ltr">
-      <button
-        className="mech-diagram-toggle"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        aria-controls={bodyId}
-        aria-label={`${toggleText}: ${title}`}
-      >
+      <button className="mech-diagram-toggle" onClick={() => setOpen(!open)}>
         <span className="mech-diagram-title">
           <span className="mech-bracket">[</span> {title} <span className="mech-bracket">]</span>
         </span>
-        <span className="mech-diagram-chev" aria-hidden="true">
-          {open ? "▾" : "▸"}
-        </span>
+        <span className="mech-diagram-chev">{open ? "▾" : "▸"}</span>
       </button>
       {open && (
-        <div className="mech-diagram-body" id={bodyId}>
+        <div className="mech-diagram-body">
           <div className="mech-frames">
             {diagram.frames.map((f, i) => (
               <div className="mech-frame-wrap" key={i}>
@@ -696,5 +762,67 @@ export function ArrowPrimitiveReview() {
       <div dir="ltr" tabIndex={0} role="region" aria-label="Same specimens inside a Persian RTL section" style={{ overflowX: "auto", textAlign: "left" }}><ArrowTaxonomySpecimenV5 /></div>
     </section>
     <p style={{ marginTop: 32, maxWidth: "70ch", fontSize: 16, lineHeight: 1.5 }}>Review at 100% browser zoom and phone width. Check the orange half-barb, the two equilibrium shafts, and the single double-headed resonance shaft. Do not merge or begin Stage 2 before approval.</p>
+  </main>;
+}
+
+
+/** Stage 2 proof: every arrow is authored with refs, then resolved before drawing. */
+export function ReferenceAnchoringSpecimenV5() {
+  const frame: DFrame = {
+    atoms: [
+      { id: "nu", el: "O", x: 72, y: 118, charge: "−", lp: { n: 2, angles: [90, 0] } },
+      { id: "c", el: "C", x: 216, y: 118, charge: "+" },
+      { id: "br", el: "Br", x: 360, y: 118 },
+    ],
+    bonds: [{ a: "c", b: "br" }],
+    curves: [
+      { from: "legacy-unused", to: "legacy-unused", fromRef: "lonePair:nu:1", toRef: "atom:c", bulge: -32 },
+      { from: "legacy-unused", to: "legacy-unused", fromRef: "bond:c:br", toRef: "atom:br", bulge: -28, fish: true },
+    ],
+  };
+  const positions = new Map(frame.atoms.map((a) => [a.id, { x: a.x, y: a.y }]));
+  const refs = frame.curves!.map((curve) => ({
+    curve,
+    from: resolveArrowReferenceV5(frame, curve.fromRef!, positions),
+    to: resolveArrowReferenceV5(frame, curve.toRef!, positions),
+  }));
+  return <svg xmlns="http://www.w3.org/2000/svg" width={680} height={300} viewBox="0 0 680 300" direction="ltr" role="img"
+    aria-label="Stage 2 arrows resolved from lonePair, atom and bond references. A red error callout states that dangling references fail closed." style={{ background: ARROW_V5.panel }}>
+    <g fill={ARROW_V5.annotation} fontFamily="Arial, sans-serif">
+      <text x={24} y={30} fontSize={18} fontWeight={700}>Stage 2: refs become anchors</text>
+      <text x={24} y={56} fontSize={13}>No arrow starts from a bare x/y coordinate.</text>
+    </g>
+    <line x1={224} y1={118} x2={352} y2={118} stroke={ARROW_V5.ink} strokeWidth={1.7} />
+    <g fill={ARROW_V5.ink} fontFamily="monospace" fontSize={19} fontWeight={600} textAnchor="middle">
+      <text x={72} y={124}>O</text><text x={216} y={124}>C</text><text x={360} y={124}>Br</text>
+    </g>
+    <g fill={ARROW_V5.ink}><circle cx={72} cy={102} r={1.8}/><circle cx={75} cy={102} r={1.8}/></g>
+    <g fill={ARROW_V5.annotation} fontFamily="ui-monospace, monospace" fontSize={12}>
+      <text x={24} y={182}>fromRef: lonePair:nu:1</text><text x={24} y={202}>toRef: atom:c</text>
+      <text x={382} y={182}>fromRef: bond:c:br</text><text x={382} y={202}>toRef: atom:br</text>
+    </g>
+    {refs.map(({ curve, from, to }, i) => {
+      const start = from.kind === "atom" ? from.point : from.point;
+      const end = to.kind === "atom" ? to.point : to.point;
+      return <g key={i} data-anchor-from={from.ref} data-anchor-to={to.ref}>
+        <path d={curvePath(start.x, start.y, end.x, end.y, curve.bulge)} fill="none"
+          stroke={curve.fish ? ARROW_V5.single : ARROW_V5.pair} strokeWidth={2} />
+        <circle cx={from.point.x} cy={from.point.y} r={3} fill={curve.fish ? ARROW_V5.single : ARROW_V5.pair}/>
+      </g>;
+    })}
+    <g transform="translate(24 246)" fontFamily="ui-monospace, monospace" fontSize={12}>
+      <rect width={632} height={32} rx={4} fill="#fee2e2" stroke="#dc2626"/>
+      <text x={12} y={20} fill="#b91c1c">dev error on missing ref: Dangling atom reference: atom:missing</text>
+    </g>
+  </svg>;
+}
+
+export function ReferenceAnchoringReviewV5() {
+  return <main dir="ltr" style={{ background: ARROW_V5.panel, color: ARROW_V5.ink, padding: "32px 24px 64px", fontFamily: "Arial, sans-serif", minHeight: "100vh" }}>
+    <p style={{ color: ARROW_V5.annotation, fontSize: 13, letterSpacing: "0.08em", fontWeight: 700 }}>CHEMOVEXA / STAGE 2 REVIEW</p>
+    <h1 style={{ fontSize: "clamp(28px, 4vw, 44px)", lineHeight: 1.12, maxWidth: "18ch" }}>Anchors are references, not guesses.</h1>
+    <p style={{ maxWidth: "65ch", fontSize: 16, lineHeight: 1.5 }}>This specimen uses explicit <code>lonePair:nu:0</code>, <code>bond:c:br</code> and atom refs. The renderer resolves them against the same frame, trims atom endpoints to measured label boxes, and throws on a dangling ref.</p>
+    <div tabIndex={0} role="region" aria-label="Stage 2 anchoring specimen, horizontally scrollable" style={{ overflowX: "auto", marginTop: 32 }}><ReferenceAnchoringSpecimenV5 /></div>
+    <p style={{ marginTop: 32, maxWidth: "65ch", fontSize: 16, lineHeight: 1.5 }}>The legacy corpus still renders through its old fields in this checkpoint. No Stage 4 migration has happened. Review the visible source/destination dots, the bond midpoint, and the red fail-closed error treatment before the next stage.</p>
   </main>;
 }

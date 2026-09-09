@@ -1,6 +1,6 @@
-import { ArrowPrimitiveReview } from "@/components/tools/mechanisms/DiagramPanel";
+import { ReferenceAnchoringReviewV5 } from "@/components/tools/mechanisms/DiagramPanel";
 
-// Temporary branch-preview route.
+// Stage 2 review route. Existing mechanism pages remain on the legacy corpus fields.
 export default function ArrowReviewPage() {
-  return <ArrowPrimitiveReview />;
+  return <ReferenceAnchoringReviewV5 />;
 }

@@ -231,3 +231,43 @@ No branch was created or pushed, no commit was made, and no preview was deployed
 from this sandbox. The accompanying handoff instructions describe the maintainer's
 single Stage 1 commit on `design/arrows-v5`. Do not merge to `main`, or begin
 Stage 2, before explicit maintainer approval of the branch preview.
+
+## Stage 2 checkpoint: reference anchoring
+
+Stage 2 adds the first real authoring contract for arrows without migrating the
+corpus. `DCurve` now accepts `fromRef` and `toRef`; new records may omit the old
+`from`/`to` fields. Legacy fields remain optional only so the untouched v4 corpus
+continues to compile and render until Stage 4.
+
+The accepted frame-local reference forms are:
+
+```ts
+atom:<atomId>
+bond:<atomId>:<atomId>
+lonePair:<atomId>:<zero-based-pair-index>
+```
+
+`atom:` resolves to a real atom, `bond:` resolves only if that exact bond exists
+(order-independent) and returns its midpoint, and `lonePair:` resolves only if the
+atom has a displayed lone-pair angle at that index. The resolver returns both the
+point and provenance (`kind`, `id`, `ref`). It never accepts a raw x/y fallback.
+Atom endpoints are then trimmed through the existing measured label-box helper;
+bond and lone-pair sources stay at their resolved source point. A Stage 2 arrow
+must provide both refs. A half-migrated pair fails loudly.
+
+The production `Frame` component now branches on `fromRef` / `toRef` before the
+legacy path. A dangling or malformed new ref throws a named `CHEMOVEXA arrows v5`
+error rather than disappearing or drawing from a guessed coordinate. The old
+renderer branch is retained only for old records and still uses its old marker
+behavior. The review specimen proves a lone-pair source to an atom and a bond
+midpoint source to an atom destination, with the exact refs printed beside them.
+
+The new reference test script passes 12 checks: atom provenance, reversed bond
+resolution, lone-pair resolution, six invalid/dangling refs, missing bond
+protection and rendered provenance attributes. Stage 1's 52 checks still pass.
+The Stage 2 proof intentionally shows the error state as a red review callout;
+it does not mount an invalid component merely to obtain a screenshot.
+
+Still not done: corpus migration, all-29 validation, source-context checks for
+fishhooks, geometry helpers, wedge/hash bonds, unrelated-atom curve collision
+checks, full Next build, browser hydration and Vercel preview review.

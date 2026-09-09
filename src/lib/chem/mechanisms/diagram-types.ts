@@ -31,8 +31,12 @@ export type DBond = {
 
 /** curved electron-push arrow. `from`/`to`: atom id, or bond id "bond:<a>:<b>" (midpoint). */
 export type DCurve = {
-  from: string;
-  to: string;
+  /** Stage 2 checked references. New arrows must use these instead of coordinates. */
+  fromRef?: string;
+  toRef?: string;
+  /** @deprecated Stage 1/legacy corpus fields. Kept until migration stage. */
+  from?: string;
+  to?: string;
   /** bulge side & magnitude: +1/-1 picks perpendicular side; default 30 */
   bulge?: number;
   /** fishhook (single-headed, radical) */

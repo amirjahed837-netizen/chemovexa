@@ -271,3 +271,62 @@ it does not mount an invalid component merely to obtain a screenshot.
 Still not done: corpus migration, all-29 validation, source-context checks for
 fishhooks, geometry helpers, wedge/hash bonds, unrelated-atom curve collision
 checks, full Next build, browser hydration and Vercel preview review.
+
+## Task A: animated electron-pushing arrows
+
+Scope: the production `Frame` renderer in `DiagramPanel.tsx` (both the Stage 2
+`fromRef`/`toRef` path and the legacy `from`/`to` path). The Stage 1 primitives
+and review specimens below the isolation boundary are unchanged and static.
+No mechanism data, marker geometry, bulge geometry, colours or i18n keys changed.
+
+### Render structure
+
+Each curved arrow is now a `<g class="mech-curve">` containing:
+
+1. `path.mech-curve-shaft`: the stroked quadratic with `pathLength="1"` and no
+   marker. Stage 2 provenance (`data-anchor-from` / `data-anchor-to`) stays on
+   this element.
+2. `g.mech-curve-head > path`: the *same* `d` with `stroke="none"` and the
+   existing `mech-arrow` / `mech-fish` marker. Only the marker paints, so the head
+   sits exactly where the static renderer put it. Opacity is animated on the
+   wrapping group so it reliably applies to the marker.
+
+### Timeline
+
+| Phase | Property | Duration | Start |
+| --- | --- | --- | --- |
+| Shaft draw (source to sink) | `stroke-dashoffset` 1 to 0 | 600 ms, `cubic-bezier(0.4, 0, 0.2, 1)` | `i * 700 ms` |
+| Head fade-in | `opacity` 0 to 1 | 180 ms, ease-out | `i * 700 ms + 600 ms` |
+
+`i` is the arrow's index in `frame.curves`, so arrows play in authored order.
+The path starts at its `M` point, which is always the electron source, so the
+draw direction follows electron flow in every locale (the panel is LTR-locked).
+
+### Gating
+
+* Arrows only mount once the `getBBox` gate (`ready`) is open, as before.
+* The SVG carries `data-play="false"` until an `IntersectionObserver`
+  (threshold 0.25) reports the frame visible; then `data-play="true"` and the
+  animation plays once. Without `IntersectionObserver`, it plays immediately.
+* While paused, `animation-fill-mode: both` holds the first keyframe, so the
+  arrow is hidden rather than flashing fully drawn and then restarting.
+* Collapsing and re-opening the diagram remounts frames and replays the arrows.
+
+### Motion, layout and print safety
+
+* Only `stroke-dashoffset` and `opacity` animate: no transform, size or
+  viewBox change. CLS contribution is 0 by construction and no new overflow can
+  occur at 360 px.
+* `prefers-reduced-motion: reduce` sets `animation: none !important` and shows
+  arrows fully drawn. The global 0.01 ms duration rule alone is not enough,
+  because animation delays would still hide later arrows.
+* `@media print` does the same, so printed sheets never capture a half-drawn
+  or paused arrow.
+
+### Verification status
+
+No local build or browser run was possible for this change. CI (typecheck,
+both arrow validators, `next build`) runs on the PR. Browser-only checks still
+needed on the preview: draw direction on legacy and v5 arrows, head timing,
+reduced-motion (DevTools rendering emulation), 360 px width, CLS in Lighthouse,
+FA locale and print preview.

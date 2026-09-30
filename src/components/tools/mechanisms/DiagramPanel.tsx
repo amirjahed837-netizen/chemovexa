@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { DAtom, DBond, DConnector, DFrame, MechanismDiagram } from "@/lib/chem/mechanisms/diagrams";
 import { getDiagram } from "@/lib/chem/mechanisms/diagrams";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,13 @@ import { cn } from "@/lib/utils";
 
 const BOND_LEN = 72; // target visual length for every bond
 const FONT = 14;
+
+/**
+ * Task A: electron-arrow animation. Arrow i starts drawing at i * ARROW_STAGGER_MS.
+ * Shaft duration (600 ms) and head fade (180 ms, starting at +600 ms) live in
+ * globals.css under "animated electron arrows". Paint-only: no geometry changes.
+ */
+const ARROW_STAGGER_MS = 700;
 
 type Pt = { x: number; y: number };
 type Box = { w: number; h: number };
@@ -152,6 +159,10 @@ function resolveCurveV5(
 function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
   const [boxes, setBoxes] = useState<Record<string, Box>>({});
   const textRefs = useRef<Map<string, SVGTextElement>>(new Map());
+  const svgRef = useRef<SVGSVGElement>(null);
+  // Task A: arrows stay paused (fully hidden, via CSS fill-mode) until the frame
+  // is measured (`ready`) AND scrolled into view; then the draw-in plays once.
+  const [play, setPlay] = useState(false);
 
   const layout = useMemo(() => {
     const pos = relax(frame.atoms, frame.bonds);
@@ -278,12 +289,37 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
 
   const ready = frame.bonds.every((b) => boxOf(b.a) && boxOf(b.b));
 
+  // Task A: start the one-shot arrow animation only after the getBBox gate is
+  // open and the frame is visible. Without IntersectionObserver, play at once.
+  useEffect(() => {
+    if (!ready || play) return;
+    const el = svgRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setPlay(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setPlay(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ready, play]);
+
   const captionText = frame.caption ? (locale === "fa" ? frame.caption.fa : frame.caption.en) : null;
 
   return (
     <svg
+      ref={svgRef}
       viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
       className="mech-frame"
+      data-play={play ? "true" : "false"}
       style={{ maxHeight: 250 }}
       role="img"
     >
@@ -347,43 +383,53 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
           );
         })}
 
-      {/* curved arrows */}
+      {/* curved arrows (Task A): the shaft draws from electron source to sink,
+          then the head group fades in. Geometry is identical to the static
+          renderer; only stroke-dashoffset/opacity animate (see globals.css). */}
       {ready &&
         (frame.curves ?? []).map((c, i) => {
           const strict = resolveCurveV5(frame, c, new Map(atoms.map((a) => [a.id, { x: a.x, y: a.y }])), boxOf);
+          let d: string;
+          let stroke: string;
+          let strokeWidth: number;
           if (strict) {
-            return (
-              <path
-                key={`c${i}`}
-                data-anchor-from={strict.from.ref}
-                data-anchor-to={strict.to.ref}
-                d={curvePath(strict.start.x, strict.start.y, strict.end.x, strict.end.y, c.bulge)}
-                fill="none"
-                stroke={c.fish ? "#f97316" : PINK}
-                strokeWidth={2}
-                markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`}
-              />
-            );
+            d = curvePath(strict.start.x, strict.start.y, strict.end.x, strict.end.y, c.bulge);
+            stroke = c.fish ? "#f97316" : PINK;
+            strokeWidth = 2;
+          } else {
+            if (!c.from || !c.to) throw new Error("[CHEMOVEXA arrows v5] Legacy arrows require from and to, or use both fromRef and toRef.");
+            const from = resolve(c.from);
+            const to = resolve(c.to);
+            if (!from || !to) return null;
+            const start = c.from.startsWith("bond:")
+              ? from
+              : edgePoint(from, boxOf(c.from), to, 3);
+            const end = c.to.startsWith("bond:")
+              ? to
+              : edgePoint(to, boxOf(c.to), from, 6);
+            d = curvePath(start.x, start.y, end.x, end.y, c.bulge);
+            stroke = PINK;
+            strokeWidth = 1.6;
           }
-          if (!c.from || !c.to) throw new Error("[CHEMOVEXA arrows v5] Legacy arrows require from and to, or use both fromRef and toRef.");
-          const from = resolve(c.from);
-          const to = resolve(c.to);
-          if (!from || !to) return null;
-          const start = c.from.startsWith("bond:")
-            ? from
-            : edgePoint(from, boxOf(c.from), to, 3);
-          const end = c.to.startsWith("bond:")
-            ? to
-            : edgePoint(to, boxOf(c.to), from, 6);
+          const timing = { "--mech-arrow-delay": `${i * ARROW_STAGGER_MS}ms` } as CSSProperties;
           return (
-            <path
-              key={`c${i}`}
-              d={curvePath(start.x, start.y, end.x, end.y, c.bulge)}
-              fill="none"
-              stroke={PINK}
-              strokeWidth={1.6}
-              markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`}
-            />
+            <g key={`c${i}`} className="mech-curve" style={timing}>
+              <path
+                className="mech-curve-shaft"
+                data-anchor-from={strict?.from.ref}
+                data-anchor-to={strict?.to.ref}
+                d={d}
+                pathLength={1}
+                fill="none"
+                stroke={stroke}
+                strokeWidth={strokeWidth}
+              />
+              {/* same path, no stroke: only its marker paints, so the head sits
+                  exactly where the static renderer put it */}
+              <g className="mech-curve-head">
+                <path d={d} fill="none" stroke="none" markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`} />
+              </g>
+            </g>
           );
         })}
 

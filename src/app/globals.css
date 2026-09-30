@@ -635,3 +635,71 @@ html[dir="rtl"] .mech-footnote {
   text-align: right;
 }
 
+/* ------------- Mechanism diagrams: animated electron arrows (Task A) ------------- */
+/* Paint-only: animates stroke-dashoffset (shaft) and opacity (head) and never
+   geometry, so the SVG box is identical before, during and after (CLS 0, no
+   overflow). Shafts use pathLength="1", so the dash math is size-independent.
+   The shaft draws from the path's M point (electron source) to its end (sink).
+   Timeline per arrow: shaft 0-600 ms, head fade 600-780 ms, offset by
+   --mech-arrow-delay (i * 700 ms, set inline in DiagramPanel.tsx).
+   `both` fill-mode keeps arrows hidden while paused / during their delay. */
+
+@keyframes mech-arrow-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes mech-arrow-head-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mech-frame .mech-curve-shaft {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: mech-arrow-draw 600ms cubic-bezier(0.4, 0, 0.2, 1) var(--mech-arrow-delay, 0ms) both;
+  animation-play-state: paused;
+}
+
+.mech-frame .mech-curve-head {
+  animation: mech-arrow-head-in 180ms ease-out calc(var(--mech-arrow-delay, 0ms) + 600ms) both;
+  animation-play-state: paused;
+}
+
+/* set by Frame once getBBox measurement is done AND the frame is in view */
+.mech-frame[data-play="true"] .mech-curve-shaft,
+.mech-frame[data-play="true"] .mech-curve-head {
+  animation-play-state: running;
+}
+
+/* Reduced motion: static, fully drawn arrows. `animation: none` is required
+   (not just the global 0.01ms duration) because delays would otherwise keep
+   later arrows hidden for several seconds. */
+@media (prefers-reduced-motion: reduce) {
+  .mech-frame .mech-curve-shaft,
+  .mech-frame .mech-curve-head {
+    animation: none !important;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Print: never capture a half-drawn or paused arrow. */
+@media print {
+  .mech-frame .mech-curve-shaft,
+  .mech-frame .mech-curve-head {
+    animation: none !important;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}

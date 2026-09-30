@@ -109,7 +109,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "Acid-catalyzed hydration",
       summary:
         "Water adds across the double bond with the acid as a true catalyst: protonation → carbocation → water attack → deprotonation. The proton that starts the cycle is regenerated at the end. Markovnikov orientation.",
-      general: "C=C + H2O --(H+)--> C–C(OH)(H)",
+      general: "C=C + H₂O →(H⁺) C–C(OH)(H)",
       steps: [
         { label: "Step 1 — protonation of the π bond", detail: "H₃O⁺ (or H₂SO₄) protonates the alkene; the more stable carbocation forms — Markovnikov." },
         { label: "Step 2 — water attacks", detail: "H₂O attacks the planar carbocation, giving an oxonium ion." },
@@ -126,7 +126,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "آبدوستی کاتالیز‌شده با اسید",
       summary:
         "آب با کمک اسید (که اینجا کاتالیزور واقعی است) روی پی دوگانه اضافه می‌شود: پروتون‌گیری ← کاتیون ← حملهٔ آب ← جدا شدن پروتون. پروتونی که چرخه را شروع کرد، آخر دوباره آزاد می‌شود. جهت‌گیری مارکوفنیکوف.",
-      general: "C=C + H2O --(H+)--> C–C(OH)(H)",
+      general: "C=C + H₂O →(H⁺) C–C(OH)(H)",
       steps: [
         { label: "مرحلهٔ ۱ — پروتون‌گیری از پی π", detail: "H₃O⁺ (یا H₂SO₄) به آلکن پروتون می‌دهد؛ پایدارترین کاتیون ساخته می‌شود — مارکوفنیکوف." },
         { label: "مرحلهٔ ۲ — حملهٔ آب", detail: "آب به کاتیون تخت حمله می‌کند و یون اکسونیوم می‌سازد." },
@@ -140,8 +140,8 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       conditions: "H₂SO₄/H₃PO₄ رقیق؛ صنعتی: بستر اسید فسفریک، حدود ۳۰۰ درجه و ۶۰–۷۰ اتمسفر برای اتن ← اتانول.",
     },
     examples: [
-      { name: { en: "Ethene → ethanol", fa: "اتن ← اتانول" }, equation: "CH2=CH2 + H2O -> H3PO4 -> CH3CH2OH" },
-      { name: { en: "Propene → 2-propanol", fa: "پروپن ← ۲-پروپانول" }, equation: "CH3-CH=CH2 + H2O -> CH3-CHOH-CH3" },
+      { name: { en: "Ethene → ethanol", fa: "اتن ← اتانول" }, equation: "CH₂=CH₂ + H₂O →(H₃PO₄) CH₃CH₂OH" },
+      { name: { en: "Propene → 2-propanol", fa: "پروپن ← ۲-پروپانول" }, equation: "CH₃-CH=CH₂ + H₂O → CH₃-CHOH-CH₃" },
     ],
     related: ["ch8-hydration"],
   },
@@ -158,7 +158,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "Syn dihydroxylation — cold dilute KMnO₄ (Baeyer/Wagner)",
       summary:
         "Permanganate adds two OH groups to the SAME face of the π bond through a cyclic manganate ester; Mn(VII) falls to Mn(IV) as brown MnO₂. Doubles as the Baeyer unsaturation test.",
-      general: "C=C + [O] + H2O -> HO–C–C–OH (syn) + MnO2",
+      general: "C=C + [O] + H₂O → HO–C–C–OH (syn) + MnO₂",
       steps: [
         { label: "Step 1 — manganate ester", detail: "The π bond attacks MnO₄⁻; a five-membered cyclic ester with two C–O–Mn bonds forms on one face of the double bond." },
         { label: "Step 2 — hydrolysis + reduction", detail: "Water breaks the Mn–O bonds; both OH groups stay on the same face (cis/syn). Mn(VII) is reduced to brown MnO₂ precipitate." },
@@ -174,7 +174,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "دی‌هیدروکسیل‌کردن سین — KMnO₄ سرد و رقیق (بایر/واگنر)",
       summary:
         "پرمنگنات از طریق استر حلقوی منگنات، دو گروه OH را به یک رویِ پی π اضافه می‌کند؛ Mn(VII) به Mn(IV) رسوب قهوه‌ای MnO₂ کاهش می‌یابد. هم‌زمان آزمون بایر برای شناسایی پی دوگانه است.",
-      general: "C=C + [O] + H2O -> HO–C–C–OH (سین) + MnO2",
+      general: "C=C + [O] + H₂O → HO–C–C–OH (سین) + MnO₂",
       steps: [
         { label: "مرحلهٔ ۱ — استر منگنات", detail: "پی π به MnO₄⁻ حمله می‌کند؛ استر حلقه‌ای پنج‌ضلعی با دو پی C–O–Mn روی یک رویِ پی دوگانه ساخته می‌شود." },
         { label: "مرحلهٔ ۲ — هیدرولیز و کاهش", detail: "آب پی‌های Mn–O را می‌شکند؛ هر دو OH روی همان روی می‌مانند (سین). Mn(VII) به رسوب قهوه‌ای MnO₂ کاهش می‌یابد." },
@@ -187,8 +187,8 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       conditions: "KMnO₄ سرد (۰–۲۵ درجه)، رقیق و کمی بازی. OsO₄ همان دی‌اول سین را ملایم‌تر (و گران‌تر) می‌دهد.",
     },
     examples: [
-      { name: { en: "Ethene → ethylene glycol", fa: "اتن ← اتیلن گلیکول" }, equation: "CH2=CH2 + KMnO4 + H2O -> CH2OH-CH2OH + MnO2 + KOH" },
-      { name: { en: "1-Butene → 1,2-butanediol", fa: "۱-بوتن ← ۱٬۲-بوتان‌دی‌اول" }, equation: "CH2=CH-CH2-CH3 + KMnO4 -> CH2OH-CHOH-CH2-CH3" },
+      { name: { en: "Ethene → ethylene glycol", fa: "اتن ← اتیلن گلیکول" }, equation: "CH₂=CH₂ + KMnO₄ + H₂O → CH₂OH-CH₂OH + MnO₂ + KOH" },
+      { name: { en: "1-Butene → 1,2-butanediol", fa: "۱-بوتن ← ۱٬۲-بوتان‌دی‌اول" }, equation: "CH₂=CH-CH₂-CH₃ + KMnO₄ → CH₂OH-CHOH-CH₂-CH₃" },
     ],
     related: ["ch8-kmn04-diol", "ch8-wagner-butene"],
   },
@@ -205,7 +205,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "Ozonolysis — cutting the C=C",
       summary:
         "Ozone adds to the double bond as a molozonide which rearranges to an ozonide; reductive workup then splits the C–C completely, turning each alkene carbon into a carbonyl. The molecule's skeleton is revealed by its fragments.",
-      general: "C=C + O3 -> (ozonide) -> 2 C=O",
+      general: "C=C + O₃ → (ozonide) → 2 C=O",
       steps: [
         { label: "Step 1 — cycloaddition", detail: "Ozone adds across the C=C in one concerted 1,3-dipolar step → unstable molozonide." },
         { label: "Step 2 — rearrangement", detail: "The molozonide fragments and recombines into the more stable ozonide." },
@@ -222,7 +222,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "اوزونولیز — بریدن پی C=C",
       summary:
         "اوزون به پی دوگانه اضافه می‌شود و مولواوزونید می‌سازد که به اوزونید پایدارتر بازآرایی می‌شود؛ سپس در کارِ بعدی، پی C–C کاملاً شکسته و هر کربن آلکنی به کربونیل تبدیل می‌شود. اسکلت مولکول از تکه‌هایش آشکار می‌شود.",
-      general: "C=C + O3 -> (اوزونید) -> 2 C=O",
+      general: "C=C + O₃ → (اوزونید) → 2 C=O",
       steps: [
         { label: "مرحلهٔ ۱ — سیکلودبیست", detail: "اوزون در یک گام هم‌زمان ۱٬۳-دوقطبی روی C=C می‌نشیند ← مولواوزونید ناپایدار." },
         { label: "مرحلهٔ ۲ — بازآرایی", detail: "مولواوزونید می‌شکند و دوباره به اوزونید پایدارتر ترکیب می‌شود." },
@@ -236,8 +236,8 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       conditions: "O₃ در CH₂Cl₂ در ۷۸- درجه، سپس کارِ کاهشی Zn/H₂O یا اکسایشی H₂O₂.",
     },
     examples: [
-      { name: { en: "Ethene → formaldehyde", fa: "اتن ← فرمالدهید" }, equation: "CH2=CH2 + O3 -> 2 HCHO" },
-      { name: { en: "2-Butene → acetaldehyde", fa: "۲-بوتن ← استالدهید" }, equation: "CH3-CH=CH-CH3 + O3 -> 2 CH3CHO" },
+      { name: { en: "Ethene → formaldehyde", fa: "اتن ← فرمالدهید" }, equation: "CH₂=CH₂ + O₃ → 2 HCHO" },
+      { name: { en: "2-Butene → acetaldehyde", fa: "۲-بوتن ← استالدهید" }, equation: "CH₃-CH=CH-CH₃ + O₃ → 2 CH₃CHO" },
     ],
     related: ["ch8-ozonolysis-ethene"],
   },
@@ -254,7 +254,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "Catalytic hydrogenation",
       summary:
         "H₂ and the alkene both adsorb onto a metal surface (Pd, Pt, Ni); the H–H bond splits into metal hydrides which are delivered to the same face of the C=C. Syn addition, no carbocation.",
-      general: "C=C + H2 --(Pd/C)--> C–C(H)(H)",
+      general: "C=C + H₂ →(Pd/C) C–C(H)(H)",
       steps: [
         { label: "Step 1 — adsorption", detail: "Both π bond and H₂ stick to the metal surface, weakening their own bonds." },
         { label: "Step 2 — surface delivery", detail: "Two surface hydrogens are handed to the two alkene carbons from the same face (syn) as the C=C becomes C–C." },
@@ -271,7 +271,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "هیدروژن‌دار کردن کاتالیزی",
       summary:
         "H₂ و آلکن هر دو روی سطح فلز (Pd، Pt، Ni) جذب می‌شوند؛ پی H–H روی سطح به هیدریدهای فلزی تبدیل و از یک روی به C=C تحویل داده می‌شود. افزایش سین و بدون کاتیون.",
-      general: "C=C + H2 --(Pd/C)--> C–C(H)(H)",
+      general: "C=C + H₂ →(Pd/C) C–C(H)(H)",
       steps: [
         { label: "مرحلهٔ ۱ — جذب سطحی", detail: "هم پی π و هم H₂ به سطح فلز می‌چسبند و پی‌های خودشان سست می‌شود." },
         { label: "مرحلهٔ ۲ — تحویل سطحی", detail: "دو هیدروژنِ سطحی از یک روی به دو کربن آلکن داده می‌شوند (سین) و C=C به C–C تبدیل می‌شود." },
@@ -285,8 +285,8 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       conditions: "Pd/C، PtO₂ یا نیکل رانی؛ برای بیشتر آلکن‌ها ۱ اتمسفر H₂؛ برای آلکین‌ها و آروماتیک‌ها دما/فشار بیشتر.",
     },
     examples: [
-      { name: { en: "Ethene → ethane", fa: "اتن ← اتان" }, equation: "CH2=CH2 + H2 -> Pd/C -> CH3-CH3" },
-      { name: { en: "Ethyne + Lindlar → cis-ethene", fa: "اتین + لیندلر ← سیس-اتن" }, equation: "HC≡CH + H2 -> Lindlar -> CH2=CH2 (cis)" },
+      { name: { en: "Ethene → ethane", fa: "اتن ← اتان" }, equation: "CH₂=CH₂ + H₂ →(Pd/C) CH₃-CH₃" },
+      { name: { en: "Ethyne + Lindlar → cis-ethene", fa: "اتین + لیندلر ← سیس-اتن" }, equation: "HC≡CH + H₂ →(Lindlar) CH₂=CH₂ (cis)" },
     ],
     related: ["ch7-hydrogenation", "ch8-alkyne-hydrogenation"],
   },
@@ -303,7 +303,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "Radical addition of HBr (peroxide effect)",
       summary:
         "With peroxides, HBr adds by a radical chain instead of ions. The Br· radical adds to the alkene first, building the MORE stable carbon radical — which puts Br on the less substituted carbon: anti-Markovnikov.",
-      general: "C=C + HBr --(ROOR)--> anti-Markovnikov bromide",
+      general: "C=C + HBr →(ROOR) anti-Markovnikov bromide",
       steps: [
         { label: "Initiation", detail: "RO–OR splits homolytically (heat/light) → RO· which abstracts H from HBr → Br·." },
         { label: "Propagation 1", detail: "Br· adds to the alkene carbon so that the MORE stable (more substituted) radical forms — Br ends up on the less substituted carbon." },
@@ -321,7 +321,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "افزایش رادیکالی HBr (اثر پراکسید)",
       summary:
         "در حضور پراکسیدها، HBr با زنجیرهٔ رادیکالی (نه یونی) اضافه می‌شود. ابتدا رادیکال Br· به آلکن اضافه می‌شود و رادیکال کربنی پایدارتر می‌سازد — پس بروم روی کربن کم‌جانشین‌تر می‌نشیند: پاد-مارکوفنیکوف.",
-      general: "C=C + HBr --(ROOR)--> برومید پاد-مارکوفنیکوف",
+      general: "C=C + HBr →(ROOR) برومید پاد-مارکوفنیکوف",
       steps: [
         { label: "شروع", detail: "RO–OR با گرما/نور همگن می‌شکند ← RO· که از HBr پروتون می‌رباید ← Br·." },
         { label: "رشد ۱", detail: "Br· به کربنی از آلکن می‌نشیند که رادیکال جای‌گرفته‌تر (پایدارتر) بسازد — پس بروم روی کربن کم‌جانشین می‌ماند." },
@@ -336,7 +336,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       conditions: "HBr + پراکسید (ROOR)، نور یا گرما؛ خشک.",
     },
     examples: [
-      { name: { en: "Propene + HBr/ROOR", fa: "پروپن + HBr/ROOR" }, equation: "CH3-CH=CH2 + HBr -> ROOR -> CH3-CH2-CH2Br" },
+      { name: { en: "Propene + HBr/ROOR", fa: "پروپن + HBr/ROOR" }, equation: "CH₃-CH=CH₂ + HBr →(ROOR) CH₃-CH₂-CH₂Br" },
     ],
     related: [],
   },
@@ -353,7 +353,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "Hydroboration–oxidation",
       summary:
         "BH₃ adds H and BH₂ across the C=C in one concerted four-center step (syn, no carbocation); oxidation with H₂O₂/OH⁻ replaces B by OH. Net: anti-Markovnikov alcohol.",
-      general: "C=C + BH3; H2O2/OH- -> anti-Markovnikov alcohol",
+      general: "C=C + BH₃; H₂O₂/OH⁻ → anti-Markovnikov alcohol",
       steps: [
         { label: "Step 1 — concerted hydroboration", detail: "B (electrophile) and H deliver simultaneously through a four-membered transition state. B goes to the LESS substituted carbon (sterics + electronics); H and B add syn." },
         { label: "Step 2 — oxidation", detail: "HOO⁻ attacks boron; a 1,2-alkyl migration moves the alkyl from B to O; hydrolysis releases the alcohol, retaining configuration." },
@@ -369,7 +369,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "هیدروبوراسیون–اکسایش",
       summary:
         "BH₃ در یک گام هم‌زمان چهارمرکزی (سین و بدون کاتیون) H و BH₂ روی C=C می‌گذارد؛ سپس اکسایش با H₂O₂/OH⁻ بور را به OH تبدیل می‌کند. حاصل: الکل پاد-مارکوفنیکوف.",
-      general: "C=C + BH3; H2O2/OH- -> الکل پاد-مارکوفنیکوف",
+      general: "C=C + BH₃; H₂O₂/OH⁻ → الکل پاد-مارکوفنیکوف",
       steps: [
         { label: "مرحلهٔ ۱ — هیدروبوراسیون هم‌زمان", detail: "بور (الکترون‌خواه) و هیدروژن هم‌زمان از حالت گذار چهارجانبه اضافه می‌شوند. بور روی کربن کم‌جانشین‌تر می‌نشیند (عوامل فضایی + الکترونی)؛ H و B سین اضافه می‌شوند." },
         { label: "مرحلهٔ ۲ — اکسایش", detail: "HOO⁻ به بور حمله می‌کند؛ مهاجرت ۱٬۲-آلکیلی گروه آلکیل را از B به O منتقل می‌کند و هیدرولیز، الکل را با حفظ پیکربندی آزاد می‌کند." },
@@ -382,7 +382,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       conditions: "BH₃·THF (یا 9-BBN) در ۰–۲۵ درجه؛ سپس H₂O₂ و NaOH.",
     },
     examples: [
-      { name: { en: "Propene → 1-propanol", fa: "پروپن ← ۱-پروپانول" }, equation: "CH3-CH=CH2 -> BH3; H2O2/OH- -> CH3-CH2-CH2OH" },
+      { name: { en: "Propene → 1-propanol", fa: "پروپن ← ۱-پروپانول" }, equation: "CH₃-CH=CH₂ → BH₃; H₂O₂/OH⁻ → CH₃-CH₂-CH₂OH" },
     ],
     related: [],
   },
@@ -399,7 +399,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "Alkyne additions — twice the π, twice the chemistry",
       summary:
         "Alkynes undergo the same electrophilic additions as alkenes but take TWO equivalents; with poisoned catalysts you can stop at the alkene. Terminal alkynes are also weak acids — their acetylides are carbon nucleophiles.",
-      general: "C≡C + 2 HX -> CX2–CHX2   |   R–C≡CH + NaNH2 -> R–C≡C⁻",
+      general: "C≡C + 2 HX → CX₂–CHX₂ | R–C≡CH + NaNH₂ → R–C≡C⁻",
       steps: [
         { label: "Step 1 — first addition", detail: "Electrophilic addition through a vinyl carbocation/halonium — slower than alkenes (vinyl cations are unstable). Markovnikov still governs HX additions." },
         { label: "Step 2 — second addition", detail: "The resulting alkene (or geminal dihalide after 2 X₂/HX) adds again. Controlling the stoichiometry controls the product." },
@@ -416,7 +416,7 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       title: "افزایش‌های آلکین — دو π، دو برابر شیمی",
       summary:
         "آلکین‌ها همان افزایش‌های الکترون‌خواهی آلکن‌ها را دارند اما دو هم‌ارز مصرف می‌کنند؛ با کاتالیزور مسموم می‌توان در مرحلهٔ آلکن توقف کرد. آلکین‌های انتهایی همچنین اسید ضعیف‌اند و استیلیدهایشان هسته‌خواه کربنی است.",
-      general: "C≡C + 2 HX -> CX2–CHX2   |   R–C≡CH + NaNH2 -> R–C≡C⁻",
+      general: "C≡C + 2 HX → CX₂–CHX₂ | R–C≡CH + NaNH₂ → R–C≡C⁻",
       steps: [
         { label: "مرحلهٔ ۱ — اولین افزایش", detail: "افزایش الکترون‌خواهی از مسیر کاتیون وینیل/هالونیوم — کندتر از آلکن‌ها (کاتیون وینیل ناپایدار است). در افزایش HX همچنان مارکوفنیکوف حاکم است." },
         { label: "مرحلهٔ ۲ — دومین افزایش", detail: "آلکن حاصل (یا دی‌هالید جوهری پس از ۲ X₂/HX) دوباره اضافه می‌شود. کنترل استوکیومتری، محصول را کنترل می‌کند." },
@@ -430,8 +430,8 @@ export const ALKENE_MECHANISMS: Mechanism[] = [
       conditions: "برای آب‌دوستی HgSO₄/H₂SO₄؛ برای هیدروژن‌دار کردن جزئی لیندلر Pd/BaSO₄/کینولین؛ برای استیلیدها NaNH₂ در NH₃ مایع.",
     },
     examples: [
-      { name: { en: "Ethyne + 2 HBr", fa: "اتین + 2 HBr" }, equation: "HC≡CH + 2 HBr -> CHBr2-CH3" },
-      { name: { en: "Acetylide alkylation", fa: "آلکیل‌دار کردن استیلید" }, equation: "HC≡C⁻ + CH3Br -> HC≡C-CH3" },
+      { name: { en: "Ethyne + 2 HBr", fa: "اتین + 2 HBr" }, equation: "HC≡CH + 2 HBr → CHBr₂-CH₃" },
+      { name: { en: "Acetylide alkylation", fa: "آلکیل‌دار کردن استیلید" }, equation: "HC≡C⁻ + CH₃Br → HC≡C-CH₃" },
     ],
     related: ["ch8-alkyne-hydrogenation"],
   },

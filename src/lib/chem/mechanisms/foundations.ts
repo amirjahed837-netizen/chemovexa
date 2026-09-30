@@ -15,7 +15,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "SN2 — bimolecular nucleophilic substitution",
       summary:
         "One concerted step: the nucleophile attacks from the side opposite the leaving group as the C–LG bond breaks. Rate = k[RX][Nu⁻]. At a stereocenter the configuration inverts (Walden inversion). Methyl/primary halides are fastest.",
-      general: "Nu⁻ + R–X -> R–Nu + X⁻  (one step)",
+      general: "Nu⁻ + R–X → R–Nu + X⁻ (one step)",
       steps: [
         { label: "Step 1 — the only step", detail: "Nu⁻ approaches the σ* C–X orbital from 180° (backside); the C–Nu bond forms exactly as C–X breaks. The transition state has both Nu and X partially bonded — pentacoordinate, trigonal-bipyramidal-ish." },
       ],
@@ -30,7 +30,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "SN2 — جانشینی هسته‌خواهی دوذره‌ای",
       summary:
         "یک گام هم‌زمان: هسته‌خواه از سمت مقابل گروه خارج‌شونده حمله می‌کند در حالی که پیوند C–LG می‌شکند. سرعت = k[RX][Nu⁻]. روی مرکز استری، پیکربندی وارونه می‌شود (وارونگی والدن). هالیدهای متیلی/نوع اول سریع‌ترین‌اند.",
-      general: "Nu⁻ + R–X -> R–Nu + X⁻  (یک مرحله)",
+      general: "Nu⁻ + R–X → R–Nu + X⁻ (یک مرحله)",
       steps: [
         { label: "مرحلهٔ ۱ — تنها مرحله", detail: "Nu⁻ از ۱۸۰ درجه (پشت) به اوربیتال σ* C–X نزدیک می‌شود؛ پیوند C–Nu دقیقاً هم‌زمان با شکستن C–X ساخته می‌شود. حالت گذار هم Nu و هم X نیمه‌پیوسته دارند — شبه‌پنج‌مختصات." },
       ],
@@ -42,8 +42,8 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       conditions: "هسته‌خواه قوی، زیرلایهٔ کم‌فضا، حلال قطبی آپروتیک، دمای پایین‌تر.",
     },
     examples: [
-      { name: { en: "Methyl bromide + OH⁻", fa: "برومید متیل + OH⁻" }, equation: "CH3Br + OH- -> CH3OH + Br-" },
-      { name: { en: "Williamson ether", fa: "اتر ویلیامسون" }, equation: "CH3Br + CH3ONa -> CH3OCH3 + NaBr" },
+      { name: { en: "Methyl bromide + OH⁻", fa: "برومید متیل + OH⁻" }, equation: "CH₃Br + OH⁻ → CH₃OH + Br⁻" },
+      { name: { en: "Williamson ether", fa: "اتر ویلیامسون" }, equation: "CH₃Br + CH₃ONa → CH₃OCH₃ + NaBr" },
     ],
     related: ["ch6-sn2", "ch11-ether-synthesis"],
   },
@@ -60,7 +60,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "SN1 — unimolecular nucleophilic substitution",
       summary:
         "Two steps: slow ionization to a planar carbocation (rate = k[RX] only), then fast capture by the nucleophile. Racemization at a stereocenter — either face can be attacked. Tertiary halides only.",
-      general: "R–X -> R⁺ + X⁻ ; R⁺ + Nu -> R–Nu",
+      general: "R–X → R⁺ + X⁻ ; R⁺ + Nu → R–Nu",
       steps: [
         { label: "Step 1 — ionization (slow)", detail: "The C–X bond breaks on its own; the leaving group takes both electrons → planar sp² carbocation + X⁻. Rate depends ONLY on [RX]." },
         { label: "Step 2 — capture (fast)", detail: "The nucleophile attacks either face of the planar cation; deprotonation if neutral. Slight excess of inversion because the departing X⁻ blocks its own side." },
@@ -76,7 +76,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "SN1 — جانشینی هسته‌خواهی یک‌ذره‌ای",
       summary:
         "دو مرحله: یونش کند به کاتیون تخت (سرعت فقط = k[RX]) و سپس شکار سریع توسط هسته‌خواه. روی مرکز استری راکی‌سازی می‌شود — حمله از هر دو سو ممکن است. فقط هالیدهای نوع سوم.",
-      general: "R–X -> R⁺ + X⁻ ; R⁺ + Nu -> R–Nu",
+      general: "R–X → R⁺ + X⁻ ; R⁺ + Nu → R–Nu",
       steps: [
         { label: "مرحلهٔ ۱ — یونش (کند)", detail: "پیوند C–X خودش می‌شکند؛ گروه خارج‌شونده هر دو الکترون را می‌برد ← کاتیون sp² تخت + X⁻. سرعت فقط به [RX] بستگی دارد." },
         { label: "مرحلهٔ ۲ — شکار (سریع)", detail: "هسته‌خواه از هر روی کاتیون تخت حمله می‌کند؛ اگر خنثی بود، دی‌پروتونه شدن. کمی فراوانی وارونگی چون X⁻ِ رفته، سمت خودش را سد می‌کند." },
@@ -89,7 +89,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       conditions: "زیرلایهٔ نوع سوم/بنزیلی، هسته‌خواه ضعیف کافی است، حلال قطبی پروتیک، گرما.",
     },
     examples: [
-      { name: { en: "t-BuBr solvolysis", fa: "انحلال‌پذیری t-BuBr" }, equation: "(CH3)3CBr + H2O -> (CH3)3COH + HBr" },
+      { name: { en: "t-BuBr solvolysis", fa: "انحلال‌پذیری t-BuBr" }, equation: "(CH₃)₃CBr + H₂O → (CH₃)₃COH + HBr" },
     ],
     related: ["ch6-sn1"],
   },
@@ -106,7 +106,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "E2 & E1 — making the double bond",
       summary:
         "E2: one concerted step — a base removes a β-H anti-periplanar to the leaving group as C=C forms and X⁻ departs. E1: the SN1 carbocation forms first, then a base takes the β-H. Zaitsev's rule: the more substituted alkene dominates.",
-      general: "R–CH2–CH(X)–R' + B⁻ -> R–CH=CH–R' + HB + X⁻",
+      general: "R–CH₂–CH(X)–R' + B⁻ → R–CH=CH–R' + HB + X⁻",
       steps: [
         { label: "E2 — concerted", detail: "Base, β-H, both carbons and X are coplanar (anti). C–H breaks as C=C forms as C–X breaks — all simultaneously. Rate = k[RX][base]. Bulky bases (t-BuO⁻) give the less substituted (Hofmann) alkene." },
         { label: "E1 — via carbocation", detail: "Ionization first (same as SN1 step 1); then any weak base removes a β-H → alkene. Competes with SN1 on the same cation; heat favors elimination." },
@@ -122,7 +122,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "E2 و E1 — ساختن پی دوگانه",
       summary:
         "E2: یک گام هم‌زمان — باز، هیدروژن β‌ای ضد-پری‌پلانار با گروه خارج‌شونده را برمی‌دارد در حالی که C=C ساخته و X⁻ خارج می‌شود. E1: اول کاتیون SN1 شکل می‌گیرد، بعد باز β-H را می‌گیرد. قاعدهٔ زایتسف: آلکن جای‌گرفته‌تر حاکم است.",
-      general: "R–CH2–CH(X)–R' + B⁻ -> R–CH=CH–R' + HB + X⁻",
+      general: "R–CH₂–CH(X)–R' + B⁻ → R–CH=CH–R' + HB + X⁻",
       steps: [
         { label: "E2 — هم‌زمان", detail: "باز، β-H، دو کربن و X همه‌در یک صفحه (ضد). C–H می‌شکند هم‌زمان با ساخته‌شدن C=C و شکستن C–X. سرعت = k[RX][باز]. بازهای حجیم (t-BuO⁻) آلکن کم‌جانشین (هوفمن) می‌دهند." },
         { label: "E1 — از مسیر کاتیون", detail: "اول یونش (مانند گام ۱ SN1)؛ سپس هر باز ضعیفی β-H را می‌گیرد ← آلکن. روی همان کاتیون با SN1 رقابت می‌کند؛ گرما حذف را ترجیح می‌دهد." },
@@ -135,8 +135,8 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       conditions: "E2: باز قوی (KOH/EtOH، t-BuOK). E1: اسید + گرما، الکل‌های نوع دوم/سوم.",
     },
     examples: [
-      { name: { en: "E2 with KOH", fa: "E2 با KOH" }, equation: "CH3CH2Br + KOH -> EtOH, heat -> CH2=CH2 + KBr + H2O" },
-      { name: { en: "Dehydration", fa: "آب‌گیری" }, equation: "CH3CH2OH -> H2SO4, 170C -> CH2=CH2 + H2O" },
+      { name: { en: "E2 with KOH", fa: "E2 با KOH" }, equation: "CH₃CH₂Br + KOH →(EtOH, heat) CH₂=CH₂ + KBr + H₂O" },
+      { name: { en: "Dehydration", fa: "آب‌گیری" }, equation: "CH₃CH₂OH →(H₂SO₄, 170 °C) CH₂=CH₂ + H₂O" },
     ],
     related: ["ch6-e2", "ch7-elimination-dehydrohalogenation", "ch11-alcohol-dehydration"],
   },
@@ -153,7 +153,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "Radical halogenation of alkanes",
       summary:
         "Three phases: INITIATION (hν splits X₂ → X·), PROPAGATION (X· abstracts H → R·; R· attacks X₂ → RX + X·), TERMINATION (two radicals combine). UV or heat drives it; product mixtures are statistical unless controlled.",
-      general: "CH4 + Cl2 -> hν -> CH3Cl + HCl",
+      general: "CH₄ + Cl₂ → hν → CH₃Cl + HCl",
       steps: [
         { label: "Initiation", detail: "Light (or 250–400 °C) homolytically splits Cl₂ into two Cl· radicals." },
         { label: "Propagation 1", detail: "Cl· abstracts an H: Cl· + CH₄ → HCl + CH₃· (endothermic for Cl, exothermic for Br — hence Br is more selective)." },
@@ -171,7 +171,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "هالوژن‌دار کردن رادیکالی آلکان‌ها",
       summary:
         "سه فاز: شروع (hν موجب شکست X₂ ← X·)، رشد (X· هیدروژن می‌رباید ← R·؛ R· به X₂ حمله می‌کند ← RX + X·)، پایان (ترکیب دو رادیکال). نور فرابنفش یا گرما محرک است؛ مخلوط محصول بدون کنترل آماری است.",
-      general: "CH4 + Cl2 -> hν -> CH3Cl + HCl",
+      general: "CH₄ + Cl₂ → hν → CH₃Cl + HCl",
       steps: [
         { label: "شروع", detail: "نور (یا ۲۵۰–۴۰۰ درجه) Cl₂ را همگن به دو رادیکال Cl· می‌شکند." },
         { label: "رشد ۱", detail: "Cl· هیدروژن می‌رباید: Cl· + CH₄ ← HCl + CH₃· (برای Cl گرماده‌درون‌ساز و برای Br گرماده — برای همین Br گزینش‌پذیرتر است)." },
@@ -186,7 +186,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       conditions: "Cl₂ یا Br₂، hν (فرابنفش) یا ۲۵۰–۴۰۰ درجه؛ فاز گاز یا محلول CCl₄.",
     },
     examples: [
-      { name: { en: "Methane chlorination", fa: "کلراسیون متان" }, equation: "CH4 + Cl2 -> hν -> CH3Cl + HCl" },
+      { name: { en: "Methane chlorination", fa: "کلراسیون متان" }, equation: "CH₄ + Cl₂ → hν → CH₃Cl + HCl" },
     ],
     related: ["ch10-methane-chlorination"],
   },
@@ -203,7 +203,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "Grignard reagents — formation & destruction",
       summary:
         "Mg metal inserts into the C–X bond (oxidative insertion) giving R–MgX, best read as R⁻ MgX⁺ — a carbanion equivalent, superb nucleophile and base. Water destroys it instantly (pKa 50 vs 16), which is why everything must be bone-dry.",
-      general: "R–Br + Mg -> Et2O -> R–MgBr ; R–MgBr + H2O -> R–H + Mg(OH)Br",
+      general: "R–Br + Mg →(Et₂O) R–MgBr ; R–MgBr + H₂O → R–H + Mg(OH)Br",
       steps: [
         { label: "Formation", detail: "Electrons flow from Mg into the σ* C–Br orbital; the metal inserts. Anhydrous ether solvates and stabilizes the reagent; iodine or 1,2-dibromoethane activates a lazy Mg surface." },
         { label: "Quench by water", detail: "R⁻ (the strongest base in the flask) rips H⁺ from water → alkane. Any O–H/N–H bond does the same — alcohols, amines, terminal alkynes." },
@@ -220,7 +220,7 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       title: "معرف‌های گرینیار — ساخت و نابودی",
       summary:
         "فلز منیزیم درون پیوند C–X می‌نشیند (درج اکسایشی) و R–MgX می‌دهد که بهتر است R⁻ MgX⁺ بخوانیم — هم‌ارز کربانیون، هسته‌خواه و بازِ عالی. آب آن را فوراً نابود می‌کند (pKa ۵۰ در برابر ۱۶)؛ برای همین همه‌چیز باید بی‌رطوبت باشد.",
-      general: "R–Br + Mg -> Et2O -> R–MgBr ; R–MgBr + H2O -> R–H + Mg(OH)Br",
+      general: "R–Br + Mg →(Et₂O) R–MgBr ; R–MgBr + H₂O → R–H + Mg(OH)Br",
       steps: [
         { label: "ساخت", detail: "الکترون‌ها از Mg به اوربیتال σ* C–Br جاری می‌شوند؛ فلز درج می‌شود. اتر بدون آب، معرف را حل و پایدار می‌کند؛ ید یا ۱٬۲-دی‌برومواتان سطح کسل‌شدهٔ Mg را بیدار می‌کند." },
         { label: "خاموشی با آب", detail: "R⁻ (قوی‌ترین باز ظرف) پروتون را از آب می‌رباید ← آلکان. هر پیوند O–H/N–H همین کار را می‌کند — الکل‌ها، آمین‌ها، آلکین‌های انتهایی." },
@@ -234,8 +234,8 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       conditions: "برادهٔ Mg، Et₂O/THF بدون آب، اتمسفر بی‌اثر؛ خاموشی با NH₄Cl آبی.",
     },
     examples: [
-      { name: { en: "Formation", fa: "ساخت" }, equation: "CH3Br + Mg -> Et2O -> CH3MgBr" },
-      { name: { en: "Destruction", fa: "نابودی" }, equation: "CH3MgBr + H2O -> CH4 + Mg(OH)Br" },
+      { name: { en: "Formation", fa: "ساخت" }, equation: "CH₃Br + Mg →(Et₂O) CH₃MgBr" },
+      { name: { en: "Destruction", fa: "نابودی" }, equation: "CH₃MgBr + H₂O → CH₄ + Mg(OH)Br" },
     ],
     related: ["ch12-grignard-methane", "ch12-grignard-h2o-quench"],
   },

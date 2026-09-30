@@ -15,7 +15,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "Nucleophilic acyl substitution — the master mechanism",
       summary:
         "Unlike aldehydes/ketones (addition), acyl derivatives undergo ADDITION then ELIMINATION: the nucleophile adds to C=O, then the leaving group departs, restoring the C=O. The reactivity ladder (acid chloride > anhydride > ester ~ acid > amide) decides who converts whom.",
-      general: "RCO–L + Nu⁻ -> R–C(O⁻)(Nu)(L) -> RCO–Nu + L⁻",
+      general: "RCO–L + Nu⁻ → R–C(O⁻)(Nu)(L) → RCO–Nu + L⁻",
       steps: [
         { label: "Step 1 — nucleophilic addition", detail: "Nu attacks the acyl carbon → tetrahedral intermediate (sp³ carbon with O⁻, Nu and L all attached). This is why the carbonyl must have a leaving group: aldehydes/ketones' H/R cannot leave, so they stop at addition." },
         { label: "Step 2 — elimination of L", detail: "The lone pair returns to rebuild C=O as L⁻ departs. Equilibrium position = leaving-group quality." },
@@ -32,7 +32,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "جانشینی هسته‌خواهی اسیدیل — سازوکار مادر",
       summary:
         "برخلاف آلدهید/کتون‌ها (افزایش)، مشتقات اسیدی افزودن و سپس حذف می‌کنند: هسته‌خواه به C=O اضافه می‌شود، بعد گروه خارج‌شونده می‌رود و C=O بازمی‌سازد. نردبان واکنش‌پذیری (اسید کلراید > انیدرید > استر ≈ اسید > آمید) تعیین می‌کند چه کسی چه کسی را تبدیل کند.",
-      general: "RCO–L + Nu⁻ -> R–C(O⁻)(Nu)(L) -> RCO–Nu + L⁻",
+      general: "RCO–L + Nu⁻ → R–C(O⁻)(Nu)(L) → RCO–Nu + L⁻",
       steps: [
         { label: "مرحلهٔ ۱ — افزودن هسته‌خواهی", detail: "Nu به کربن اسیدی حمله می‌کند ← میان‌واسط چهاروجهی (کربن sp³ با O⁻ و Nu و L). دلیل نیاز به گروه خارج‌شونده همین است: H/R آلدهید و کتون نمی‌توانند بروند، پس واکنش در «افزایش» می‌ماند." },
         { label: "مرحلهٔ ۲ — خروج L", detail: "زوج الکترونی برمی‌گردد و C=O بازسازی می‌شود در حالی که L⁻ خارج می‌شود. جای تعادل = کیفیت گروه خارج‌شونده." },
@@ -46,7 +46,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       conditions: "بسته به مشتق؛ اسیدها/استرها معمولاً کاتالیز اسید/باز و گرما می‌خواهند، کلرایدها فوری واکنش می‌دهند.",
     },
     examples: [
-      { name: { en: "Template", fa: "الگو" }, equation: "RCOCl + Nu -> RCONu + Cl" },
+      { name: { en: "Template", fa: "الگو" }, equation: "RCOCl + Nu → RCONu + Cl" },
     ],
     related: ["ch17-acid-chloride", "ch17-ester-from-acylchloride", "ch17-amide-formation", "ch17-anhydride-hydrolysis"],
   },
@@ -63,7 +63,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "Fischer esterification",
       summary:
         "Acid protonates the carbonyl, the alcohol attacks, a tetrahedral intermediate forms, and water leaves. Every step is reversible — excess alcohol (or water removal) pushes the equilibrium to the ester. The acid OH is replaced by OR.",
-      general: "RCOOH + R'OH <-> H2SO4 -> RCOOR' + H2O",
+      general: "RCOOH + R'OH <→(H₂SO₄) RCOOR' + H₂O",
       steps: [
         { label: "Step 1 — protonation", detail: "H⁺ on the carbonyl O makes the carbon far more electrophilic." },
         { label: "Step 2 — alcohol attack", detail: "R'OH attacks → tetrahedral intermediate; proton shuffling moves the charge around." },
@@ -80,7 +80,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "استری‌شدن فیشر",
       summary:
         "اسید کربونیل را پروتونه می‌کند، الکل حمله می‌کند، میان‌واسط چهاروجهی شکل می‌گیرد و آب خارج می‌شود. هر مرحله برگشت‌پذیر است — الکل اضافه (یا برداشتن آب) تعادل را به سمت استر می‌برد. گروه OH اسید با OR جایگزین می‌شود.",
-      general: "RCOOH + R'OH <-> H2SO4 -> RCOOR' + H2O",
+      general: "RCOOH + R'OH <→(H₂SO₄) RCOOR' + H₂O",
       steps: [
         { label: "مرحلهٔ ۱ — پروتون‌گیری", detail: "H⁺ روی اکسیژن کربونیل، الکترون‌خواهی کربن را بسیار بالا می‌برد." },
         { label: "مرحلهٔ ۲ — حملهٔ الکل", detail: "R'OH حمله می‌کند ← میان‌واسط چهاروجهی؛ جابه‌جایی پروتون‌ها بار را جابه‌جا می‌کند." },
@@ -94,7 +94,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       conditions: "H₂SO₄ غلیظ کاتالیزوری، بازگرداندن (رفلاکس)؛ برداشتن آب یا الکل اضافه.",
     },
     examples: [
-      { name: { en: "Ethyl acetate", fa: "اتیل استات" }, equation: "CH3COOH + C2H5OH <-> H2SO4 -> CH3COOC2H5 + H2O" },
+      { name: { en: "Ethyl acetate", fa: "اتیل استات" }, equation: "CH₃COOH + C₂H₅OH <→(H₂SO₄) CH₃COOC₂H₅ + H₂O" },
     ],
     related: ["ch11-esterification-fischer"],
   },
@@ -111,7 +111,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "Carboxylic acid → acid chloride (SOCl₂)",
       summary:
         "The acid's OH attacks SOCl₂ → chlorosulfite intermediate; Cl⁻ then displaces it while SO₂ and HCl escape as gases. Two gases leave = completion by Le Chatelier. Acid chlorides sit at the TOP of the reactivity ladder.",
-      general: "RCOOH + SOCl2 -> RCOCl + SO2 + HCl",
+      general: "RCOOH + SOCl₂ → RCOCl + SO₂ + HCl",
       steps: [
         { label: "Step 1 — chlorosulfite formation", detail: "The acid OH attacks sulfur of SOCl₂, Cl⁻ leaves; the chlorosulfite ester (R–C(=O)–O–S(=O)Cl) forms." },
         { label: "Step 2 — chloride displacement", detail: "Cl⁻ attacks the acyl carbon → tetrahedral intermediate; the chlorosulfite group departs and fragments to SO₂ + Cl⁻." },
@@ -128,7 +128,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "کربوکسیلیک اسید ← اسید کلراید (SOCl₂)",
       summary:
         "گروه OH اسید به SOCl₂ حمله می‌کند ← واسط کلروسولفیت؛ سپس Cl⁻ آن را جابه‌جا می‌کند در حالی که SO₂ و HCl به‌صورت گاز خارج می‌شوند. خروج دو گاز = کامل شدن واکنش با لو شاتلیه. اسید کلرایدها قلهٔ نردبان واکنش‌پذیری‌اند.",
-      general: "RCOOH + SOCl2 -> RCOCl + SO2 + HCl",
+      general: "RCOOH + SOCl₂ → RCOCl + SO₂ + HCl",
       steps: [
         { label: "مرحلهٔ ۱ — ساخت کلروسولفیت", detail: "گروه OH اسید به گوگرد SOCl₂ حمله می‌کند، Cl⁻ خارج می‌شود؛ استر کلروسولفیت (R–C(=O)–O–S(=O)Cl) ساخته می‌شود." },
         { label: "مرحلهٔ ۲ — جابه‌جایی با کلرید", detail: "Cl⁻ به کربن اسیدی حمله می‌کند ← واسط چهاروجهی؛ گروه کلروسولفیت خارج شده و به SO₂ + Cl⁻ می‌شکند." },
@@ -142,7 +142,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       conditions: "SOCl₂ خالص یا در اتر، رفلاکس؛ DMF کاتالیزوری اختیاری.",
     },
     examples: [
-      { name: { en: "Acetyl chloride", fa: "استیل کلراید" }, equation: "CH3COOH + SOCl2 -> CH3COCl + SO2 + HCl" },
+      { name: { en: "Acetyl chloride", fa: "استیل کلراید" }, equation: "CH₃COOH + SOCl₂ → CH₃COCl + SO₂ + HCl" },
     ],
     related: ["ch17-acid-chloride"],
   },
@@ -159,7 +159,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "Hydrolysis of esters & amides",
       summary:
         "Water (or OH⁻) attacks the acyl carbon; the alkoxy/amino group leaves and the acid (or carboxylate) forms. Acid hydrolysis is reversible; base hydrolysis (saponification) is not — the carboxylate anion repels nucleophiles.",
-      general: "RCOOR' + H2O <-> H+ -> RCOOH + R'OH   |   + OH- -> RCOO⁻ + R'OH",
+      general: "RCOOR' + H₂O <→ H⁺ → RCOOH + R'OH | + OH⁻ → RCOO⁻ + R'OH",
       steps: [
         { label: "Acid route", detail: "Protonate C=O → water attacks → tetrahedral intermediate → proton transfers → R'OH leaves → ester/acid equilibrium." },
         { label: "Base route (saponification)", detail: "OH⁻ attacks → tetrahedral intermediate → alkoxide leaves → carboxylic acid instantly deprotonated to carboxylate — which can't be attacked again, so the reaction is one-way." },
@@ -176,7 +176,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "هیدرولیز استرها و آمیدها",
       summary:
         "آب (یا OH⁻) به کربن اسیدی حمله می‌کند؛ گروه آلکوکسی/آمینو خارج می‌شود و اسید (یا کربوکسیلات) ساخته می‌شود. هیدرولیز اسیدی برگشت‌پذیر است؛ هیدرولیز بازی (صابونی‌شدن) نیست — آنیون کربوکسیلات هسته‌خواه‌ها را می‌راند.",
-      general: "RCOOR' + H2O <-> H+ -> RCOOH + R'OH   |   + OH- -> RCOO⁻ + R'OH",
+      general: "RCOOR' + H₂O <→ H⁺ → RCOOH + R'OH | + OH⁻ → RCOO⁻ + R'OH",
       steps: [
         { label: "مسیر اسیدی", detail: "پروتون‌گیری C=O ← حملهٔ آب ← واسط چهاروجهی ← انتقال پروتون‌ها ← خروج R'OH ← تعادل استر/اسید." },
         { label: "مسیر بازی (صابونی‌شدن)", detail: "OH⁻ حمله می‌کند ← واسط چهاروجهی ← خروج آلکوکسید ← اسید کربوکسیلیک فوراً به کربوکسیلات دی‌پروتونه می‌شود — که دیگر قابل حمله نیست؛ پس واکنش یک‌طرفه است." },
@@ -190,7 +190,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       conditions: "اسیدی: H₃O⁺، رفلاکس. بازی: NaOH/H₂O، رفلاکس. آمیدها: سخت‌تر و طولانی‌تر.",
     },
     examples: [
-      { name: { en: "Saponification", fa: "صابونی‌شدن" }, equation: "C17H35COOCH3 + NaOH -> C17H35COONa + CH3OH" },
+      { name: { en: "Saponification", fa: "صابونی‌شدن" }, equation: "C₁₇H₃₅COOCH₃ + NaOH → C₁₇H₃₅COONa + CH₃OH" },
     ],
     related: ["ch17-anhydride-hydrolysis", "ch23-saponification"],
   },
@@ -207,7 +207,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "Claisen condensation — ester enolate + ester",
       summary:
         "Ethoxide removes an α-H from an ester; the enolate attacks another ester's carbonyl; EtO⁻ leaves → β-keto ester. The LAST step (deprotonating the active methylene, pKa ~11) makes the whole reaction effectively irreversible — hence a FULL equivalent of base.",
-      general: "2 CH3COOC2H5 -> NaOEt -> CH3COCH2COOC2H5 + C2H5OH",
+      general: "2 CH₃COOC₂H₅ →(NaOEt) CH₃COCH₂COOC₂H₅ + C₂H₅OH",
       steps: [
         { label: "Step 1 — ester enolate", detail: "NaOEt (matching the ester's OR group!) removes an α-H → ester enolate." },
         { label: "Step 2 — acyl substitution", detail: "Enolate attacks another ester's C=O → tetrahedral intermediate → EtO⁻ expelled → β-keto ester." },
@@ -224,7 +224,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       title: "تراکم کلایزن — انولات استر + استر",
       summary:
         "اتوکساید یک α-H از استر می‌گیرد؛ انولات به کربونیل استر دیگر حمله می‌کند؛ EtO⁻ خارج می‌شود ← β-کتو استر. مرحلهٔ آخر (دی‌پروتونه کردن متیلن فعال با pKa حدود ۱۱) کل واکنش را عملاً برگشت‌ناپذیر می‌کند — برای همین بازِ «کامل» لازم است.",
-      general: "2 CH3COOC2H5 -> NaOEt -> CH3COCH2COOC2H5 + C2H5OH",
+      general: "2 CH₃COOC₂H₅ →(NaOEt) CH₃COCH₂COOC₂H₅ + C₂H₅OH",
       steps: [
         { label: "مرحلهٔ ۱ — انولات استر", detail: "NaOEt (هم‌جنس با گروه OR استر!) یک α-H را برمی‌دارد ← انولات استر." },
         { label: "مرحلهٔ ۲ — جانشینی اسیدیلی", detail: "انولات به C=O استر دیگر حمله می‌کند ← واسط چهاروجهی ← خروج EtO⁻ ← β-کتو استر." },
@@ -238,7 +238,7 @@ export const ACYL_MECHANISMS: Mechanism[] = [
       conditions: "NaOEt در EtOH و سپس کارِ H₃O⁺؛ یک هم‌ارز کامل باز (نه کاتالیزوری).",
     },
     examples: [
-      { name: { en: "Ethyl acetate → acetoacetic ester", fa: "اتیل استات ← استواستیک استر" }, equation: "2 CH3COOC2H5 -> CH3COCH2COOC2H5" },
+      { name: { en: "Ethyl acetate → acetoacetic ester", fa: "اتیل استات ← استواستیک استر" }, equation: "2 CH₃COOC₂H₅ → CH₃COCH₂COOC₂H₅" },
     ],
     related: ["ch19-claisen", "ch19-michael"],
   },

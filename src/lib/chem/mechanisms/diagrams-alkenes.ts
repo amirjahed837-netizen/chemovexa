@@ -30,8 +30,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "h", "b": "br"}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "h", "bulge": -34},
-          {"from": "bond:br:h", "to": "br", "bulge": -28}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:h", "bulge": -34},
+          {"fromRef": "bond:br:h", "toRef": "atom:br", "bulge": -28}
         ]
       },
       {
@@ -53,7 +53,7 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "br", "b": "c2", "dash": true}
         ],
         "curves": [
-          {"from": "br", "to": "c2", "bulge": -32}
+          {"fromRef": "atom:br", "toRef": "atom:c2", "bulge": -32}
         ]
       },
       {
@@ -110,9 +110,9 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "br1", "b": "c2", "dash": true}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "br1", "bulge": 35},
-          {"from": "bond:br1:br2", "to": "br2", "bulge": -28},
-          {"from": "br1", "to": "c1", "bulge": 35}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:br1", "bulge": 35},
+          {"fromRef": "bond:br1:br2", "toRef": "atom:br2", "bulge": -28},
+          {"fromRef": "atom:br1", "toRef": "atom:c1", "bulge": 35}
         ]
       },
       {
@@ -133,8 +133,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "br2", "b": "c2", "dash": true}
         ],
         "curves": [
-          {"from": "br2", "to": "c2", "bulge": 32},
-          {"from": "bond:br1:c2", "to": "br1", "bulge": 30}
+          {"fromRef": "atom:br2", "toRef": "atom:c2", "bulge": 32},
+          {"fromRef": "bond:br1:c2", "toRef": "atom:br1", "bulge": 30}
         ]
       },
       {
@@ -190,8 +190,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "w"}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "hp", "bulge": -32},
-          {"from": "bond:hp:w", "to": "w", "bulge": -26}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:hp", "bulge": -32},
+          {"fromRef": "bond:hp:w", "toRef": "atom:w", "bulge": -26}
         ]
       },
       {
@@ -213,7 +213,7 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "w", "b": "c2", "dash": true}
         ],
         "curves": [
-          {"from": "w", "to": "c2", "bulge": -32}
+          {"fromRef": "atom:w", "toRef": "atom:c2", "bulge": -32}
         ]
       },
       {
@@ -238,8 +238,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "o", "b": "hp"}
         ],
         "curves": [
-          {"from": "w", "to": "hp", "bulge": -26},
-          {"from": "bond:hp:o", "to": "o", "bulge": 28}
+          {"fromRef": "atom:w", "toRef": "atom:hp", "bulge": -26},
+          {"fromRef": "bond:hp:o", "toRef": "atom:o", "bulge": 28}
         ]
       },
       {
@@ -370,9 +370,9 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "o2", "b": "o3", "order": 2}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "o3", "bulge": -64},
-          {"from": "bond:o2:o3", "to": "o2", "bulge": -26},
-          {"from": "o1", "to": "c1", "bulge": -32}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:o3", "bulge": -64},
+          {"fromRef": "bond:o2:o3", "toRef": "atom:o2", "bulge": -26},
+          {"fromRef": "atom:o1", "toRef": "atom:c1", "bulge": -32}
         ]
       },
       {
@@ -395,9 +395,9 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "o1", "b": "o2"}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "bond:c1:o1", "bulge": 24},
-          {"from": "bond:o1:o2", "to": "o2", "bulge": -25},
-          {"from": "o3", "to": "bond:c2:o3", "bulge": 24}
+          {"fromRef": "bond:c1:c2", "toRef": "bond:c1:o1", "bulge": 24},
+          {"fromRef": "bond:o1:o2", "toRef": "atom:o2", "bulge": -25},
+          {"fromRef": "atom:o3", "toRef": "bond:c2:o3", "bulge": 24}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "→ carbonyl + carbonyl oxide", "size": 10, "color": "slate"}
@@ -421,9 +421,9 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "o3", "b": "o2"}
         ],
         "curves": [
-          {"from": "o2", "to": "c1", "bulge": -32},
-          {"from": "bond:c1:o1", "to": "c2", "bulge": 32},
-          {"from": "bond:c2:o3", "to": "o3", "bulge": -25}
+          {"fromRef": "atom:o2", "toRef": "atom:c1", "bulge": -32},
+          {"fromRef": "bond:c1:o1", "toRef": "atom:c2", "bulge": 32},
+          {"fromRef": "bond:c2:o3", "toRef": "atom:o3", "bulge": -25}
         ]
       },
       {
@@ -566,8 +566,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "o1", "b": "o2"}
         ],
         "curves": [
-          {"from": "bond:o1:o2", "to": "o1", "bulge": 28, "fish": true},
-          {"from": "bond:o1:o2", "to": "o2", "bulge": -28, "fish": true}
+          {"fromRef": "bond:o1:o2", "toRef": "atom:o1", "bulge": 28, "fish": true},
+          {"fromRef": "bond:o1:o2", "toRef": "atom:o2", "bulge": -28, "fish": true}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Initiation: RO-OR + Δ → 2 RO·", "size": 10, "color": "slate"}
@@ -588,9 +588,9 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "o", "b": "h", "dash": true}
         ],
         "curves": [
-          {"from": "o", "to": "bond:h:o", "bulge": -24, "fish": true},
-          {"from": "bond:br:h", "to": "bond:h:o", "bulge": 34, "fish": true},
-          {"from": "bond:br:h", "to": "br", "bulge": -25, "fish": true}
+          {"fromRef": "atom:o", "toRef": "bond:h:o", "bulge": -24, "fish": true},
+          {"fromRef": "bond:br:h", "toRef": "bond:h:o", "bulge": 34, "fish": true},
+          {"fromRef": "bond:br:h", "toRef": "atom:br", "bulge": -25, "fish": true}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "→ ROH + Br·", "size": 10, "color": "slate"}
@@ -613,9 +613,9 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "br", "b": "c1", "dash": true}
         ],
         "curves": [
-          {"from": "br", "to": "bond:br:c1", "bulge": -25, "fish": true},
-          {"from": "bond:c1:c2", "to": "bond:br:c1", "bulge": 34, "fish": true},
-          {"from": "bond:c1:c2", "to": "c2", "bulge": -25, "fish": true}
+          {"fromRef": "atom:br", "toRef": "bond:br:c1", "bulge": -25, "fish": true},
+          {"fromRef": "bond:c1:c2", "toRef": "bond:br:c1", "bulge": 34, "fish": true},
+          {"fromRef": "bond:c1:c2", "toRef": "atom:c2", "bulge": -25, "fish": true}
         ]
       },
       {
@@ -639,9 +639,9 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c2", "b": "h", "dash": true}
         ],
         "curves": [
-          {"from": "c2", "to": "bond:c2:h", "bulge": -25, "fish": true},
-          {"from": "bond:br2:h", "to": "bond:c2:h", "bulge": 34, "fish": true},
-          {"from": "bond:br2:h", "to": "br2", "bulge": -25, "fish": true}
+          {"fromRef": "atom:c2", "toRef": "bond:c2:h", "bulge": -25, "fish": true},
+          {"fromRef": "bond:br2:h", "toRef": "bond:c2:h", "bulge": 34, "fish": true},
+          {"fromRef": "bond:br2:h", "toRef": "atom:br2", "bulge": -25, "fish": true}
         ],
         "labels": [
           {"x": 410, "y": 28, "text": "→ 1-bromopropane + Br·", "size": 10, "color": "slate"}
@@ -695,8 +695,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c2", "b": "h", "dash": true}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "b", "bulge": -28},
-          {"from": "bond:b:h", "to": "bond:c2:h", "bulge": -28}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:b", "bulge": -28},
+          {"fromRef": "bond:b:h", "toRef": "bond:c2:h", "bulge": -28}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Concerted four-center approach; same-face delivery", "size": 10, "color": "slate"}
@@ -830,8 +830,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c2", "b": "h"}
         ],
         "curves": [
-          {"from": "base", "to": "h", "bulge": -28},
-          {"from": "bond:c2:h", "to": "c2", "bulge": -28}
+          {"fromRef": "atom:base", "toRef": "atom:h", "bulge": -28},
+          {"fromRef": "bond:c2:h", "toRef": "atom:c2", "bulge": -28}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Independent branch: propyne + NaNH₂", "size": 10, "color": "slate"}

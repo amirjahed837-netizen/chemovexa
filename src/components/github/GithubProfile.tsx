@@ -56,6 +56,7 @@ export function GithubProfile() {
   const [user, setUser] = useState<GhUser | null>(null);
   const [repos, setRepos] = useState<GhRepo[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [now] = useState(() => Date.now());
 
   useEffect(() => {
     let cancelled = false;
@@ -106,7 +107,7 @@ export function GithubProfile() {
   }, []);
 
   function relativeTime(iso: string): string {
-    const diff = Date.now() - new Date(iso).getTime();
+    const diff = now - new Date(iso).getTime();
     const days = Math.floor(diff / 86_400_000);
     if (days < 1) return g.today;
     if (days === 1) return g.yesterday;

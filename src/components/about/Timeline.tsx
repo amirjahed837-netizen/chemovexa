@@ -5,7 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { useI18n } from "@/lib/i18n";
 
 export function Timeline({ items }: { items: TimelineItem[] }) {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
 
   return (
     <ol className="relative space-y-8 border-l border-white/10 pl-6 rtl:border-l-0 rtl:border-r rtl:pl-0 rtl:pr-6">

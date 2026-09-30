@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { DAtom, DBond, DConnector, DFrame, MechanismDiagram } from "@/lib/chem/mechanisms/diagrams";
+import type { DAtom, DBond, DConnector, DFrame } from "@/lib/chem/mechanisms/diagrams";
 import { getDiagram } from "@/lib/chem/mechanisms/diagrams";
 import { cn } from "@/lib/utils";
 

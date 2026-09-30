@@ -40,7 +40,7 @@ function solvePH(
   const K = num(kx);
 
   let pH: number | null = null;
-  let note: string | null = null;
+  const note: string | null = null;
 
   if ((mode === "strong-acid" || mode === "strong-base") && (C === null || C <= 0)) {
     return { error: errors.concPos, pH: null };

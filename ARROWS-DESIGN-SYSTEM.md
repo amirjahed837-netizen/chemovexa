@@ -271,3 +271,46 @@ it does not mount an invalid component merely to obtain a screenshot.
 Still not done: corpus migration, all-29 validation, source-context checks for
 fishhooks, geometry helpers, wedge/hash bonds, unrelated-atom curve collision
 checks, full Next build, browser hydration and Vercel preview review.
+
+## Stage 4 checkpoint: corpus migrated to explicit references
+
+The full arrow corpus (all 5 diagram data files, 29 mechanisms, 150 curves) is now
+expressed with Stage 2 `fromRef` / `toRef` references. The conversion was performed
+by `scripts/migrate-arrows-to-refs.mjs`, a deterministic, geometry-preserving pass:
+
+- bare atom id (`"nu"`) → `atom:<id>` (`atom:nu`) — atom sources/destinations are
+  still trimmed through the same measured label-box helper, so rendering geometry
+  is unchanged;
+- existing bond midpoints (`"bond:br:c"`) → unchanged — the resolver is
+  order-independent;
+- no lone-pair refs were inferred. Upgrading an atom-origin arrow to
+  `lonePair:<id>:<i>` would move its start point to the displayed dot pair and is
+  deliberately deferred to a visual pass;
+- `bulge`, `fish`, and `label` fields pass through untouched. Migrated fishhook
+  shafts now render through the Stage 2 branch (orange `#f97316` single-electron
+  role); pair arrows remain magenta.
+
+The script loads each data file through the TypeScript transpiler, validates every
+converted reference frame-locally (atom existence, bond endpoint pairs, lone-pair
+indices), asserts the text rewrite count equals the walked curve count, and exits
+nonzero on any dangling ref. `--check` is the default; `--write` applies.
+
+Verification performed for this checkpoint (full project, local):
+
+| Check | Result |
+| --- | --- |
+| `node scripts/migrate-arrows-to-refs.mjs --write` | Exit 0; 150 curves converted, 0 mixed, 0 dangling refs |
+| Re-run in `--check` mode | 0 legacy, 150 ref-based, 0 mixed |
+| Legacy `"from"` / `"to"` keys remaining in corpus | 0 |
+| `npx tsc --noEmit` | Exit 0 |
+| `node scripts/validate-arrow-primitives.mjs` | Exit 0, 52/52 |
+| `node scripts/validate-arrow-references.mjs` | Exit 0, 12/12 |
+| `npm run build` | Exit 0, all routes prerendered |
+
+The legacy `from` / `to` renderer branch in `DiagramPanel.tsx` is now dead code kept
+deliberately for rollback safety; removing it belongs to Stage 5 cleanup.
+
+Still not done: geometry helpers and wedge/hash bonds (Stage 3), all-diagram
+chemistry-context validation — source-context for fishhooks, equilibrium/resonance
+species identity, bond-length and collision checks (Stage 5), browser hydration and
+preview review.

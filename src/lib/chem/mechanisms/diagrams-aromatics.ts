@@ -36,7 +36,7 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c1", "b": "e", "dash": true}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "e", "bulge": 30}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:e", "bulge": 30}
         ]
       },
       {
@@ -66,8 +66,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c1", "b": "h"}
         ],
         "curves": [
-          {"from": "base", "to": "h", "bulge": -25},
-          {"from": "bond:c1:h", "to": "bond:c1:c2", "bulge": -26}
+          {"fromRef": "atom:base", "toRef": "atom:h", "bulge": -25},
+          {"fromRef": "bond:c1:h", "toRef": "bond:c1:c2", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "One arenium resonance contributor; C-E is retained", "size": 10, "color": "slate"}
@@ -127,8 +127,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "n", "b": "w"}
         ],
         "curves": [
-          {"from": "o2", "to": "bond:n:o2", "bulge": -24},
-          {"from": "bond:n:w", "to": "w", "bulge": -24}
+          {"fromRef": "atom:o2", "toRef": "bond:n:o2", "bulge": -24},
+          {"fromRef": "bond:n:w", "toRef": "atom:w", "bulge": -24}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "After H₂SO₄ protonates HNO₃; HSO₄⁻ omitted", "size": 10, "color": "slate"}
@@ -161,8 +161,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "n", "b": "o2", "order": 2}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "n", "bulge": -30},
-          {"from": "bond:n:o2", "to": "o2", "bulge": -25}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:n", "bulge": -30},
+          {"fromRef": "bond:n:o2", "toRef": "atom:o2", "bulge": -25}
         ],
         "labels": [
           {"x": 410, "y": 65, "text": "Linear nitronium; N", "size": 10, "color": "slate"},
@@ -200,8 +200,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c1", "b": "h"}
         ],
         "curves": [
-          {"from": "base", "to": "h", "bulge": 36},
-          {"from": "bond:c1:h", "to": "bond:c1:c2", "bulge": -25}
+          {"fromRef": "atom:base", "toRef": "atom:h", "bulge": 36},
+          {"fromRef": "bond:c1:h", "toRef": "bond:c1:c2", "bulge": -25}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "C-N is retained; H₂SO₄ is regenerated", "size": 10, "color": "slate"}
@@ -266,7 +266,7 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "br2", "b": "fe", "dash": true}
         ],
         "curves": [
-          {"from": "br2", "to": "fe", "bulge": -28}
+          {"fromRef": "atom:br2", "toRef": "atom:fe", "bulge": -28}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Lewis-acid activation; Fe ligands condensed", "size": 10, "color": "slate"}
@@ -298,8 +298,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c1", "b": "br1", "dash": true}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "br1", "bulge": 28},
-          {"from": "bond:br1:br2", "to": "br2", "bulge": -26}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:br1", "bulge": 28},
+          {"fromRef": "bond:br1:br2", "toRef": "atom:br2", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "FeBr₃ associated with departing Br; ligation omitted", "size": 10, "color": "slate"}
@@ -334,8 +334,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "base", "b": "fe"}
         ],
         "curves": [
-          {"from": "bond:base:fe", "to": "h", "bulge": 36},
-          {"from": "bond:c1:h", "to": "bond:c1:c2", "bulge": -26}
+          {"fromRef": "bond:base:fe", "toRef": "atom:h", "bulge": 36},
+          {"fromRef": "bond:c1:h", "toRef": "bond:c1:c2", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "FeBr₄⁻ written Br-FeBr₃⁻; complex charge condensed", "size": 10, "color": "slate"}
@@ -396,7 +396,7 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "cl", "b": "al", "dash": true}
         ],
         "curves": [
-          {"from": "cl", "to": "al", "bulge": -28}
+          {"fromRef": "atom:cl", "toRef": "atom:al", "bulge": -28}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Lewis-acid activation; no free methyl cation", "size": 10, "color": "slate"}
@@ -428,8 +428,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c1", "b": "r", "dash": true}
         ],
         "curves": [
-          {"from": "bond:c1:c2", "to": "r", "bulge": 30},
-          {"from": "bond:cl:r", "to": "cl", "bulge": -26}
+          {"fromRef": "bond:c1:c2", "toRef": "atom:r", "bulge": 30},
+          {"fromRef": "bond:cl:r", "toRef": "atom:cl", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "AlCl₃-bound chloride; ligation omitted", "size": 10, "color": "slate"}
@@ -464,8 +464,8 @@ export const AROMATIC_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "base", "b": "al"}
         ],
         "curves": [
-          {"from": "bond:al:base", "to": "h", "bulge": 36},
-          {"from": "bond:c1:h", "to": "bond:c1:c2", "bulge": -26}
+          {"fromRef": "bond:al:base", "toRef": "atom:h", "bulge": 36},
+          {"fromRef": "bond:c1:h", "toRef": "bond:c1:c2", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "AlCl₄⁻ written Cl-AlCl₃⁻; complex charge condensed", "size": 10, "color": "slate"}

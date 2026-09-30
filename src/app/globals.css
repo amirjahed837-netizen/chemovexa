@@ -534,6 +534,7 @@ html[dir="rtl"] .mech-diagram {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+  min-height: 2.75rem;
   border-radius: 0.75rem 0.75rem 0 0;
   background: linear-gradient(to bottom, rgba(13, 148, 136, 0.12), rgba(13, 148, 136, 0.04));
   border: 1px solid rgba(13, 148, 136, 0.25);
@@ -541,6 +542,14 @@ html[dir="rtl"] .mech-diagram {
   padding: 0.55rem 0.9rem;
   text-align: left;
   transition: background 0.2s ease;
+}
+
+/* the filter bar renders its own clear (×) button — hide the native one */
+.mech-search::-webkit-search-cancel-button,
+.mech-search::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
 }
 
 .mech-diagram-toggle:hover {

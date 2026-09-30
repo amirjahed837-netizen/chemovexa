@@ -241,6 +241,7 @@ function AiWriteup({ equation, auto }: { equation: string; auto: boolean }) {
     })();
 
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [equation, auto, attempt]);
 
   return (
@@ -282,7 +283,7 @@ function ReactionRadar({
   prediction: Prediction | null;
   onLoad: (id: string) => void;
 }) {
-  const { t, fmt: interpolate } = useI18n();
+  const { t } = useI18n();
   const l = t.pages.lab;
   if (!prediction) return null;
   const dot =

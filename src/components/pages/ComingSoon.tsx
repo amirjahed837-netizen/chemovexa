@@ -17,13 +17,11 @@ export function ComingSoon({
   eyebrow,
   description,
   step,
-  planned,
 }: {
   title: string;
   eyebrow?: string;
   description: string;
   step: string;
-  planned: string[];
 }) {
   const { t } = useI18n();
 

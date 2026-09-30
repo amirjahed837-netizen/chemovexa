@@ -1,9 +1,7 @@
 "use client";
 
-import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
-import { useI18n } from "@/lib/i18n";
 
 export function PageHeader({
   eyebrow,

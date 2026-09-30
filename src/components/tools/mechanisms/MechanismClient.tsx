@@ -97,8 +97,6 @@ export function MechanismClient() {
     });
   }, []);
 
-  const eqDir = "ltr"; // equations always LTR
-
   return (
     <>
       <Container className="pt-14 pb-6">
@@ -124,7 +122,7 @@ export function MechanismClient() {
                 onClick={() => setTopic("all")}
                 aria-pressed={topic === "all"}
                 className={cn(
-                  "rounded-full border px-3.5 py-1.5 text-xs font-medium transition",
+                  "rounded-full border px-3.5 py-2 text-xs font-medium transition sm:py-1.5",
                   topic === "all"
                     ? "border-cyan-400/50 bg-cyan-400/15 text-cyan-200"
                     : "border-white/10 text-slate-400 hover:text-slate-200"
@@ -140,7 +138,7 @@ export function MechanismClient() {
                     onClick={() => setTopic(tp)}
                     aria-pressed={topic === tp}
                     className={cn(
-                      "rounded-full border px-3.5 py-1.5 text-xs font-medium transition",
+                      "rounded-full border px-3.5 py-2 text-xs font-medium transition sm:py-1.5",
                       topic === tp
                         ? "border-cyan-400/50 bg-cyan-400/15 text-cyan-200"
                         : "border-white/10 text-slate-400 hover:text-slate-200"
@@ -156,7 +154,7 @@ export function MechanismClient() {
                 value={family}
                 onChange={(e) => setFamily(e.target.value as FamilyFilter)}
                 aria-label={m.allFamilies}
-                className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-400/50"
+                className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-base text-slate-200 outline-none focus:border-cyan-400/50 sm:text-xs"
               >
                 <option value="all">{m.allFamilies}</option>
                 {familiesPresent.map((f) => (
@@ -172,7 +170,7 @@ export function MechanismClient() {
                   type="search"
                   placeholder={m.searchPlaceholder}
                   aria-label={m.searchPlaceholder}
-                  className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-xs text-slate-200 outline-none placeholder:text-slate-500 focus:border-cyan-400/50"
+                  className="mech-search w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 pe-8 text-base text-slate-200 outline-none placeholder:text-slate-500 focus:border-cyan-400/50 sm:text-xs"
                 />
                 {query && (
                   <button

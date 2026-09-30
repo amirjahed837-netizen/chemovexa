@@ -31,8 +31,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "nu", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "nu", "to": "c", "bulge": -28},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:nu", "toRef": "atom:c", "bulge": -28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -54,8 +54,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "nu"}
         ],
         "curves": [
-          {"from": "o", "to": "bond:c:o", "bulge": 26},
-          {"from": "bond:c:g", "to": "g", "bulge": -26}
+          {"fromRef": "atom:o", "toRef": "bond:c:o", "bulge": 26},
+          {"fromRef": "bond:c:g", "toRef": "atom:g", "bulge": -26}
         ]
       },
       {
@@ -109,8 +109,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "w"}
         ],
         "curves": [
-          {"from": "o", "to": "hp", "bulge": 28},
-          {"from": "bond:hp:w", "to": "w", "bulge": 26}
+          {"fromRef": "atom:o", "toRef": "atom:hp", "bulge": 28},
+          {"fromRef": "bond:hp:w", "toRef": "atom:w", "bulge": 26}
         ]
       },
       {
@@ -134,8 +134,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "nu", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "nu", "to": "c", "bulge": -28},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:nu", "toRef": "atom:c", "bulge": -28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -176,8 +176,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "nu"}
         ],
         "curves": [
-          {"from": "o", "to": "bond:c:o", "bulge": 26},
-          {"from": "bond:c:g", "to": "g", "bulge": -26}
+          {"fromRef": "atom:o", "toRef": "bond:c:o", "bulge": 26},
+          {"fromRef": "bond:c:g", "toRef": "atom:g", "bulge": -26}
         ],
         "labels": [
           {"x": 410, "y": 28, "text": "After proton transfer;", "size": 10, "color": "slate"},
@@ -204,8 +204,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "g"}
         ],
         "curves": [
-          {"from": "w", "to": "hp", "bulge": -26},
-          {"from": "bond:hp:o", "to": "o", "bulge": 28}
+          {"fromRef": "atom:w", "toRef": "atom:hp", "bulge": -26},
+          {"fromRef": "bond:hp:o", "toRef": "atom:o", "bulge": 28}
         ]
       },
       {
@@ -262,8 +262,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "oh", "b": "s", "dash": true}
         ],
         "curves": [
-          {"from": "oh", "to": "s", "bulge": -28},
-          {"from": "bond:cl:s", "to": "cl", "bulge": -26}
+          {"fromRef": "atom:oh", "toRef": "atom:s", "bulge": -28},
+          {"fromRef": "bond:cl:s", "toRef": "atom:cl", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "SOCl-Cl = SOCl₂; S=O and one S-Cl condensed", "size": 10, "color": "slate"}
@@ -291,8 +291,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "bridge", "b": "hp"}
         ],
         "curves": [
-          {"from": "cl", "to": "hp", "bulge": -28},
-          {"from": "bond:bridge:hp", "to": "bridge", "bulge": 26}
+          {"fromRef": "atom:cl", "toRef": "atom:hp", "bulge": -28},
+          {"fromRef": "bond:bridge:hp", "toRef": "atom:bridge", "bulge": 26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "→ RCO-O-S(=O)Cl + HCl", "size": 10, "color": "slate"}
@@ -317,8 +317,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "nu", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "nu", "to": "c", "bulge": -28},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:nu", "toRef": "atom:c", "bulge": -28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -340,8 +340,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "nu"}
         ],
         "curves": [
-          {"from": "o", "to": "bond:c:o", "bulge": 26},
-          {"from": "bond:c:g", "to": "g", "bulge": -26}
+          {"fromRef": "atom:o", "toRef": "bond:c:o", "bulge": 26},
+          {"fromRef": "bond:c:g", "toRef": "atom:g", "bulge": -26}
         ]
       },
       {
@@ -361,8 +361,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "s", "b": "cl"}
         ],
         "curves": [
-          {"from": "ox", "to": "bond:ox:s", "bulge": -26},
-          {"from": "bond:cl:s", "to": "cl", "bulge": -26}
+          {"fromRef": "atom:ox", "toRef": "bond:ox:s", "bulge": -26},
+          {"fromRef": "bond:cl:s", "toRef": "atom:cl", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "[OS(O)Cl]⁻ → SO₂ + Cl⁻", "size": 10, "color": "slate"}
@@ -420,8 +420,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "nu", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "nu", "to": "c", "bulge": -28},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:nu", "toRef": "atom:c", "bulge": -28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -443,8 +443,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "nu"}
         ],
         "curves": [
-          {"from": "o", "to": "bond:c:o", "bulge": 26},
-          {"from": "bond:c:g", "to": "g", "bulge": -26}
+          {"fromRef": "atom:o", "toRef": "bond:c:o", "bulge": 26},
+          {"fromRef": "bond:c:g", "toRef": "atom:g", "bulge": -26}
         ]
       },
       {
@@ -467,8 +467,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "oh", "b": "hp"}
         ],
         "curves": [
-          {"from": "base", "to": "hp", "bulge": -28},
-          {"from": "bond:hp:oh", "to": "oh", "bulge": -28}
+          {"fromRef": "atom:base", "toRef": "atom:hp", "bulge": -28},
+          {"fromRef": "bond:hp:oh", "toRef": "atom:oh", "bulge": -28}
         ]
       },
       {
@@ -524,8 +524,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "et"}
         ],
         "curves": [
-          {"from": "base", "to": "ha", "bulge": -26},
-          {"from": "bond:ca:ha", "to": "ca", "bulge": 28}
+          {"fromRef": "atom:base", "toRef": "atom:ha", "bulge": -26},
+          {"fromRef": "bond:ca:ha", "toRef": "atom:ca", "bulge": 28}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Carbon-anion resonance contributor shown next", "size": 10, "color": "slate"}
@@ -552,8 +552,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "ca", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "ca", "to": "c", "bulge": -28},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:ca", "toRef": "atom:c", "bulge": -28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "CO₂Et is the intact donor ester group", "size": 10, "color": "slate"}
@@ -578,8 +578,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "nu"}
         ],
         "curves": [
-          {"from": "o", "to": "bond:c:o", "bulge": 26},
-          {"from": "bond:c:g", "to": "g", "bulge": -26}
+          {"fromRef": "atom:o", "toRef": "bond:c:o", "bulge": 26},
+          {"fromRef": "bond:c:g", "toRef": "atom:g", "bulge": -26}
         ]
       },
       {
@@ -608,8 +608,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "ca", "b": "hp"}
         ],
         "curves": [
-          {"from": "base", "to": "hp", "bulge": -28},
-          {"from": "bond:ca:hp", "to": "ca", "bulge": -28}
+          {"fromRef": "atom:base", "toRef": "atom:hp", "bulge": -28},
+          {"fromRef": "bond:ca:hp", "toRef": "atom:ca", "bulge": -28}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "β-Keto ester pKₐ ≈ 11; base is consumed overall", "size": 10, "color": "slate"}
@@ -641,8 +641,8 @@ export const ACYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "w"}
         ],
         "curves": [
-          {"from": "ca", "to": "hp", "bulge": -40},
-          {"from": "bond:hp:w", "to": "w", "bulge": -26}
+          {"fromRef": "atom:ca", "toRef": "atom:hp", "bulge": -40},
+          {"fromRef": "bond:hp:w", "toRef": "atom:w", "bulge": -26}
         ]
       },
       {

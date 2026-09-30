@@ -31,8 +31,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "nu", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "nu", "to": "c", "bulge": -28},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:nu", "toRef": "atom:c", "bulge": -28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -57,8 +57,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "donor"}
         ],
         "curves": [
-          {"from": "o", "to": "hp", "bulge": 30},
-          {"from": "bond:donor:hp", "to": "donor", "bulge": 28}
+          {"fromRef": "atom:o", "toRef": "atom:hp", "bulge": 30},
+          {"fromRef": "bond:donor:hp", "toRef": "atom:donor", "bulge": 28}
         ]
       },
       {
@@ -112,8 +112,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "nu", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "nu", "to": "c", "bulge": -28},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:nu", "toRef": "atom:c", "bulge": -28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -180,8 +180,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "w"}
         ],
         "curves": [
-          {"from": "o", "to": "hp", "bulge": 30},
-          {"from": "bond:hp:w", "to": "w", "bulge": 28}
+          {"fromRef": "atom:o", "toRef": "atom:hp", "bulge": 30},
+          {"fromRef": "bond:hp:w", "toRef": "atom:w", "bulge": 28}
         ]
       },
       {
@@ -203,8 +203,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "nu"}
         ],
         "curves": [
-          {"from": "nu", "to": "bond:c:nu", "bulge": 28},
-          {"from": "bond:c:o", "to": "o", "bulge": -28}
+          {"fromRef": "atom:nu", "toRef": "bond:c:nu", "bulge": 28},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -28}
         ]
       },
       {
@@ -229,8 +229,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "n", "b": "hp"}
         ],
         "curves": [
-          {"from": "w", "to": "hp", "bulge": -26},
-          {"from": "bond:hp:n", "to": "n", "bulge": -26}
+          {"fromRef": "atom:w", "toRef": "atom:hp", "bulge": -26},
+          {"fromRef": "bond:hp:n", "toRef": "atom:n", "bulge": -26}
         ]
       },
       {
@@ -286,9 +286,9 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "o", "order": 2}
         ],
         "curves": [
-          {"from": "base", "to": "h", "bulge": -26},
-          {"from": "bond:ca:h", "to": "bond:c:ca", "bulge": -24},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:base", "toRef": "atom:h", "bulge": -26},
+          {"fromRef": "bond:ca:h", "toRef": "bond:c:ca", "bulge": -24},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -306,8 +306,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "o"}
         ],
         "curves": [
-          {"from": "o", "to": "bond:c:o", "bulge": -25},
-          {"from": "bond:c:ca", "to": "ca", "bulge": -25}
+          {"fromRef": "atom:o", "toRef": "bond:c:o", "bulge": -25},
+          {"fromRef": "bond:c:ca", "toRef": "atom:ca", "bulge": -25}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "O⁻-CH=CH₂ ↔ O=CH-CH₂⁻", "size": 10, "color": "slate"}
@@ -336,8 +336,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "ca", "b": "c2", "dash": true}
         ],
         "curves": [
-          {"from": "ca", "to": "c2", "bulge": -30},
-          {"from": "bond:c2:o2", "to": "o2", "bulge": -26}
+          {"fromRef": "atom:ca", "toRef": "atom:c2", "bulge": -30},
+          {"fromRef": "bond:c2:o2", "toRef": "atom:o2", "bulge": -26}
         ]
       },
       {
@@ -364,8 +364,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "w"}
         ],
         "curves": [
-          {"from": "o2", "to": "hp", "bulge": 28},
-          {"from": "bond:hp:w", "to": "w", "bulge": 26}
+          {"fromRef": "atom:o2", "toRef": "atom:hp", "bulge": 28},
+          {"fromRef": "bond:hp:w", "toRef": "atom:w", "bulge": 26}
         ]
       },
       {
@@ -425,8 +425,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "w"}
         ],
         "curves": [
-          {"from": "o", "to": "hp", "bulge": 28},
-          {"from": "bond:hp:w", "to": "w", "bulge": 26}
+          {"fromRef": "atom:o", "toRef": "atom:hp", "bulge": 28},
+          {"fromRef": "bond:hp:w", "toRef": "atom:w", "bulge": 26}
         ]
       },
       {
@@ -449,9 +449,9 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "r"}
         ],
         "curves": [
-          {"from": "w", "to": "ha", "bulge": -26},
-          {"from": "bond:ca:ha", "to": "bond:c:ca", "bulge": 48},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "atom:w", "toRef": "atom:ha", "bulge": -26},
+          {"fromRef": "bond:ca:ha", "toRef": "bond:c:ca", "bulge": 48},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -474,9 +474,9 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "br1", "b": "br2"}
         ],
         "curves": [
-          {"from": "bond:c:ca", "to": "br1", "bulge": 30},
-          {"from": "bond:br1:br2", "to": "br2", "bulge": -26},
-          {"from": "o", "to": "bond:c:o", "bulge": -26}
+          {"fromRef": "bond:c:ca", "toRef": "atom:br1", "bulge": 30},
+          {"fromRef": "bond:br1:br2", "toRef": "atom:br2", "bulge": -26},
+          {"fromRef": "atom:o", "toRef": "bond:c:o", "bulge": -26}
         ]
       },
       {
@@ -501,8 +501,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "ca", "b": "br"}
         ],
         "curves": [
-          {"from": "w", "to": "hp", "bulge": -26},
-          {"from": "bond:hp:o", "to": "o", "bulge": 28}
+          {"fromRef": "atom:w", "toRef": "atom:hp", "bulge": -26},
+          {"fromRef": "bond:hp:o", "toRef": "atom:o", "bulge": 28}
         ]
       },
       {
@@ -560,8 +560,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "bh", "b": "hh"}
         ],
         "curves": [
-          {"from": "bond:bh:hh", "to": "c", "bulge": -30},
-          {"from": "bond:c:o", "to": "o", "bulge": -26}
+          {"fromRef": "bond:bh:hh", "toRef": "atom:c", "bulge": -30},
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": -26}
         ]
       },
       {
@@ -586,8 +586,8 @@ export const CARBONYL_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "hp", "b": "w"}
         ],
         "curves": [
-          {"from": "o", "to": "hp", "bulge": 30},
-          {"from": "bond:hp:w", "to": "w", "bulge": 26}
+          {"fromRef": "atom:o", "toRef": "atom:hp", "bulge": 30},
+          {"fromRef": "bond:hp:w", "toRef": "atom:w", "bulge": 26}
         ]
       },
       {

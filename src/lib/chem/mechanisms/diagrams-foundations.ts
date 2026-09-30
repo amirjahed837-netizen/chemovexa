@@ -27,8 +27,8 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "nu", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "nu", "to": "c", "bulge": -34},
-          {"from": "bond:br:c", "to": "br", "bulge": -32}
+          {"fromRef": "atom:nu", "toRef": "atom:c", "bulge": -34},
+          {"fromRef": "bond:br:c", "toRef": "atom:br", "bulge": -32}
         ]
       },
       {
@@ -95,7 +95,7 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c", "b": "nu"}
         ],
         "curves": [
-          {"from": "bond:c:o", "to": "o", "bulge": 32}
+          {"fromRef": "bond:c:o", "toRef": "atom:o", "bulge": 32}
         ]
       },
       {
@@ -117,7 +117,7 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "w", "b": "c", "dash": true}
         ],
         "curves": [
-          {"from": "w", "to": "c", "bulge": -32}
+          {"fromRef": "atom:w", "toRef": "atom:c", "bulge": -32}
         ]
       },
       {
@@ -142,8 +142,8 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "o", "b": "h"}
         ],
         "curves": [
-          {"from": "w", "to": "h", "bulge": -26},
-          {"from": "bond:h:o", "to": "o", "bulge": 28}
+          {"fromRef": "atom:w", "toRef": "atom:h", "bulge": -26},
+          {"fromRef": "bond:h:o", "toRef": "atom:o", "bulge": 28}
         ]
       },
       {
@@ -202,9 +202,9 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c2", "b": "r"}
         ],
         "curves": [
-          {"from": "base", "to": "h", "bulge": -26},
-          {"from": "bond:c1:h", "to": "bond:c1:c2", "bulge": 24},
-          {"from": "bond:c2:x", "to": "x", "bulge": -28}
+          {"fromRef": "atom:base", "toRef": "atom:h", "bulge": -26},
+          {"fromRef": "bond:c1:h", "toRef": "bond:c1:c2", "bulge": 24},
+          {"fromRef": "bond:c2:x", "toRef": "atom:x", "bulge": -28}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "H-C-C-Br: anti-periplanar projection", "size": 10, "color": "slate"}
@@ -254,8 +254,8 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "cl1", "b": "cl2"}
         ],
         "curves": [
-          {"from": "bond:cl1:cl2", "to": "cl1", "bulge": 30, "fish": true},
-          {"from": "bond:cl1:cl2", "to": "cl2", "bulge": -30, "fish": true}
+          {"fromRef": "bond:cl1:cl2", "toRef": "atom:cl1", "bulge": 30, "fish": true},
+          {"fromRef": "bond:cl1:cl2", "toRef": "atom:cl2", "bulge": -30, "fish": true}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Initiation: Cl₂ + hν → 2 Cl·", "size": 10, "color": "slate"}
@@ -276,9 +276,9 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "cl", "b": "h", "dash": true}
         ],
         "curves": [
-          {"from": "cl", "to": "bond:cl:h", "bulge": -25, "fish": true},
-          {"from": "bond:c:h", "to": "bond:cl:h", "bulge": 35, "fish": true},
-          {"from": "bond:c:h", "to": "c", "bulge": -27, "fish": true}
+          {"fromRef": "atom:cl", "toRef": "bond:cl:h", "bulge": -25, "fish": true},
+          {"fromRef": "bond:c:h", "toRef": "bond:cl:h", "bulge": 35, "fish": true},
+          {"fromRef": "bond:c:h", "toRef": "atom:c", "bulge": -27, "fish": true}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "→ HCl + CH₃·", "size": 10, "color": "slate"}
@@ -299,9 +299,9 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "cl1", "b": "cl2"}
         ],
         "curves": [
-          {"from": "c", "to": "bond:c:cl1", "bulge": -26, "fish": true},
-          {"from": "bond:cl1:cl2", "to": "bond:c:cl1", "bulge": 36, "fish": true},
-          {"from": "bond:cl1:cl2", "to": "cl2", "bulge": -28, "fish": true}
+          {"fromRef": "atom:c", "toRef": "bond:c:cl1", "bulge": -26, "fish": true},
+          {"fromRef": "bond:cl1:cl2", "toRef": "bond:c:cl1", "bulge": 36, "fish": true},
+          {"fromRef": "bond:cl1:cl2", "toRef": "atom:cl2", "bulge": -28, "fish": true}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "→ CH₃Cl + Cl·", "size": 10, "color": "slate"}
@@ -320,8 +320,8 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "c1", "b": "c2", "dash": true}
         ],
         "curves": [
-          {"from": "c1", "to": "bond:c1:c2", "bulge": -25, "fish": true},
-          {"from": "c2", "to": "bond:c1:c2", "bulge": -25, "fish": true}
+          {"fromRef": "atom:c1", "toRef": "bond:c1:c2", "bulge": -25, "fish": true},
+          {"fromRef": "atom:c2", "toRef": "bond:c1:c2", "bulge": -25, "fish": true}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "Termination: 2 CH₃· → CH₃CH₃", "size": 10, "color": "slate"}
@@ -391,8 +391,8 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"a": "h", "b": "o"}
         ],
         "curves": [
-          {"from": "bond:c:mg", "to": "h", "bulge": -30},
-          {"from": "bond:h:o", "to": "o", "bulge": -26}
+          {"fromRef": "bond:c:mg", "toRef": "atom:h", "bulge": -30},
+          {"fromRef": "bond:h:o", "toRef": "atom:o", "bulge": -26}
         ],
         "labels": [
           {"x": 260, "y": 175, "text": "→ CH₄ + MgBrOH", "size": 10, "color": "slate"}

@@ -15,7 +15,7 @@ import { fa } from "./fa";
 export type Locale = "en" | "fa";
 
 const DICTS: Record<Locale, Dictionary> = { en, fa };
-const STORAGE_KEY = "chemovexa-locale";
+export const STORAGE_KEY = "chemovexa-locale";
 
 function detectInitial(): Locale {
   if (typeof window === "undefined") return "en";
@@ -45,6 +45,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
 
   useEffect(() => {
+    // Deliberately post-hydration: reading localStorage during render would
+    // mismatch the server-rendered (en) markup.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocaleState(detectInitial());
   }, []);
 

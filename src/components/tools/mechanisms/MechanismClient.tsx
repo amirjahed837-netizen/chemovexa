@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { useI18n } from "@/lib/i18n";
+import { BOOKMARK_STRINGS, type BookmarkStrings } from "@/lib/i18n/bookmarks";
+import { useBookmarks } from "@/lib/bookmarks";
 import {
   MECHANISMS,
   TOPIC_ORDER,
@@ -25,15 +27,41 @@ import { DiagramPanel } from "@/components/tools/mechanisms/DiagramPanel";
 import { cn } from "@/lib/utils";
 
 type FamilyFilter = FamilyId | "all";
+type View = "all" | "saved";
+
+/** Task B: ids that exist today; stale stored ids are ignored (never deleted). */
+const VALID_IDS: ReadonlySet<string> = new Set(MECHANISMS.map((x) => x.id));
+const TOAST_MS = 4000;
+const LIST_TOP_ID = "mech-list-top";
+
+function StarIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" width={16} height={16} aria-hidden="true" focusable="false" className="shrink-0">
+      <path
+        d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"
+        fill={filled ? "currentColor" : "none"}
+        stroke="currentColor"
+        strokeWidth={1.7}
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function MechanismClient() {
   const { t, locale, fmt } = useI18n();
   const m = t.pages.mechanisms;
+  const b = BOOKMARK_STRINGS[locale === "fa" ? "fa" : "en"];
 
   const [topic, setTopic] = useState<TopicId | "all">("all");
   const [family, setFamily] = useState<FamilyFilter>("all");
   const [query, setQuery] = useState("");
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
+  const [view, setView] = useState<View>("all");
+  const [toast, setToast] = useState<{ text: string; key: number } | null>(null);
+
+  const bookmarks = useBookmarks(VALID_IDS);
+  const { savedSet, count: savedCount, toggle: toggleSaved } = bookmarks;
 
   const familiesPresent = useMemo(() => {
     const set = new Set<FamilyId>();
@@ -44,6 +72,7 @@ export function MechanismClient() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return MECHANISMS.filter((x) => {
+      if (view === "saved" && !savedSet.has(x.id)) return false;
       if (topic !== "all" && x.topic !== topic) return false;
       if (family !== "all" && x.family !== family) return false;
       if (!q) return true;
@@ -60,7 +89,7 @@ export function MechanismClient() {
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [topic, family, query]);
+  }, [topic, family, query, view, savedSet]);
 
   // group by topic for display
   const grouped = useMemo(() => {
@@ -70,7 +99,7 @@ export function MechanismClient() {
     })).filter((g) => g.items.length > 0);
   }, [filtered]);
 
-  const hasFilters = topic !== "all" || family !== "all" || query.trim() !== "";
+  const hasFilters = topic !== "all" || family !== "all" || query.trim() !== "" || view !== "all";
   const allOpen = openIds.size >= MECHANISMS.length;
   const anyOpen = openIds.size > 0;
 
@@ -78,6 +107,7 @@ export function MechanismClient() {
     setTopic("all");
     setFamily("all");
     setQuery("");
+    setView("all");
   }, []);
 
   const expandAll = useCallback(() => {
@@ -97,6 +127,36 @@ export function MechanismClient() {
     });
   }, []);
 
+  // Task B: save/unsave with an announced, visible confirmation.
+  const onToggleSave = useCallback(
+    (id: string) => {
+      const nowSaved = toggleSaved(id);
+      const nextCount = Math.max(0, savedCount + (nowSaved ? 1 : -1));
+      setToast({
+        text: fmt(nowSaved ? b.toastSaved : b.toastRemoved, { count: nextCount }),
+        key: Date.now(),
+      });
+    },
+    [toggleSaved, savedCount, fmt, b],
+  );
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), TOAST_MS);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  const showSaved = useCallback(() => {
+    setView("saved");
+    setTopic("all");
+    setToast(null);
+    const el = document.getElementById(LIST_TOP_ID);
+    if (el) {
+      const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    }
+  }, []);
+
   const eqDir = "ltr"; // equations always LTR
 
   return (
@@ -113,6 +173,7 @@ export function MechanismClient() {
 
       {/* filter bar */}
       <Container className="pb-8">
+        <div id={LIST_TOP_ID} className="scroll-mt-28" />
         <Reveal delay={100}>
           <GlassCard className="flex flex-col gap-4 p-5">
             <div
@@ -121,11 +182,14 @@ export function MechanismClient() {
               aria-label={m.filterByTopic}
             >
               <button
-                onClick={() => setTopic("all")}
-                aria-pressed={topic === "all"}
+                onClick={() => {
+                  setView("all");
+                  setTopic("all");
+                }}
+                aria-pressed={view === "all" && topic === "all"}
                 className={cn(
                   "rounded-full border px-3.5 py-1.5 text-xs font-medium transition",
-                  topic === "all"
+                  view === "all" && topic === "all"
                     ? "border-cyan-400/50 bg-cyan-400/15 text-cyan-200"
                     : "border-white/10 text-slate-400 hover:text-slate-200"
                 )}
@@ -134,14 +198,18 @@ export function MechanismClient() {
               </button>
               {TOPIC_ORDER.map((tp) => {
                 const n = MECHANISMS.filter((x) => x.topic === tp).length;
+                const active = view === "all" && topic === tp;
                 return (
                   <button
                     key={tp}
-                    onClick={() => setTopic(tp)}
-                    aria-pressed={topic === tp}
+                    onClick={() => {
+                      setView("all");
+                      setTopic(tp);
+                    }}
+                    aria-pressed={active}
                     className={cn(
                       "rounded-full border px-3.5 py-1.5 text-xs font-medium transition",
-                      topic === tp
+                      active
                         ? "border-cyan-400/50 bg-cyan-400/15 text-cyan-200"
                         : "border-white/10 text-slate-400 hover:text-slate-200"
                     )}
@@ -150,6 +218,27 @@ export function MechanismClient() {
                   </button>
                 );
               })}
+              {/* Task B: always enabled, even when empty (empty state explains how to save).
+                  The count slot has a reserved width so hydration cannot shift the row. */}
+              <button
+                onClick={() => (view === "saved" ? setView("all") : showSaved())}
+                aria-pressed={view === "saved"}
+                aria-label={fmt(b.tabAria, { count: savedCount })}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition",
+                  view === "saved"
+                    ? "border-amber-300/70 bg-amber-300/20 text-amber-100"
+                    : savedCount > 0
+                      ? "border-amber-300/40 text-amber-200 hover:bg-amber-300/10"
+                      : "border-white/10 text-slate-400 hover:text-slate-200"
+                )}
+              >
+                <StarIcon filled={savedCount > 0} />
+                <span>{b.tab}</span>
+                <span aria-hidden="true">
+                  (<span className="inline-block min-w-[2ch] text-center tabular-nums">{savedCount}</span>)
+                </span>
+              </button>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <select
@@ -213,7 +302,33 @@ export function MechanismClient() {
 
       {/* cards grouped by topic */}
       <Container className="pb-20">
-        {grouped.length === 0 ? (
+        {/* Task B: saved view header. Only rendered after a user click, so it
+            is input-driven and does not count toward CLS. */}
+        {view === "saved" && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-300/30 bg-amber-300/[0.06] px-4 py-3">
+            <div>
+              <h2 className="flex items-center gap-2 font-display text-lg font-bold text-amber-100">
+                <StarIcon filled />
+                {b.sectionTitle}
+                <span className="font-mono text-xs font-normal text-amber-200/80">{savedCount}</span>
+              </h2>
+              <p className="mt-0.5 text-xs text-slate-400">{b.storedLocally}</p>
+            </div>
+            <button
+              onClick={() => setView("all")}
+              className="min-h-11 rounded-lg border border-white/15 px-3 text-xs font-medium text-slate-200 transition hover:border-cyan-400/40 hover:text-cyan-200"
+            >
+              {b.showAll}
+            </button>
+          </div>
+        )}
+
+        {view === "saved" && savedCount === 0 ? (
+          <div className="py-10 text-center">
+            <p className="text-sm font-semibold text-slate-200">{b.emptyTitle}</p>
+            <p className="mx-auto mt-1.5 max-w-md text-xs leading-relaxed text-slate-400">{b.emptyHint}</p>
+          </div>
+        ) : grouped.length === 0 ? (
           <div className="py-10 text-center">
             <p className="text-sm text-slate-400">{m.noResults}</p>
             {hasFilters && (
@@ -244,8 +359,12 @@ export function MechanismClient() {
                     mech={mech}
                     open={openIds.has(mech.id)}
                     onToggle={() => toggleOne(mech.id)}
+                    saved={savedSet.has(mech.id)}
+                    onToggleSave={() => onToggleSave(mech.id)}
                     locale={locale}
                     m={m}
+                    b={b}
+                    fmt={fmt}
                   />
                 ))}
               </div>
@@ -253,6 +372,33 @@ export function MechanismClient() {
           ))
         )}
       </Container>
+
+      {/* Task B: save feedback. The live region is always mounted (so screen
+          readers announce the first message) and fixed-positioned (no layout
+          shift). Width is capped by the viewport, so no overflow at 360 px. */}
+      <div
+        role="status"
+        aria-live="polite"
+        className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 print:hidden"
+      >
+        {toast && (
+          <div
+            key={toast.key}
+            className="pointer-events-auto flex max-w-full flex-wrap items-center gap-3 rounded-xl border border-amber-300/40 bg-slate-900/95 px-4 py-3 text-sm text-slate-100 shadow-lg shadow-black/40"
+          >
+            <span className="flex items-center gap-2 text-amber-200">
+              <StarIcon filled />
+              <span className="text-slate-100">{toast.text}</span>
+            </span>
+            <button
+              onClick={showSaved}
+              className="min-h-11 rounded-lg border border-amber-300/50 px-3 text-xs font-semibold text-amber-100 transition hover:bg-amber-300/15"
+            >
+              {b.viewSaved}
+            </button>
+          </div>
+        )}
+      </div>
     </>
   );
 }
@@ -261,12 +407,18 @@ function MechanismCard({
   mech,
   open,
   onToggle,
+  saved,
+  onToggleSave,
   locale,
   m,
+  b,
+  fmt,
 }: {
   mech: Mechanism;
   open: boolean;
   onToggle: () => void;
+  saved: boolean;
+  onToggleSave: () => void;
   locale: string;
   m: {
     stepsLabel: string;
@@ -280,6 +432,8 @@ function MechanismCard({
     expand: string;
     collapse: string;
   };
+  b: BookmarkStrings;
+  fmt: (template: string, vars?: Record<string, string | number>) => string;
 }) {
   const title = mechTitle(mech, locale);
   const summary = mechSummary(mech, locale);
@@ -294,7 +448,13 @@ function MechanismCard({
 
   return (
     <Reveal delay={(mech.id.length % 3) * 60}>
-      <GlassCard className={cn("flex h-full flex-col p-6 transition", open && "ring-1 ring-cyan-400/30")}>
+      <GlassCard
+        className={cn(
+          "flex h-full flex-col p-6 transition",
+          open && "ring-1 ring-cyan-400/30",
+          saved && !open && "ring-1 ring-amber-300/30"
+        )}
+      >
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <span
             className={cn(
@@ -312,6 +472,26 @@ function MechanismCard({
               {tag}
             </span>
           ))}
+          {/* Task B: save toggle. 44 px touch target; both labels share one grid
+              cell so the button width is identical saved/unsaved (no shift). */}
+          <button
+            type="button"
+            onClick={onToggleSave}
+            aria-pressed={saved}
+            aria-label={fmt(saved ? b.unsaveAria : b.saveAria, { title })}
+            className={cn(
+              "ms-auto inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300",
+              saved
+                ? "border-amber-300/60 bg-amber-300/15 text-amber-200"
+                : "border-white/15 text-slate-300 hover:border-amber-300/40 hover:text-amber-200"
+            )}
+          >
+            <StarIcon filled={saved} />
+            <span className="grid" aria-hidden="true">
+              <span className={cn("col-start-1 row-start-1", saved && "invisible")}>{b.save}</span>
+              <span className={cn("col-start-1 row-start-1", !saved && "invisible")}>{b.saved}</span>
+            </span>
+          </button>
         </div>
 
         <button

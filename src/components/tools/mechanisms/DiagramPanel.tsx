@@ -425,9 +425,11 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
                 strokeWidth={strokeWidth}
               />
               {/* same path, no stroke: only its marker paints, so the head sits
-                  exactly where the static renderer put it */}
+                  exactly where the static renderer put it. strokeWidth MUST match
+                  the shaft: the markers use the default markerUnits="strokeWidth",
+                  so without it the head would shrink to 1/2 (v5) or 1/1.6 (legacy). */}
               <g className="mech-curve-head">
-                <path d={d} fill="none" stroke="none" markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`} />
+                <path d={d} fill="none" stroke="none" strokeWidth={strokeWidth} markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`} />
               </g>
             </g>
           );

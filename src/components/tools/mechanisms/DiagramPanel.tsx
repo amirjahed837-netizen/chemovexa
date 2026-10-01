@@ -358,7 +358,7 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
     const a = atoms.find((x) => x.id === id);
     if (!a) return undefined;
     if (a.bare) return { w: 8, h: 12 };
-    return boxes[id];
+    return boxes[id] ?? { w: a.el.length * 9 + 4, h: 16 };
   };
   const posOf = (id: string): Pt | undefined => atoms.find((a) => a.id === id);
 

@@ -27,6 +27,13 @@ export type DBond = {
   order?: 1 | 2 | 3;
   /** dashed (partial bond in TS / resonance) */
   dash?: boolean;
+  /**
+   * Stereochemistry: wedge = solid filled triangle, atom `a` is the IN-PLANE
+   * root and `b` points TOWARD the viewer. Hash = dashed wedge, `b` points AWAY.
+   * Only valid with order 1 and not together with `dash`.
+   */
+  wedge?: boolean;
+  hash?: boolean;
 };
 
 /** curved electron-push arrow. `from`/`to`: atom id, or bond id "bond:<a>:<b>" (midpoint). */

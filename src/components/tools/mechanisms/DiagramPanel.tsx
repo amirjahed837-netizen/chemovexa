@@ -107,6 +107,50 @@ function headPath(x2: number, y2: number, cx: number, cy: number, size = 7, half
   return `M ${tipX.toFixed(1)} ${tipY.toFixed(1)} L ${(bx + lw).toFixed(1)} ${(by + lh).toFixed(1)} L ${(bx - lw).toFixed(1)} ${(by - lh).toFixed(1)} Z`;
 }
 
+/**
+ * Stereochemistry bonds: a wedge is a solid filled triangle, a hash is a dashed
+ * wedge narrowing to the far atom. In both cases `a` is the in-plane root and
+ * `b` is the stereocenter substituent (wedge = toward viewer, hash = away).
+ * Drawn as absolute SVG paths so they scale with viewBox, not strokeWidth.
+ */
+function wedgePath(a: Pt, b: Pt, width = 6) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.max(Math.hypot(dx, dy), 1);
+  // perpendicular unit vector
+  const px = -dy / len;
+  const py = dx / len;
+  // wide at the root atom (a), tapering to a point at the stereocenter (b)
+  return {
+    d: `M ${(a.x + px * width).toFixed(1)} ${(a.y + py * width).toFixed(1)} L ${b.x.toFixed(1)} ${b.y.toFixed(
+      1,
+    )} L ${(a.x - px * width).toFixed(1)} ${(a.y - py * width).toFixed(1)} Z`,
+  };
+}
+
+/**
+ * Hashed wedge: 5 parallel strokes perpendicular to the bond axis, each
+ * proportionally wider toward the stereocenter end.
+ */
+function hashSegments(a: Pt, b: Pt, count = 5, maxWidth = 9) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.max(Math.hypot(dx, dy), 1);
+  const ux = dx / len;
+  const uy = dy / len;
+  const px = -uy;
+  const py = ux;
+  const segs: { x1: number; y1: number; x2: number; y2: number; w: number }[] = [];
+  for (let i = 1; i <= count; i++) {
+    const t = i / (count + 1);
+    const cx = a.x + dx * t;
+    const cy = a.y + dy * t;
+    const w = maxWidth * t;
+    segs.push({ x1: cx + px * w, y1: cy + py * w, x2: cx - px * w, y2: cy - py * w, w: 1.4 });
+  }
+  return segs;
+}
+
 const INK = "var(--mech-ink)";
 const PINK = "var(--mech-pink)";
 const TEAL = "var(--mech-teal)";
@@ -210,7 +254,18 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
     // charges become their own positioned labels (attached to atom corner)
     const chargeLabels: { x: number; y: number; text: string; atomId: string }[] = [];
     atoms.forEach((a) => {
-      if (!a.charge || a.bare) return;
+      if (!a.charge) return;
+      // Bare atoms (vertex carbons) have no rendered label to attach to, so
+      // the charge is placed directly above the vertex instead of at a corner.
+      if (a.bare) {
+        chargeLabels.push({
+          x: a.x,
+          y: a.y - 11,
+          text: a.charge,
+          atomId: a.id,
+        });
+        return;
+      }
       // place at upper-right unless bond occupies that quadrant, then upper-left
       const neighbors = frame.bonds
         .filter((b) => b.a === a.id || b.b === a.id)
@@ -349,6 +404,35 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
           const dash = b.dash ? "4 3" : undefined;
           const stroke = b.dash ? SLATE : INK;
           const order = b.order ?? 1;
+          // Stereochemistry: wedge/hash override the plain bond rendering.
+          if (order === 1 && b.wedge) {
+            return (
+              <path
+                key={`b${i}`}
+                d={wedgePath(a1, b1).d}
+                fill={INK}
+                stroke="none"
+                data-stereo="wedge"
+              />
+            );
+          }
+          if (order === 1 && b.hash) {
+            return (
+              <g key={`b${i}`} data-stereo="hash">
+                {hashSegments(a1, b1).map((s, k) => (
+                  <line
+                    key={k}
+                    x1={s.x1}
+                    y1={s.y1}
+                    x2={s.x2}
+                    y2={s.y2}
+                    stroke={INK}
+                    strokeWidth={s.w}
+                  />
+                ))}
+              </g>
+            );
+          }
           if (order > 1) {
             const dx = b1.x - a1.x;
             const dy = b1.y - a1.y;

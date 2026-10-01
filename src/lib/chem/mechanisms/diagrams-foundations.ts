@@ -66,6 +66,91 @@ export const FOUNDATION_DIAGRAMS: Record<string, MechanismDiagram> = {
     ],
     "connectors": ["→", "→"]
   },
+  "sn2-stereo": {
+    "title": {
+      "en": "SN2 stereochemistry: Walden inversion",
+      "fa": "⁦SN2⁩ استریوشیمی: وارونگی والدن"
+    },
+    "footnote": {
+      "en": "Wedge/hash notation makes the stereospecificity visible: the leaving group starts as a solid wedge toward the viewer, and after backside attack the nucleophile ends as a hashed wedge pointing away. Every SN2 inverts every stereocenter — the configuration is never scrambled, never racemized.",
+      "fa": "نمایش گوهی/هاش‌دار بودن استریوشیمی را آشکار می‌کند: گروه ترک‌کننده در ابتدا به‌صورت گوهیِ پررنگ به سمت بیننده قرار دارد و پس از حمله از پشت، هسته‌خواه به‌صورت هاش‌دار به دور از بیننده می‌نشیند. هر واکنش ⁦SN2⁩ در هر مرکز استریو، وارونگی ایجاد می‌کند — پیکربندی هرگز مخدوش یا راسمی نمی‌شود."
+    },
+    "frames": [
+      {
+        "caption": {
+          "en": "(S)-2-bromobutane: Br points toward the viewer.",
+          "fa": "(S)-۲-بروموبوتان: Br به سمت بیننده است."
+        },
+        "atoms": [
+          {"id": "c2", "el": "C", "x": 250, "y": 90, "bare": true},
+          {"id": "br", "el": "Br", "x": 250, "y": 18, "charge": "δ−"},
+          {"id": "c1", "el": "CH₃", "x": 182.3, "y": 114.6},
+          {"id": "c3", "el": "CH₂CH₃", "x": 317.7, "y": 114.6},
+          {"id": "h", "el": "H", "x": 250, "y": 162}
+        ],
+        "bonds": [
+          {"a": "c2", "b": "br", "wedge": true},
+          {"a": "c2", "b": "c1"},
+          {"a": "c2", "b": "c3"},
+          {"a": "c2", "b": "h", "hash": true}
+        ],
+        "labels": [
+          {"x": 60, "y": 165, "text": "S configuration", "size": 11, "color": "teal"}
+        ]
+      },
+      {
+        "caption": {
+          "en": "HO⁻ attacks from the back, opposite the wedge.",
+          "fa": "HO⁻ از پشت، روبروی گوه حمله می‌کند."
+        },
+        "atoms": [
+          {"id": "nu", "el": "HO", "x": 250, "y": 162, "charge": "−"},
+          {"id": "c2", "el": "C", "x": 250, "y": 90, "bare": true, "charge": "δ+"},
+          {"id": "br", "el": "Br", "x": 250, "y": 18, "charge": "δ−"},
+          {"id": "c1", "el": "CH₃", "x": 182.3, "y": 114.6},
+          {"id": "c3", "el": "CH₂CH₃", "x": 317.7, "y": 114.6},
+          {"id": "h", "el": "H", "x": 312.35, "y": 54}
+        ],
+        "bonds": [
+          {"a": "c2", "b": "br", "dash": true},
+          {"a": "nu", "b": "c2", "dash": true},
+          {"a": "c2", "b": "c1"},
+          {"a": "c2", "b": "c3"},
+          {"a": "c2", "b": "h"}
+        ],
+        "curves": [
+          {"fromRef": "atom:nu", "toRef": "atom:c2", "bulge": 26},
+          {"fromRef": "bond:br:c2", "toRef": "atom:br", "bulge": 26}
+        ],
+        "labels": [
+          {"x": 395, "y": 90, "text": "180°", "size": 11, "color": "slate"}
+        ]
+      },
+      {
+        "caption": {
+          "en": "(R)-2-butanol: OH now points away — inverted.",
+          "fa": "(R)-۲-بوتانول: OH حالا رو به دور است — وارونگی پیدا کرده."
+        },
+        "atoms": [
+          {"id": "c2", "el": "C", "x": 250, "y": 90, "bare": true},
+          {"id": "o", "el": "OH", "x": 250, "y": 18},
+          {"id": "c1", "el": "CH₃", "x": 182.3, "y": 114.6},
+          {"id": "c3", "el": "CH₂CH₃", "x": 317.7, "y": 114.6},
+          {"id": "h", "el": "H", "x": 250, "y": 162}
+        ],
+        "bonds": [
+          {"a": "c2", "b": "o", "hash": true},
+          {"a": "c2", "b": "c1"},
+          {"a": "c2", "b": "c3"},
+          {"a": "c2", "b": "h", "wedge": true}
+        ],
+        "labels": [
+          {"x": 400, "y": 165, "text": "R configuration", "size": 11, "color": "teal"}
+        ]
+      }
+    ],
+    "connectors": ["→", "→"]
+  },
   "sn1": {
     "title": {
       "en": "SN1: ionization, capture, deprotonation",

@@ -45,7 +45,52 @@ export const FOUNDATION_MECHANISMS: Mechanism[] = [
       { name: { en: "Methyl bromide + OH⁻", fa: "برومید متیل + OH⁻" }, equation: "CH₃Br + OH⁻ → CH₃OH + Br⁻" },
       { name: { en: "Williamson ether", fa: "اتر ویلیامسون" }, equation: "CH₃Br + CH₃ONa → CH₃OCH₃ + NaBr" },
     ],
-    related: ["ch6-sn2", "ch11-ether-synthesis"],
+    related: ["ch6-sn2", "ch11-ether-synthesis", "sn2-stereo"],
+  },
+  {
+    id: "sn2-stereo",
+    family: "substitution",
+    topic: "foundations",
+    source: { en: "McMurry ch. 6", fa: "مک‌موری فصل ۶" },
+    tags: {
+      en: ["stereospecific", "Walden inversion", "wedge/dash"],
+      fa: ["استریوگزینش‌پذیر", "وارونگی والدن", "گوه/خط‌چین"],
+    },
+    en: {
+      title: "SN2 stereochemistry — Walden inversion",
+      summary:
+        "Backside attack inverts the stereocenter: the leaving group leaves and the nucleophile enters on opposite faces. A single enantiomer of substrate gives a single enantiomer of product — never racemic. Wedge/hash notation shows the flip directly.",
+      general: "(S)-CH₃CH₂CHBrCH₃ + HO⁻ → (R)-CH₃CH₂CHOHCH₃ + Br⁻",
+      steps: [
+        { label: "Step 1 — the only step", detail: "The nucleophile attacks the σ* C–X orbital from 180° behind the leaving group. The three in-plane substituents bend through the carbon like an umbrella flipping inside-out in the wind." },
+      ],
+      keyPoints: [
+        "100% inversion, 0% retention, 0% racemization — stereospecific.",
+        "If you start with (S), you get (R); (R) gives (S) — every time.",
+        "Contrast: SN1 gives racemization because the planar carbocation is attacked from both faces.",
+      ],
+      conditions: "Any SN2 substrate with a stereocenter at the reaction carbon. Methyl has no stereocenter, so the first example cannot show this.",
+    },
+    fa: {
+      title: "استریوشیمی SN2 — وارونگی والدن",
+      summary:
+        "حمله از پشت مرکز استریو را وارون می‌کند: گروه ترک‌کننده از یک سطح و هسته‌خواه از سطح مقابل وارد می‌شود. یک انانتیومر از بستر، فقط یک انانتیومر از محصول می‌دهد — هرگز راسمی نیست. نماد گوه/هاش این برگشت را مستقیماً نشان می‌دهد.",
+      general: "(S)-CH₃CH₂CHBrCH₃ + HO⁻ → (R)-CH₃CH₂CHOHCH₃ + Br⁻",
+      steps: [
+        { label: "تنها مرحله", detail: "هسته‌خواه از ۱۸۰° پشت گروه ترک‌کننده به اوربیتال σ* ی C–X حمله می‌کند. سه استخلافِ صفحه‌ای از میان کربن خم می‌شوند — مثل چتری که در باد برگردانده می‌شود." },
+      ],
+      keyPoints: [
+        "۱۰۰٪ وارونگی، ۰٪ حفظ، ۰٪ راسمی‌شدن — استریوگزینش‌پذیر.",
+        "اگر با (S) شروع کنید (R) به‌دست می‌آید؛ (R) می‌دهد (S) — همیشه.",
+        "در مقایسه: SN1 موجب راسمی‌شدن می‌شود چون کربوکاتیون تخت از هر دو سطح حمله می‌شود.",
+      ],
+      conditions: "هر بستر SN2 که در کربن واکنش مرکز استریو داشته باشد. متیل مرکز استریو ندارد، به همین دلیل مثال اول نمی‌تواند این حالت را نشان دهد.",
+    },
+    examples: [
+      { name: { en: "2-bromobutane + hydroxide", fa: "۲-بروموبوتان + هیدروکسید" }, equation: "(S)-CH₃CH₂CHBrCH₃ + OH⁻ → (R)-CH₃CH₂CHOHCH₃ + Br⁻" },
+      { name: { en: "2-bromobutane + iodide", fa: "۲-بروموبوتان + یدید" }, equation: "(S)-CH₃CH₂CHBrCH₃ + I⁻ → (R)-CH₃CH₂CHICH₃ + Br⁻" },
+    ],
+    related: ["sn2", "sn1", "ch6-sn2"],
   },
   {
     id: "sn1",

@@ -70,7 +70,7 @@ function edgePoint(from: Pt, box: Box | undefined, to: Pt, pad: number): Pt {
   return { x: from.x + dx * t, y: from.y + dy * t };
 }
 
-function curvePath(x1: number, y1: number, x2: number, y2: number, bulge = 30) {
+function curveGeom(x1: number, y1: number, x2: number, y2: number, bulge = 30) {
   const mx = (x1 + x2) / 2;
   const my = (y1 + y2) / 2;
   const dx = x2 - x1;
@@ -78,7 +78,29 @@ function curvePath(x1: number, y1: number, x2: number, y2: number, bulge = 30) {
   const len = Math.max(Math.hypot(dx, dy), 1);
   const cx = mx + (-dy / len) * bulge;
   const cy = my + (dx / len) * bulge;
+  return { cx, cy };
+}
+
+function curvePath(x1: number, y1: number, x2: number, y2: number, bulge = 30) {
+  const { cx, cy } = curveGeom(x1, y1, x2, y2, bulge);
   return `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+}
+
+/**
+ * Arrow head as an explicit path (not a <marker>) so it can be revealed only
+ * once its shaft finishes drawing. Tangent at t=1 of a quadratic Bézier is
+ * simply end - control.
+ */
+function headPath(x2: number, y2: number, cx: number, cy: number, size = 7) {
+  const ang = Math.atan2(y2 - cy, x2 - cx);
+  const tipX = x2 + Math.cos(ang) * size * 0.55;
+  const tipY = y2 + Math.sin(ang) * size * 0.55;
+  const bx = x2 - Math.cos(ang) * size * 0.45;
+  const by = y2 - Math.sin(ang) * size * 0.45;
+  const half = size * 0.42;
+  const lw = Math.cos(ang + Math.PI / 2) * half;
+  const lh = Math.sin(ang + Math.PI / 2) * half;
+  return `M ${tipX.toFixed(1)} ${tipY.toFixed(1)} L ${(bx + lw).toFixed(1)} ${(by + lh).toFixed(1)} L ${(bx - lw).toFixed(1)} ${(by - lh).toFixed(1)} Z`;
 }
 
 const INK = "var(--mech-ink)";
@@ -257,6 +279,21 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
     return () => clearTimeout(t);
   }, [layout]);
 
+  /* Stage 3: set each arrow's real path length as a CSS var so the
+   * draw-on animation can animate stroke-dashoffset from exactly that length. */
+  const svgRef = useRef<SVGSVGElement>(null);
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    svg.querySelectorAll<SVGPathElement>(".mech-arrow-draw > path:first-child").forEach((p) => {
+      try {
+        p.style.setProperty("--arrow-len", `${p.getTotalLength().toFixed(1)}px`);
+      } catch {
+        /* not rendered yet */
+      }
+    });
+  }, [boxes, frame]);
+
   const { atoms, labels, condition, chargeLabels, vb } = layout;
   const boxOf = (id: string): Box | undefined => {
     const a = atoms.find((x) => x.id === id);
@@ -282,6 +319,7 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
 
   return (
     <svg
+      ref={svgRef}
       viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
       className="mech-frame"
       style={{ maxHeight: 250 }}
@@ -352,17 +390,28 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
         (frame.curves ?? []).map((c, i) => {
           const strict = resolveCurveV5(frame, c, new Map(atoms.map((a) => [a.id, { x: a.x, y: a.y }])), boxOf);
           if (strict) {
+            const { cx, cy } = curveGeom(strict.start.x, strict.start.y, strict.end.x, strict.end.y, c.bulge);
+            const shaft = curvePath(strict.start.x, strict.start.y, strict.end.x, strict.end.y, c.bulge);
+            const color = c.fish ? "#f97316" : PINK;
             return (
-              <path
-                key={`c${i}`}
-                data-anchor-from={strict.from.ref}
-                data-anchor-to={strict.to.ref}
-                d={curvePath(strict.start.x, strict.start.y, strict.end.x, strict.end.y, c.bulge)}
-                fill="none"
-                stroke={c.fish ? "#f97316" : PINK}
-                strokeWidth={2}
-                markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`}
-              />
+              <g key={`c${i}`} className="mech-arrow-draw" style={{ animationDelay: `${i * 110}ms` }}>
+                <path
+                  data-anchor-from={strict.from.ref}
+                  data-anchor-to={strict.to.ref}
+                  d={shaft}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={2}
+                  markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`}
+                />
+                <path
+                  d={headPath(strict.end.x, strict.end.y, cx, cy)}
+                  fill={color}
+                  stroke="none"
+                  className="mech-arrow-head"
+                  style={{ animationDelay: `${i * 110 + 280}ms` }}
+                />
+              </g>
             );
           }
           if (!c.from || !c.to) throw new Error("[CHEMOVEXA arrows v5] Legacy arrows require from and to, or use both fromRef and toRef.");

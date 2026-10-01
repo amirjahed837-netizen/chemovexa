@@ -644,3 +644,45 @@ html[dir="rtl"] .mech-footnote {
   text-align: right;
 }
 
+/* ----------------- mechanism arrow draw-on animation (Stage 3) -------------- */
+/* The shaft draws itself in (stroke-dashoffset), then the head fades in once
+ * the shaft lands. Staggered per-arrow via inline animation-delay. Arrows keep
+ * pointing at their atoms at every intermediate frame — partial paths still end
+ * at the target, so nothing ever looks detached mid-animation. */
+
+.mech-arrow-draw > path:first-child {
+  stroke-dasharray: var(--arrow-len, 120px);
+  stroke-dashoffset: var(--arrow-len, 120px);
+  animation: mech-draw-shaft 460ms cubic-bezier(0.45, 0.05, 0.3, 1) both;
+}
+
+.mech-arrow-head {
+  opacity: 0;
+  animation: mech-draw-head 150ms ease-out both;
+}
+
+@keyframes mech-draw-shaft {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes mech-draw-head {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mech-arrow-draw > path:first-child {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+  .mech-arrow-head {
+    opacity: 1;
+  }
+}
+

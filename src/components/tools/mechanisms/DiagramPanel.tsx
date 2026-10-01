@@ -90,16 +90,20 @@ function curvePath(x1: number, y1: number, x2: number, y2: number, bulge = 30) {
  * Arrow head as an explicit path (not a <marker>) so it can be revealed only
  * once its shaft finishes drawing. Tangent at t=1 of a quadratic Bézier is
  * simply end - control.
+ *
+ * Full pair arrow → filled triangle; fishhook (single electron) → one open
+ * half-barb, stroked, never closed — one electron must never look like two.
  */
-function headPath(x2: number, y2: number, cx: number, cy: number, size = 7) {
+function headPath(x2: number, y2: number, cx: number, cy: number, size = 7, half = false) {
   const ang = Math.atan2(y2 - cy, x2 - cx);
   const tipX = x2 + Math.cos(ang) * size * 0.55;
   const tipY = y2 + Math.sin(ang) * size * 0.55;
   const bx = x2 - Math.cos(ang) * size * 0.45;
   const by = y2 - Math.sin(ang) * size * 0.45;
-  const half = size * 0.42;
-  const lw = Math.cos(ang + Math.PI / 2) * half;
-  const lh = Math.sin(ang + Math.PI / 2) * half;
+  const half_ = size * 0.42;
+  const lw = Math.cos(ang + Math.PI / 2) * half_;
+  const lh = Math.sin(ang + Math.PI / 2) * half_;
+  if (half) return `M ${tipX.toFixed(1)} ${tipY.toFixed(1)} L ${(bx + lw).toFixed(1)} ${(by + lh).toFixed(1)}`;
   return `M ${tipX.toFixed(1)} ${tipY.toFixed(1)} L ${(bx + lw).toFixed(1)} ${(by + lh).toFixed(1)} L ${(bx - lw).toFixed(1)} ${(by - lh).toFixed(1)} Z`;
 }
 
@@ -402,12 +406,12 @@ function Frame({ frame, locale }: { frame: DFrame; locale: string }) {
                   fill="none"
                   stroke={color}
                   strokeWidth={2}
-                  markerEnd={`url(#${c.fish ? "mech-fish" : "mech-arrow"})`}
                 />
                 <path
-                  d={headPath(strict.end.x, strict.end.y, cx, cy)}
-                  fill={color}
-                  stroke="none"
+                  d={headPath(strict.end.x, strict.end.y, cx, cy, 7, c.fish)}
+                  fill={c.fish ? "none" : color}
+                  stroke={c.fish ? color : "none"}
+                  strokeWidth={c.fish ? 1.7 : 0}
                   className="mech-arrow-head"
                   style={{ animationDelay: `${i * 110 + 280}ms` }}
                 />

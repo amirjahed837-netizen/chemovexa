@@ -30,7 +30,7 @@ export function CalculatorApp() {
     <div className="space-y-6">
       <div
         role="tablist"
-        aria-label="Calculator tools"
+        aria-label={t.ui.calcTablist}
         className="flex flex-wrap gap-1 rounded-2xl border border-white/10 bg-white/[0.03] p-1.5"
       >
         {TABS.map((tb) => (

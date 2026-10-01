@@ -31,6 +31,8 @@ export const en = {
     formula: "formula",
     optional: "optional",
     optionalField: "optional",
+    calcTablist: "Calculator tools",
+    noteNav: "Note navigation",
   },
   nav: {
     home: "Home",
@@ -322,6 +324,7 @@ export const en = {
         inMol: "in mol/L",
         dilutionTip:
           "Pipette the stock volume, transfer to a volumetric flask, then dilute to the calibration mark with solvent.",
+        formulaNote: "C₁ × V₁ = C₂ × V₂ (any consistent units)",
       },
       ph: {
         system: "System",

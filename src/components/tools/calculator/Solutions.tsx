@@ -203,7 +203,7 @@ function Dilution() {
         </Field>
 
         {result.error && <ErrorNote message={result.error} />}
-        <MethodNote>C₁ × V₁ = C₂ × V₂ (any consistent units)</MethodNote>
+        <MethodNote>{s.formulaNote}</MethodNote>
       </div>
 
       <div className="space-y-2.5 self-start">

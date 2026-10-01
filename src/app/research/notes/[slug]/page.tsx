@@ -5,6 +5,7 @@ import { getAllNotes, getNote } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { Markdown } from "@/components/md/Markdown";
+import { en } from "@/lib/i18n/en";
 import "katex/dist/katex.min.css";
 
 type Params = Promise<{ slug: string }>;
@@ -80,7 +81,11 @@ export default async function NotePage({ params }: { params: Params }) {
       </Reveal>
 
       {/* prev / next */}
-      <nav className="mt-10 grid gap-4 sm:grid-cols-2" aria-label="Note navigation">
+      <nav
+        className="mt-10 grid gap-4 sm:grid-cols-2"
+        aria-label={en.ui.noteNav}
+        dir="ltr"
+      >
         {older ? (
           <Link
             href={`/research/notes/${older.slug}`}

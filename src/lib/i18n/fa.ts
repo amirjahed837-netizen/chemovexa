@@ -33,6 +33,8 @@ export const fa: Dictionary = {
     formula: "فرمول",
     optional: "اختیاری",
     optionalField: "اختیاری",
+    calcTablist: "ابزارهای ماشین‌حساب",
+    noteNav: "ناوبری بین یادداشت‌ها",
   },
   nav: {
     home: "خانه",
@@ -320,6 +322,7 @@ export const fa: Dictionary = {
         inMol: "بر حسب mol/L",
         dilutionTip:
           "حجم محلول مادر را پیپت کنید، به فلاسک حجمی منتقل و سپس با حلال تا خط کالیبراسیون رقیق کنید.",
+        formulaNote: "C₁ × V₁ = C₂ × V₂ (هر واحد یکسانی)",
       },
       ph: {
         system: "نوع سیستم",

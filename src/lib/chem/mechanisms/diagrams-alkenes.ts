@@ -88,8 +88,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
       "fa": "برم‌دارکردن از مسیر یون برومونیوم"
     },
     "footnote": {
-      "en": "The alkene π pair attacks polarized Br₂, the Br-Br pair leaves, and a bromine lone pair closes the three-membered bridge. Br⁻ attacks from the opposite face, breaking one C-Br bridge bond. Ethene illustrates connectivity; anti stereochemistry for substituted alkenes requires wedge/dash notation, which this DSL lacks.",
-      "fa": "جفت‌الکترون ⁦π⁩ به ⁦Br₂⁩ قطبی حمله می‌کند، جفت‌الکترون ⁦Br-Br⁩ جدا می‌شود و جفت‌الکترون بروم، پل سه‌عضوی را می‌بندد. برومید از وجه مقابل حمله می‌کند و یک پیوند پل ⁦C-Br⁩ را می‌شکند. اتن اتصال اتم‌ها را نشان می‌دهد؛ نمایش فضایی افزایش پاد در آلکن‌های جانشین‌دار به پیوند گوه‌ای نیاز دارد که در این ⁦DSL⁩ وجود ندارد."
+      "en": "The alkene π pair attacks polarized Br₂, the Br-Br pair leaves, and a bromine lone pair closes the three-membered bridge. Br⁻ attacks from the opposite face, breaking one C-Br bridge bond. The final frame shows the anti stereochemistry with wedge/hash notation: the two bromines add to opposite faces of the original double bond.",
+      "fa": "جفت‌الکترون ⁦π⁩ به ⁦Br₂⁩ قطبی حمله می‌کند، جفت‌الکترون ⁦Br-Br⁩ جدا می‌شود و جفت‌الکترون بروم، پل سه‌عضوی را می‌بندد. برومید از وجه مقابل حمله می‌کند و یک پیوند پل ⁦C-Br⁩ را می‌شکند. فریم آخر استریوشیمی افزایش پاد را با نماد گوه/هاش نشان می‌دهد: دو بروم به دو وجه مقابل پیوند دوگانهٔ اولیه اضافه می‌شوند."
     },
     "frames": [
       {
@@ -158,9 +158,39 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
           {"x": 410, "y": 42, "text": "connectivity projection", "size": 10, "color": "slate"},
           {"x": 410, "y": 56, "text": "only", "size": 10, "color": "slate"}
         ]
+      },
+      {
+        "caption": {
+          "en": "Stereochemistry: cis-2-butene gives the meso dibromide.",
+          "fa": "استریوشیمی: سیس-۲-بوتن، دی‌برومید مزو می‌دهد."
+        },
+        "atoms": [
+          {"id": "c2", "el": "C", "x": 190, "y": 90, "bare": true},
+          {"id": "c3", "el": "C", "x": 262, "y": 90, "bare": true},
+          {"id": "br2", "el": "Br", "x": 190, "y": 18},
+          {"id": "br3", "el": "Br", "x": 262, "y": 162},
+          {"id": "me2", "el": "CH₃", "x": 154, "y": 27.6},
+          {"id": "me3", "el": "CH₃", "x": 298, "y": 27.6},
+          {"id": "h2", "el": "H", "x": 154, "y": 152.4},
+          {"id": "h3", "el": "H", "x": 298, "y": 152.4}
+        ],
+        "bonds": [
+          {"a": "c2", "b": "c3"},
+          {"a": "c2", "b": "br2", "wedge": true},
+          {"a": "c3", "b": "br3", "hash": true},
+          {"a": "c2", "b": "me2"},
+          {"a": "c3", "b": "me3"},
+          {"a": "c2", "b": "h2"},
+          {"a": "c3", "b": "h3"}
+        ],
+        "labels": [
+          {"x": 400, "y": 30, "text": "anti addition:", "size": 10, "color": "teal"},
+          {"x": 400, "y": 44, "text": "Br adds to opposite", "size": 10, "color": "slate"},
+          {"x": 400, "y": 58, "text": "faces (wedge vs hash)", "size": 10, "color": "slate"}
+        ]
       }
     ],
-    "connectors": ["→", "→"]
+    "connectors": ["→", "→", "→"]
   },
   "alkene-hydration": {
     "title": {
@@ -477,8 +507,8 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
       "fa": "هیدروژن‌دارکردن کاتالیزی روی سطح فلز"
     },
     "footnote": {
-      "en": "H₂ dissociates on a metal surface and adsorbed alkene is hydrogenated, usually with syn delivery. The panels summarize adsorption, transfer and desorption rather than claiming a concerted elementary two-H step. M sites are schematic, not a molecular geometry model. Ethene gives ethane; substituted alkenes need true stereochemical notation to display faces.",
-      "fa": "⁦H₂⁩ روی سطح فلز تفکیک می‌شود و آلکن جذب‌شده، معمولاً با انتقال سین هیدروژن، کاهش می‌یابد. قاب‌ها جذب، انتقال و واجذب را خلاصه می‌کنند و ادعای انتقال هم‌زمان دو ⁦H⁩ در یک گام ابتدایی ندارند. جایگاه‌های ⁦M⁩ طرح‌واره‌اند، نه مدل هندسی مولکولی. اتن، اتان می‌دهد؛ نمایش وجه‌ها در آلکن جانشین‌دار به نمادگذاری فضایی نیاز دارد."
+      "en": "H₂ dissociates on a metal surface and adsorbed alkene is hydrogenated with syn delivery — both hydrogens transfer from the metal to the same face of the C=C. The panels summarize adsorption, transfer and desorption rather than claiming a concerted elementary two-H step. M sites are schematic, not a molecular geometry model. The final frame shows the syn stereochemistry with wedge notation.",
+      "fa": "⁦H₂⁩ روی سطح فلز تفکیک می‌شود و آلکن جذب‌شده با انتقال سین هیدروژن کاهش می‌یابد — هر دو هیدروژن از فلز به یک وجهِ ⁦C=C⁩ منتقل می‌شوند. قاب‌ها جذب، انتقال و واجذب را خلاصه می‌کنند و ادعای انتقال هم‌زمان دو ⁦H⁩ در یک گام ابتدایی ندارند. جایگاه‌های ⁦M⁩ طرح‌واره‌اند، نه مدل هندسی مولکولی. فریم آخر استریوشیمی سین را با نماد گوهی نشان می‌دهد."
     },
     "frames": [
       {
@@ -539,9 +569,39 @@ export const ALKENE_DIAGRAMS: Record<string, MechanismDiagram> = {
         "labels": [
           {"x": 260, "y": 175, "text": "Desorption: C₂H₆ + free catalyst sites", "size": 10, "color": "slate"}
         ]
+      },
+      {
+        "caption": {
+          "en": "Syn stereochemistry: both H atoms add to the same face.",
+          "fa": "استریوشیمی سین: هر دو اتم H به یک وجه اضافه می‌شوند."
+        },
+        "atoms": [
+          {"id": "c2", "el": "C", "x": 190, "y": 90, "bare": true},
+          {"id": "c3", "el": "C", "x": 262, "y": 90, "bare": true},
+          {"id": "h2", "el": "H", "x": 190, "y": 18},
+          {"id": "h3", "el": "H", "x": 262, "y": 18},
+          {"id": "me2", "el": "CH₃", "x": 154, "y": 27.6},
+          {"id": "me3", "el": "CH₃", "x": 298, "y": 27.6},
+          {"id": "hp2", "el": "H", "x": 154, "y": 152.4},
+          {"id": "hp3", "el": "H", "x": 298, "y": 152.4}
+        ],
+        "bonds": [
+          {"a": "c2", "b": "c3"},
+          {"a": "c2", "b": "h2", "wedge": true},
+          {"a": "c3", "b": "h3", "wedge": true},
+          {"a": "c2", "b": "me2"},
+          {"a": "c3", "b": "me3"},
+          {"a": "c2", "b": "hp2"},
+          {"a": "c3", "b": "hp3"}
+        ],
+        "labels": [
+          {"x": 400, "y": 30, "text": "syn addition:", "size": 10, "color": "teal"},
+          {"x": 400, "y": 44, "text": "both H on the same", "size": 10, "color": "slate"},
+          {"x": 400, "y": 58, "text": "face (both wedges)", "size": 10, "color": "slate"}
+        ]
       }
     ],
-    "connectors": ["→several", "→several"]
+    "connectors": ["→several", "→several", "→"],
   },
   "alkene-radical-hbr": {
     "title": {

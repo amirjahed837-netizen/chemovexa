@@ -16,6 +16,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { route: "/chemistry/calculator", priority: 0.9, frequency: "monthly" as const },
     { route: "/chemistry/molecular-explorer", priority: 0.9, frequency: "monthly" as const },
     { route: "/chemistry/reaction-lab", priority: 0.9, frequency: "monthly" as const },
+    { route: "/chemistry/mechanisms", priority: 0.9, frequency: "monthly" as const },
+    { route: "/chemistry/mechanisms/quiz", priority: 0.8, frequency: "monthly" as const },
     { route: "/programming", priority: 0.7, frequency: "monthly" as const },
     { route: "/programming/projects", priority: 0.8, frequency: "monthly" as const },
     { route: "/programming/github", priority: 0.6, frequency: "weekly" as const },

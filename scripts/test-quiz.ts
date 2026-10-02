@@ -9,7 +9,7 @@ import { generateQuiz, type QuizQuestion } from "@/lib/chem/mechanisms/quiz";
 
 const byId = new Map(MECHANISMS.map((m) => [m.id, m]));
 
-let issues: string[] = [];
+const issues: string[] = [];
 let total = 0;
 
 function check(qs: QuizQuestion[], locale: "en" | "fa", label: string) {

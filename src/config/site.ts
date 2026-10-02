@@ -54,6 +54,12 @@ export const NAV_ITEMS: NavItem[] = [
         description: "Every organic mechanism, step by step",
         status: "live",
       },
+      {
+        label: "Mechanism Quiz",
+        href: "/chemistry/mechanisms/quiz",
+        description: "Test yourself — generated quizzes with saved best scores",
+        status: "live",
+      },
     ],
   },
   {

@@ -519,6 +519,18 @@ export const en = {
         cardOf: "{n} / {total}",
         pass: "Nice — {pct}%!",
         fail: "Keep going — review the cards and try a new quiz.",
+        pageTitle: "Mechanism Quiz",
+        pageDescription:
+          "A generated quiz over the whole mechanism library. Pick a scope and length, then see how many you can get right — your best score is saved on this device.",
+        scopeLabel: "Scope",
+        lengthLabel: "Questions",
+        tooFew: "Not enough mechanisms in this scope for a quiz — pick a broader scope.",
+        bestLine: "best so far: {correct}/{total} ({pct}%)",
+        backToLibrary: "← back to the mechanism library",
+        newBest: "new personal best!",
+        settings: "Quiz settings",
+        finish: "Finish quiz",
+        quit: "quit to settings",
       },
     },
     research: {

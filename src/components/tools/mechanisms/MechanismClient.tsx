@@ -22,6 +22,7 @@ import {
 import type { Mechanism, FamilyId, TopicId } from "@/lib/chem/mechanisms";
 import { getDiagram } from "@/lib/chem/mechanisms/diagrams";
 import { DiagramPanel } from "@/components/tools/mechanisms/DiagramPanel";
+import { QuizClient } from "@/components/tools/mechanisms/QuizClient";
 import { cn } from "@/lib/utils";
 
 type FamilyFilter = FamilyId | "all";
@@ -208,6 +209,15 @@ export function MechanismClient() {
           </GlassCard>
         </Reveal>
       </Container>
+
+      {/* flashcards & quiz over the filtered set */}
+      {filtered.length >= 4 && (
+        <Container className="pb-8">
+          <Reveal delay={80}>
+            <QuizClient ids={filtered.map((m) => m.id)} locale={locale} />
+          </Reveal>
+        </Container>
+      )}
 
       {/* cards grouped by topic */}
       <Container className="pb-20">

@@ -58,3 +58,7 @@ export const mechConditions = (m: Mechanism, locale: string) =>
   locale === "fa" ? m.fa.conditions : m.en.conditions;
 export const mechSource = (m: Mechanism, locale: string) =>
   locale === "fa" ? m.source.fa : m.source.en;
+export const mechGeneral = (m: Mechanism, locale: string) =>
+  locale === "fa" ? m.fa.general : m.en.general;
+export const mechTags = (m: Mechanism, locale: string): string[] =>
+  locale === "fa" ? m.tags.fa : m.tags.en;

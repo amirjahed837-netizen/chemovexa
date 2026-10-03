@@ -10,7 +10,7 @@
  *  - progress and best scores persist in localStorage
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -27,9 +27,18 @@ import { cn } from "@/lib/utils";
 
 type Phase = "setup" | "playing" | "result";
 type Scope = "all" | TopicId;
+type Pace = "relaxed" | "timed";
 
 const LENGTHS = [5, 10, 20] as const;
 const STORAGE_KEY = "chemovexa-quiz-best";
+const SPEED_KEY = "chemovexa-quiz-speed";
+
+/** seconds per question in timed mode, by quiz length */
+const SECS_PER_QUESTION: Record<(typeof LENGTHS)[number], number> = {
+  5: 20,
+  10: 15,
+  20: 10,
+};
 
 type BestRecord = { correct: number; total: number; pct: number; when: number };
 
@@ -46,6 +55,20 @@ function readBest(): BestRecord | null {
   return null;
 }
 
+/** fastest pace ever achieved, in questions per minute (higher is better) */
+function readSpeed(): number | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(SPEED_KEY);
+    if (!raw) return null;
+    const v = JSON.parse(raw);
+    if (typeof v?.qpm === "number" && v.qpm > 0) return v.qpm;
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 export function QuizPageClient() {
   const { t, locale } = useI18n();
   const q = t.pages.mechanisms.quiz;
@@ -53,8 +76,10 @@ export function QuizPageClient() {
 
   const [scope, setScope] = useState<Scope>("all");
   const [length, setLength] = useState<(typeof LENGTHS)[number]>(10);
+  const [pace, setPace] = useState<Pace>("relaxed");
   const [phase, setPhase] = useState<Phase>("setup");
   const [best, setBest] = useState<BestRecord | null>(() => readBest());
+  const [bestSpeed, setBestSpeed] = useState<number | null>(() => readSpeed());
 
   // Keep the displayed best score in sync when another tab updates it.
   useEffect(() => {
@@ -84,6 +109,46 @@ export function QuizPageClient() {
   const [score, setScore] = useState(0);
   const [history, setHistory] = useState<boolean[]>([]);
 
+  /* ------------------------------- timer ------------------------------- */
+  // Timed mode gives each question its own countdown. The interval id lives in a
+  // ref so it survives re-renders; a second ref tracks whether the current
+  // question was auto-answered by the clock (so onCheck doesn't double-count it).
+  const tickRef = useRef<number | null>(null);
+  const timedOutRef = useRef(false);
+  const timeBudget = pace === "timed" ? SECS_PER_QUESTION[length] : 0;
+  const [timeLeft, setTimeLeft] = useState(timeBudget);
+  const startedAtRef = useRef<number>(0);
+  const totalMsRef = useRef<number>(0);
+
+  const stopTimer = useCallback(() => {
+    if (tickRef.current !== null) {
+      window.clearInterval(tickRef.current);
+      tickRef.current = null;
+    }
+  }, []);
+
+  // (re)start the per-question countdown; a no-op in relaxed mode
+  const startQuestionTimer = useCallback(() => {
+    if (pace !== "timed") return;
+    stopTimer();
+    startedAtRef.current = Date.now();
+    const deadline = startedAtRef.current + timeBudget * 1000;
+    tickRef.current = window.setInterval(() => {
+      const remaining = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+      setTimeLeft(remaining);
+      if (remaining <= 0) {
+        stopTimer();
+        // clock ran out: score as missed, reveal the answer, allow advancing
+        timedOutRef.current = true;
+        setHistory((h) => [...h, false]);
+        setChecked(true);
+      }
+    }, 250);
+  }, [pace, timeBudget, stopTimer]);
+
+  // never leak an interval
+  useEffect(() => stopTimer, [stopTimer]);
+
   const start = useCallback(() => {
     setSeed(Math.floor(Math.random() * 1e9));
     setIdx(0);
@@ -91,10 +156,15 @@ export function QuizPageClient() {
     setChecked(false);
     setScore(0);
     setHistory([]);
+    timedOutRef.current = false;
+    totalMsRef.current = 0;
+    setTimeLeft(timeBudget);
     setPhase("playing");
-  }, []);
+    startQuestionTimer();
+  }, [timeBudget, startQuestionTimer]);
 
   const finish = useCallback(() => {
+    stopTimer();
     setPhase("result");
     const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
     const prev = readBest();
@@ -107,7 +177,20 @@ export function QuizPageClient() {
         /* storage unavailable — best score stays session-only */
       }
     }
-  }, [score, questions.length]);
+    // record pace (questions per minute) in timed mode only
+    if (pace === "timed" && totalMsRef.current > 0) {
+      const qpm = Math.round((questions.length / totalMsRef.current) * 60000);
+      const prevSpeed = readSpeed();
+      if (qpm > 0 && (!prevSpeed || qpm > prevSpeed)) {
+        setBestSpeed(qpm);
+        try {
+          window.localStorage.setItem(SPEED_KEY, JSON.stringify({ qpm }));
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  }, [score, questions.length, pace, stopTimer]);
 
   if (phase === "setup") {
     return (
@@ -167,6 +250,29 @@ export function QuizPageClient() {
                     />
                   ))}
                 </div>
+              </div>
+
+              <div className="mb-8">
+                <p className="mb-3 text-xs font-medium uppercase tracking-wider text-slate-400">
+                  {q.paceLabel}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <ScopeChip
+                    active={pace === "relaxed"}
+                    onClick={() => setPace("relaxed")}
+                    label={q.paceRelaxed}
+                  />
+                  <ScopeChip
+                    active={pace === "timed"}
+                    onClick={() => setPace("timed")}
+                    label={q.paceTimed}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  {pace === "timed"
+                    ? q.paceTimedHint.replace("{secs}", String(SECS_PER_QUESTION[length]))
+                    : q.paceRelaxedHint}
+                </p>
               </div>
 
               {deck.length < 4 ? (
@@ -238,6 +344,12 @@ export function QuizPageClient() {
               </p>
             )}
 
+            {pace === "timed" && bestSpeed && (
+              <p className="mt-2 font-mono text-[11px] text-slate-500">
+                {q.bestSpeedLine.replace("{qps}", String(bestSpeed))}
+              </p>
+            )}
+
             {/* per-question recap */}
             <div className="mt-8 flex flex-wrap justify-center gap-1.5">
               {history.map((ok, i) => (
@@ -283,7 +395,9 @@ export function QuizPageClient() {
   const pctDone = Math.round(((idx + (checked ? 1 : 0)) / questions.length) * 100);
 
   const onCheck = () => {
-    if (picked === null) return;
+    if (picked === null || checked) return;
+    stopTimer();
+    totalMsRef.current += Date.now() - startedAtRef.current;
     setChecked(true);
     const right = picked === cur.answerId;
     if (right) setScore((s) => s + 1);
@@ -295,9 +409,12 @@ export function QuizPageClient() {
       finish();
       return;
     }
+    timedOutRef.current = false;
     setIdx((i) => i + 1);
     setPicked(null);
     setChecked(false);
+    setTimeLeft(timeBudget);
+    startQuestionTimer();
   };
 
   const promptLine: Record<typeof cur.kind, string> = {
@@ -319,7 +436,22 @@ export function QuizPageClient() {
                 .replace("{n}", String(idx + 1))
                 .replace("{total}", String(questions.length))}
             </span>
-            <span>
+            <span className="flex items-center gap-3">
+              {pace === "timed" && (
+                <span
+                  className={cn(
+                    "tabular-nums",
+                    !checked && timeLeft <= 5
+                      ? "font-bold text-rose-300"
+                      : "text-slate-400",
+                  )}
+                  aria-label={q.timeUp}
+                >
+                  {checked
+                    ? q.timeUp
+                    : q.timeLeft.replace("{n}", String(timeLeft))}
+                </span>
+              )}
               {q.scoreLine
                 .replace("{correct}", String(score))
                 .replace("{total}", String(idx + (checked ? 1 : 0)))}

@@ -24,7 +24,7 @@ import type { Mechanism } from "@/lib/chem/mechanisms";
 import { generateQuiz, QUIZ_KIND_LABEL } from "@/lib/chem/mechanisms/quiz";
 import { cn } from "@/lib/utils";
 
-type Mode = "flash" | "quiz";
+type Mode = "flash" | "quiz" | "match";
 
 export function QuizClient({
   ids,
@@ -47,7 +47,7 @@ export function QuizClient({
     <GlassCard className="p-5 sm:p-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-display text-lg font-bold text-white">
-          {mode === "flash" ? q.tabFlash : q.tabQuiz}
+          {mode === "flash" ? q.tabFlash : mode === "quiz" ? q.tabQuiz : q.tabMatch}
         </h2>
         <div
           role="tablist"
@@ -80,6 +80,19 @@ export function QuizClient({
           >
             {q.tabQuiz}
           </button>
+          <button
+            role="tab"
+            aria-selected={mode === "match"}
+            onClick={() => setMode("match")}
+            className={cn(
+              "rounded-md px-3.5 py-1.5 text-xs font-medium transition",
+              mode === "match"
+                ? "bg-cyan-400/15 text-cyan-200"
+                : "text-slate-400 hover:text-slate-200",
+            )}
+          >
+            {q.tabMatch}
+          </button>
         </div>
       </div>
 
@@ -89,6 +102,8 @@ export function QuizClient({
         </p>
       ) : mode === "flash" ? (
         <Flashcards deck={deck} locale={locale} q={q} />
+      ) : mode === "match" ? (
+        <MatchMode deck={deck} locale={locale} q={q} />
       ) : (
         <Quiz deck={deck} locale={locale} q={q} />
       )}
@@ -170,6 +185,234 @@ function Flashcards({
           {q.nextCard}
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ------------------------------- match mode ------------------------------- */
+
+/**
+ * Matching game: pair each mechanism title with its general equation.
+ *
+ * Click a title on the left, then an equation on the right (or vice versa).
+ * A correct pair locks in green; a wrong pair flashes red and deselects.
+ * The round ends when every pair is locked; "New round" reshuffles.
+ *
+ * Pairs are generated from the deck, skipping mechanisms whose general equation
+ * collides with another one in the deck (a duplicate equation can't be matched
+ * unambiguously).
+ */
+function MatchMode({
+  deck,
+  locale,
+  q,
+}: {
+  deck: Mechanism[];
+  locale: string;
+  q: ReturnType<typeof useI18n>["t"]["pages"]["mechanisms"]["quiz"];
+}) {
+  const loc = locale === "fa" ? "fa" : "en";
+
+  const pairs = useMemo(() => {
+    // drop duplicate equations so each equation maps to exactly one mechanism
+    const seen = new Set<string>();
+    return deck
+      .map((m) => ({
+        id: m.id,
+        title: mechTitle(m, loc),
+        equation: mechGeneral(m, loc),
+      }))
+      .filter((p) => {
+        const k = p.equation.trim().toLowerCase();
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+  }, [deck, loc]);
+
+  const usable = pairs.length >= 4;
+
+  const [leftOrder, setLeftOrder] = useState<string[]>([]);
+  const [rightOrder, setRightOrder] = useState<string[]>([]);
+  const [picked, setPicked] = useState<string | null>(null);
+  const [pickedSide, setPickedSide] = useState<"title" | "equation" | null>(null);
+  const [locked, setLocked] = useState<Set<string>>(new Set());
+  const [wrong, setWrong] = useState<string | null>(null);
+  const [attempts, setAttempts] = useState(0);
+
+  const byId = useMemo(() => new Map(pairs.map((p) => [p.id, p])), [pairs]);
+
+  const shuffleIds = useCallback(
+    (arr: string[]) => {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    },
+    [],
+  );
+
+  const newRound = useCallback(() => {
+    const take = pairs.slice(0, Math.min(6, pairs.length));
+    setLeftOrder(shuffleIds(take.map((p) => p.id)));
+    setRightOrder(shuffleIds(take.map((p) => p.id)));
+    setPicked(null);
+    setPickedSide(null);
+    setLocked(new Set());
+    setWrong(null);
+    setAttempts(0);
+  }, [pairs, shuffleIds]);
+
+  // deal the first round whenever the pair set changes
+  const [bootKey, setBootKey] = useState("");
+  const key = pairs.map((p) => p.id).join(",");
+  if (bootKey !== key) {
+    setBootKey(key);
+    if (usable) {
+      const take = pairs.slice(0, Math.min(6, pairs.length));
+      setLeftOrder(shuffleIds(take.map((p) => p.id)));
+      setRightOrder(shuffleIds(take.map((p) => p.id)));
+    }
+  }
+
+  const onPick = (id: string, side: "title" | "equation") => {
+    if (locked.has(id) || wrong) return;
+    // cross-side pair attempt first: both columns carry the mechanism id, so a
+    // correct match is exactly picked === id with the two sides differing.
+    // (this must be checked before the same-cell deselect branch below)
+    if (picked !== null && pickedSide !== null && pickedSide !== side) {
+      setAttempts((a) => a + 1);
+      if (picked === id) {
+        setLocked((prev) => new Set(prev).add(id));
+        setPicked(null);
+        setPickedSide(null);
+        return;
+      }
+      // wrong pair: flash both cells, then clear
+      setWrong(`${picked}|${id}`);
+      setTimeout(() => {
+        setWrong(null);
+        setPicked(null);
+        setPickedSide(null);
+      }, 700);
+      return;
+    }
+    if (picked === null) {
+      setPicked(id);
+      setPickedSide(side);
+      return;
+    }
+    // pickedSide === side from here on: same cell = deselect, other cell = re-pick
+    if (picked === id) {
+      setPicked(null);
+      setPickedSide(null);
+      return;
+    }
+    setPicked(id);
+    setPickedSide(side);
+  };
+
+  if (!usable) {
+    return (
+      <p className="py-6 text-center text-sm text-slate-400">{q.matchTooFew}</p>
+    );
+  }
+
+  const done = locked.size === leftOrder.length && leftOrder.length > 0;
+
+  return (
+    <div>
+      <p className="mb-4 text-xs text-slate-400">{q.matchHint}</p>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {/* titles */}
+        <div className="flex flex-col gap-2.5">
+          <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            {q.matchTitles}
+          </p>
+          {leftOrder.map((id) => {
+            const p = byId.get(id)!;
+            const isLocked = locked.has(id);
+            const isPicked = picked === id && pickedSide === "title";
+            const isWrong = wrong !== null && wrong.split("|").includes(id);
+            return (
+              <button
+                key={id}
+                type="button"
+                disabled={isLocked || wrong !== null}
+                onClick={() => onPick(id, "title")}
+                aria-pressed={isPicked}
+                className={cn(
+                  "rounded-lg border px-4 py-2.5 text-start text-sm transition",
+                  isLocked && "border-emerald-400/60 bg-emerald-400/10 text-emerald-200",
+                  isWrong && "border-rose-400/60 bg-rose-400/10 text-rose-200",
+                  !isLocked && !isWrong && isPicked && "border-cyan-400/50 bg-cyan-400/10 text-cyan-200",
+                  !isLocked && !isWrong && !isPicked && "border-white/10 text-slate-300 hover:border-cyan-400/40",
+                  isLocked && "opacity-70",
+                )}
+              >
+                {p.title}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* equations (always LTR) */}
+        <div className="flex flex-col gap-2.5">
+          <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            {q.matchEquations}
+          </p>
+          {rightOrder.map((id) => {
+            const p = byId.get(id)!;
+            const isLocked = locked.has(id);
+            const isPicked = picked === id && pickedSide === "equation";
+            const isWrong = wrong !== null && wrong.split("|").includes(id);
+            return (
+              <button
+                key={id}
+                type="button"
+                disabled={isLocked || wrong !== null}
+                onClick={() => onPick(id, "equation")}
+                aria-pressed={isPicked}
+                dir="ltr"
+                className={cn(
+                  "rounded-lg border px-4 py-2.5 text-start font-mono text-xs transition",
+                  isLocked && "border-emerald-400/60 bg-emerald-400/10 text-emerald-200",
+                  isWrong && "border-rose-400/60 bg-rose-400/10 text-rose-200",
+                  !isLocked && !isWrong && isPicked && "border-cyan-400/50 bg-cyan-400/10 text-cyan-200",
+                  !isLocked && !isWrong && !isPicked && "border-white/10 text-slate-300 hover:border-cyan-400/40",
+                  isLocked && "opacity-70",
+                )}
+              >
+                {p.equation}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {done && (
+        <div className="mt-6 rounded-lg border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-center">
+          <p className="font-semibold text-emerald-200">{q.matchDone}</p>
+          <p className="mt-1 font-mono text-xs text-slate-400">
+            {q.matchAttempts.replace("{n}", String(attempts))}
+          </p>
+          <button
+            onClick={newRound}
+            className="mt-3 rounded-lg border border-cyan-400/40 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/20"
+          >
+            {q.matchNew}
+          </button>
+        </div>
+      )}
+
+      {!done && attempts > 0 && (
+        <p className="mt-4 text-center font-mono text-[11px] text-slate-500">
+          {q.matchAttempts.replace("{n}", String(attempts))}
+        </p>
+      )}
     </div>
   );
 }

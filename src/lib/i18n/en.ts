@@ -492,6 +492,7 @@ export const en = {
       quiz: {
         tabFlash: "Flashcards",
         tabQuiz: "Quiz",
+        tabMatch: "Match",
         start: "Start quiz",
         startHint: "{count} questions generated from the filtered mechanisms",
         newQuiz: "New quiz",
@@ -519,6 +520,13 @@ export const en = {
         cardOf: "{n} / {total}",
         pass: "Nice — {pct}%!",
         fail: "Keep going — review the cards and try a new quiz.",
+        matchHint: "Match each mechanism with its general equation — click one item from each column. Correct pairs lock in green.",
+        matchTitles: "Mechanism",
+        matchEquations: "General equation",
+        matchTooFew: "Not enough distinct equations in this set for a matching round — widen the filters.",
+        matchDone: "All matched!",
+        matchAttempts: "attempts: {n}",
+        matchNew: "New round",
         pageTitle: "Mechanism Quiz",
         pageDescription:
           "A generated quiz over the whole mechanism library. Pick a scope and length, then see how many you can get right — your best score is saved on this device.",

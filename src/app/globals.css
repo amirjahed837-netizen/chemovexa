@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
-@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap");
-
 @theme {
   /* ---------------------------- Dark Scientific --------------------------- */
   --color-ink-950: #04070f;
@@ -508,12 +506,6 @@ html[dir="rtl"] input[type="date"] {
   text-align: right;
 }
 
-/* Native Persian numerals option (uncomment to activate):
-html[dir="rtl"] body {
-  font-feature-settings: "ss01";
-}
-*/
-
 /* ---------------------- Mechanism diagrams (textbook) ---------------------- */
 
 .mech-diagram {
@@ -525,7 +517,6 @@ html[dir="rtl"] body {
 }
 
 html[dir="rtl"] .mech-diagram {
-  /* keep the diagram panel exactly as the textbook renders it */
   direction: ltr;
 }
 
@@ -545,7 +536,6 @@ html[dir="rtl"] .mech-diagram {
   transition: background 0.2s ease;
 }
 
-/* the filter bar renders its own clear (×) button — hide the native one */
 .mech-search::-webkit-search-cancel-button,
 .mech-search::-webkit-search-decoration {
   -webkit-appearance: none;
@@ -646,10 +636,6 @@ html[dir="rtl"] .mech-footnote {
 }
 
 /* ----------------- mechanism arrow draw-on animation (Stage 3) -------------- */
-/* The shaft draws itself in (stroke-dashoffset), then the head fades in once
- * the shaft lands. Staggered per-arrow via inline animation-delay. Arrows keep
- * pointing at their atoms at every intermediate frame — partial paths still end
- * at the target, so nothing ever looks detached mid-animation. */
 
 .mech-arrow-draw > path:first-child {
   stroke-dasharray: var(--arrow-len, 120px);
@@ -686,4 +672,3 @@ html[dir="rtl"] .mech-footnote {
     opacity: 1;
   }
 }
-

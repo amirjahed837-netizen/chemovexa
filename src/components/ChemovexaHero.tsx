@@ -1,6 +1,6 @@
 'use client';
 
-import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Component, useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Bricolage_Grotesque } from 'next/font/google';
@@ -10,6 +10,10 @@ import {
   MotionConfig,
   useInView,
   useReducedMotion,
+  useScroll,
+  useTransform,
+  type MotionStyle,
+  type MotionValue,
   type Variants,
 } from 'framer-motion';
 import { Atom, Box, MousePointer2, Network } from 'lucide-react';
@@ -33,6 +37,7 @@ function SceneFallback() {
   );
 }
 
+/** A failed WebGL context must not take the whole page down with it. */
 class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
@@ -43,6 +48,62 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Scroll parallax for the DOM layer                                         */
+/* -------------------------------------------------------------------------- */
+
+interface HeroParallax {
+  /** Raw 0 → 1 progress of the hero leaving the viewport (fed to the 3D scene). */
+  scrollYProgress: MotionValue<number>;
+  /** Transforms for the text/UI container. */
+  uiStyle: MotionStyle;
+  /** Opacity for the small "drag to rotate" hint. */
+  hintOpacity: MotionValue<number>;
+}
+
+/**
+ * Framer Motion's scroll tracking uses passive listeners and writes only
+ * transform / opacity (plus a short-lived blur) straight to the element, so
+ * scrolling never triggers React renders or layout.
+ *
+ * The markup is identical with and without reduced motion (so SSR and hydration
+ * always agree); with reduced motion the progress is simply pinned to 0.
+ */
+function useHeroParallax(target: RefObject<HTMLElement>): HeroParallax {
+  const reduce = useReducedMotion();
+  const reduceRef = useRef(false);
+  useEffect(() => {
+    reduceRef.current = Boolean(reduce);
+  }, [reduce]);
+
+  const { scrollYProgress } = useScroll({
+    target,
+    offset: ['start start', 'end start'],
+  });
+
+  const progress = useTransform(scrollYProgress, (v) => (reduceRef.current ? 0 : v));
+  const y = useTransform(progress, [0, 1], [0, -120]);
+  const opacity = useTransform(progress, [0, 0.7], [1, 0]);
+  const scale = useTransform(progress, [0, 1], [1, 0.94]);
+  const blur = useTransform(progress, [0, 0.8], [0, 6]);
+  // 'none' at rest, so the browser doesn't keep a filter layer around for nothing
+  const filter = useTransform(blur, (b) => (b < 0.1 ? 'none' : `blur(${b.toFixed(1)}px)`));
+  const hintOpacity = useTransform(progress, [0, 0.25], [1, 0]);
+
+  const uiStyle: MotionStyle = {
+    y,
+    opacity,
+    scale,
+    filter,
+    transformOrigin: 'left center',
+    willChange: 'transform, opacity',
+  };
+
+  return { scrollYProgress, uiStyle, hintOpacity };
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Stats                                                                     */
 /* -------------------------------------------------------------------------- */
 
 interface StatItem {
@@ -91,6 +152,8 @@ function Stat({ label, count, suffix = '', text }: StatItem) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Hero                                                                      */
+/* -------------------------------------------------------------------------- */
 
 const container: Variants = {
   hidden: {},
@@ -114,10 +177,12 @@ export default function ChemovexaHero({
   atlasHref = '/atlas',
 }: ChemovexaHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { margin: '100px' });
+  const inView = useInView(sectionRef, { margin: '100px' }); // pauses WebGL when off-screen
+  const { scrollYProgress, uiStyle, hintOpacity } = useHeroParallax(sectionRef);
 
   return (
     <MotionConfig reducedMotion="user">
+      {/* `relative` is required: useScroll measures the section's offset from it */}
       <section
         ref={sectionRef}
         className={`relative isolate w-full overflow-hidden bg-[#070b14] text-white ${display.className}`}
@@ -137,7 +202,7 @@ export default function ChemovexaHero({
           className="absolute inset-0 z-0"
         >
           <SceneBoundary>
-            <MoleculeScene active={inView} />
+            <MoleculeScene active={inView} scroll={scrollYProgress} />
           </SceneBoundary>
         </div>
 
@@ -147,6 +212,7 @@ export default function ChemovexaHero({
             variants={container}
             initial="hidden"
             animate="show"
+            style={uiStyle}
             className="max-w-xl lg:max-w-[36rem]"
           >
             <motion.div variants={item}>
@@ -200,10 +266,13 @@ export default function ChemovexaHero({
           </motion.div>
         </div>
 
-        <p className="pointer-events-none absolute bottom-5 right-6 z-10 flex items-center gap-2 text-sm text-slate-400">
+        <motion.p
+          style={{ opacity: hintOpacity }}
+          className="pointer-events-none absolute bottom-5 right-6 z-10 flex items-center gap-2 text-sm text-slate-400"
+        >
           <MousePointer2 className="h-4 w-4" aria-hidden />
           Drag to rotate
-        </p>
+        </motion.p>
       </section>
     </MotionConfig>
   );

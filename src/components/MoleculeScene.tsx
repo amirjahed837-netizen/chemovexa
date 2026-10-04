@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef, type MutableRefObject } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   Environment,
@@ -10,8 +10,51 @@ import {
   OrbitControls,
   Sparkles,
 } from '@react-three/drei';
-import { useReducedMotion } from 'framer-motion';
+import { useReducedMotion, type MotionValue } from 'framer-motion';
 import * as THREE from 'three';
+
+const { clamp, damp, lerp } = THREE.MathUtils;
+
+/* -------------------------------------------------------------------------- */
+/*  Scroll tuning: every scroll-linked number lives here                      */
+/* -------------------------------------------------------------------------- */
+
+const SCROLL = {
+  // Damping (higher = snappier). Keeps fast scrolling from causing snaps.
+  progressDamping: 5,
+  velocityDamping: 7,
+  maxVelocity: 2.5, // progress-units per second
+
+  // Molecule
+  idleSpin: 0.22, // rad/s with no scrolling
+  spinY: 6, // extra rad/s per (progress/s) of scroll velocity
+  tiltPerVelocity: 0.3, // pitch (rad) added per (progress/s)
+  tiltPerProgress: 0.5, // pitch (rad) at the end of the hero
+  pushBack: 4, // world units along -Z at the end
+  shrink: 0.15, // fraction of scale lost at the end
+  sink: 1.2, // world units downward (reads as slower-than-page parallax)
+
+  // Orbital rings
+  ringSpeedBoost: 4, // spin multiplier gained over the full scroll
+  ringVelocityBoost: 1.5, // extra spin multiplier per |progress/s|
+  ringSpread: 0.6, // radius growth at the end
+  ringFade: 0.65, // fraction of opacity lost at the end
+
+  // Sparkles
+  sparkleSpread: 1.6,
+  sparkleSpin: 0.25,
+
+  // Frame drift as a fraction of canvas size: [at start, at end]
+  driftDesktopX: [-0.18, -0.02],
+  driftMobileY: [-0.27, -0.08],
+} as const;
+
+/** Smoothed scroll values shared by every animated part of the scene. */
+interface ScrollState {
+  progress: number; // 0 → 1 across the hero, damped
+  velocity: number; // damped d(progress)/dt
+}
+type ScrollRef = MutableRefObject<ScrollState>;
 
 /* -------------------------------------------------------------------------- */
 /*  Molecule data (pure math, no randomness)                                  */
@@ -34,6 +77,12 @@ interface BondData {
   to: Vec3;
   color: string;
   double: boolean;
+}
+interface RingSpec {
+  radius: number;
+  tilt: Vec3;
+  speed: number;
+  color: string;
 }
 interface GlassQuality {
   samples: number;
@@ -93,7 +142,7 @@ function buildMolecule(): { atoms: AtomData[]; bonds: BondData[] } {
 
 const MOLECULE = buildMolecule();
 
-const RINGS: { radius: number; tilt: Vec3; speed: number; color: string }[] = [
+const RINGS: RingSpec[] = [
   { radius: 3.7, tilt: [1.2, 0.2, 0], speed: 0.5, color: '#22d3ee' },
   { radius: 4.15, tilt: [0.4, 1.1, 0.3], speed: -0.38, color: '#34d399' },
   { radius: 4.6, tilt: [-0.9, 0.5, 1.0], speed: 0.28, color: '#3b82f6' },
@@ -101,6 +150,44 @@ const RINGS: { radius: number; tilt: Vec3; speed: number; color: string }[] = [
 
 const BACKGROUND = new THREE.Color('#070b14');
 const UP = new THREE.Vector3(0, 1, 0);
+
+/* -------------------------------------------------------------------------- */
+/*  Scroll driver: the single place that reads the MotionValue                */
+/* -------------------------------------------------------------------------- */
+
+interface ScrollDriverProps {
+  scroll?: MotionValue<number>;
+  state: ScrollRef;
+}
+
+/**
+ * Runs before every other useFrame (priority -1). It damps the raw scroll
+ * progress and derives a smooth velocity from the damped value, so a flick of
+ * the wheel eases in and out instead of snapping. With reduced motion (or no
+ * `scroll` prop) the target is 0, so everything eases back to rest.
+ */
+function ScrollDriver({ scroll, state }: ScrollDriverProps) {
+  const reduce = useReducedMotion();
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05); // ignore huge deltas after tab switches
+    const s = state.current;
+    const target = scroll && !reduce ? clamp(scroll.get(), 0, 1) : 0;
+
+    const previous = s.progress;
+    s.progress = damp(previous, target, SCROLL.progressDamping, dt);
+
+    const raw = dt > 0 ? (s.progress - previous) / dt : 0;
+    s.velocity = damp(
+      s.velocity,
+      clamp(raw, -SCROLL.maxVelocity, SCROLL.maxVelocity),
+      SCROLL.velocityDamping,
+      dt,
+    );
+  }, -1);
+
+  return null;
+}
 
 /* -------------------------------------------------------------------------- */
 /*  Building blocks                                                           */
@@ -191,19 +278,34 @@ function Bond({ from, to, color, double }: BondData) {
   );
 }
 
-function OrbitalRing({ radius, tilt, speed, color }: (typeof RINGS)[number]) {
+function OrbitalRing({ radius, tilt, speed, color, rig }: RingSpec & { rig: ScrollRef }) {
+  const outer = useRef<THREE.Group>(null);
   const spinner = useRef<THREE.Group>(null);
+  const material = useRef<THREE.MeshBasicMaterial>(null);
   const reduce = useReducedMotion();
 
   useFrame((_, delta) => {
-    if (spinner.current && !reduce) spinner.current.rotation.z += delta * speed;
+    const { progress: p, velocity: v } = rig.current;
+
+    // Disperse: ring grows outward, tips a little further off-axis, and fades
+    if (outer.current) {
+      outer.current.scale.setScalar(1 + p * SCROLL.ringSpread);
+      outer.current.rotation.set(tilt[0] + p * 0.5 * Math.sign(speed), tilt[1], tilt[2]);
+    }
+    if (material.current) material.current.opacity = 0.55 * (1 - p * SCROLL.ringFade);
+
+    // Intensify: the electron orbits faster with depth and while scrolling
+    if (spinner.current && !reduce) {
+      const boost = 1 + p * SCROLL.ringSpeedBoost + Math.abs(v) * SCROLL.ringVelocityBoost;
+      spinner.current.rotation.z += Math.min(delta, 0.05) * speed * boost;
+    }
   });
 
   return (
-    <group rotation={tilt}>
+    <group ref={outer}>
       <mesh>
         <torusGeometry args={[radius, 0.012, 16, 180]} />
-        <meshBasicMaterial color={color} transparent opacity={0.55} toneMapped={false} />
+        <meshBasicMaterial ref={material} color={color} transparent opacity={0.55} toneMapped={false} />
       </mesh>
       <group ref={spinner}>
         <mesh position={[radius, 0, 0]}>
@@ -215,18 +317,43 @@ function OrbitalRing({ radius, tilt, speed, color }: (typeof RINGS)[number]) {
   );
 }
 
+/** Quantum dust. Sparkles can't change `speed`/`scale` live without re-randomising,
+ *  so the wrapping group is scaled (disperse) and spun (intensify) instead. */
+function SparkleField({ rig }: { rig: ScrollRef }) {
+  const group = useRef<THREE.Group>(null);
+  const reduce = useReducedMotion();
+
+  useFrame((_, delta) => {
+    if (!group.current) return;
+    const { progress: p, velocity: v } = rig.current;
+    group.current.scale.setScalar(1 + p * SCROLL.sparkleSpread);
+    if (!reduce) {
+      const spin = 0.03 + Math.abs(v) * 0.6 + p * SCROLL.sparkleSpin;
+      group.current.rotation.y += Math.min(delta, 0.05) * spin;
+    }
+  });
+
+  return (
+    <group ref={group}>
+      <Sparkles count={80} scale={[10, 8, 6]} size={2.4} speed={0.35} opacity={0.7} color="#67e8f9" />
+      <Sparkles count={40} scale={[8, 6, 5]} size={3} speed={0.25} opacity={0.5} color="#6ee7b7" />
+    </group>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /*  Molecule + camera rig                                                     */
 /* -------------------------------------------------------------------------- */
 
-function Molecule() {
-  const group = useRef<THREE.Group>(null);
+function Molecule({ rig }: { rig: ScrollRef }) {
+  const scrollGroup = useRef<THREE.Group>(null); // scroll parallax (position / scale)
+  const spinGroup = useRef<THREE.Group>(null); // rotation
   const reduce = useReducedMotion();
   const { viewport, size } = useThree();
   const desktop = size.width >= 1024;
 
   // Fit the molecule to its half of the screen on any viewport
-  const scale = Math.min(
+  const fit = Math.min(
     1,
     desktop ? viewport.width / 14.5 : viewport.width / 9.2,
     viewport.height / 9.6,
@@ -239,54 +366,83 @@ function Molecule() {
   };
 
   useFrame((state, delta) => {
-    if (!group.current || reduce) return;
-    group.current.rotation.y += delta * 0.22;
-    group.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.35) * 0.18;
+    const dt = Math.min(delta, 0.05);
+    const { progress: p, velocity: v } = rig.current;
+
+    // Zoom-out parallax: push back, shrink slightly, sink below the page scroll
+    if (scrollGroup.current) {
+      scrollGroup.current.position.set(0, -p * SCROLL.sink, -p * SCROLL.pushBack);
+      scrollGroup.current.scale.setScalar(1 - p * SCROLL.shrink);
+    }
+
+    if (spinGroup.current) {
+      const spin = spinGroup.current;
+      // Yaw: idle drift + velocity proportional to scroll speed (reverses when scrolling up)
+      spin.rotation.y += ((reduce ? 0 : SCROLL.idleSpin) + v * SCROLL.spinY) * dt;
+      // Pitch: sway + tilt with depth + lean into the scroll direction, damped
+      const sway = reduce ? 0 : Math.sin(state.clock.elapsedTime * 0.35) * 0.18;
+      const targetX = sway + p * SCROLL.tiltPerProgress + v * SCROLL.tiltPerVelocity;
+      spin.rotation.x = damp(spin.rotation.x, targetX, 6, dt);
+    }
   });
 
   return (
-    <Float
-      speed={reduce ? 0 : 1.5}
-      rotationIntensity={0.3}
-      floatIntensity={0.8}
-      floatingRange={[-0.2, 0.2]}
-    >
-      <group ref={group} scale={scale}>
-        {MOLECULE.bonds.map((bond, i) => (
-          <Bond key={`b${i}`} {...bond} />
-        ))}
-        {MOLECULE.atoms.map((atom, i) => (
-          <Atom key={`a${i}`} {...atom} glass={glass} />
-        ))}
-        {RINGS.map((ring) => (
-          <OrbitalRing key={ring.radius} {...ring} />
-        ))}
-      </group>
-    </Float>
+    <group ref={scrollGroup}>
+      <Float
+        speed={reduce ? 0 : 1.5}
+        rotationIntensity={0.3}
+        floatIntensity={0.8}
+        floatingRange={[-0.2, 0.2]}
+      >
+        <group ref={spinGroup} scale={fit}>
+          {MOLECULE.bonds.map((bond, i) => (
+            <Bond key={`b${i}`} {...bond} />
+          ))}
+          {MOLECULE.atoms.map((atom, i) => (
+            <Atom key={`a${i}`} {...atom} glass={glass} />
+          ))}
+          {RINGS.map((ring) => (
+            <OrbitalRing key={ring.radius} {...ring} rig={rig} />
+          ))}
+        </group>
+      </Float>
+    </group>
   );
 }
 
 /**
  * Shifts the rendered frame (not the world) so the molecule sits on the right
- * on desktop and in the lower half on mobile, while still rotating in place
- * around the OrbitControls target.
+ * on desktop and in the lower half on mobile, and eases toward the centre as
+ * the hero scrolls away. Because the world never moves, OrbitControls keeps
+ * rotating the molecule in place.
  */
-function SceneRig() {
+function SceneRig({ rig }: { rig: ScrollRef }) {
   const { camera, size, gl, events } = useThree();
   const desktop = size.width >= 1024;
+  const applied = useRef({ x: Number.NaN, y: Number.NaN });
 
   useEffect(() => {
-    const cam = camera as THREE.PerspectiveCamera;
-    cam.setViewOffset(
+    applied.current = { x: Number.NaN, y: Number.NaN }; // force re-apply on next frame
+    return () => (camera as THREE.PerspectiveCamera).clearViewOffset();
+  }, [camera, size.width, size.height, desktop]);
+
+  useFrame(() => {
+    const p = rig.current.progress;
+    const fx = desktop ? lerp(SCROLL.driftDesktopX[0], SCROLL.driftDesktopX[1], p) : 0;
+    const fy = desktop ? 0 : lerp(SCROLL.driftMobileY[0], SCROLL.driftMobileY[1], p);
+
+    const last = applied.current;
+    if (Math.abs(fx - last.x) < 1e-4 && Math.abs(fy - last.y) < 1e-4) return; // NaN → falls through
+    (camera as THREE.PerspectiveCamera).setViewOffset(
       size.width,
       size.height,
-      desktop ? -size.width * 0.18 : 0,
-      desktop ? 0 : -size.height * 0.27,
+      fx * size.width,
+      fy * size.height,
       size.width,
       size.height,
     );
-    return () => cam.clearViewOffset();
-  }, [camera, size.width, size.height, desktop]);
+    applied.current = { x: fx, y: fy };
+  });
 
   // Let vertical swipes scroll the page on touch devices; horizontal drags rotate.
   useEffect(() => {
@@ -304,9 +460,13 @@ function SceneRig() {
 export interface MoleculeSceneProps {
   /** Pause rendering when the hero is off-screen. */
   active?: boolean;
+  /** Hero scroll progress (0 → 1). Omit to disable scroll-linked motion. */
+  scroll?: MotionValue<number>;
 }
 
-export default function MoleculeScene({ active = true }: MoleculeSceneProps) {
+export default function MoleculeScene({ active = true, scroll }: MoleculeSceneProps) {
+  const rig = useRef<ScrollState>({ progress: 0, velocity: 0 });
+
   return (
     <Canvas
       frameloop={active ? 'always' : 'never'}
@@ -314,6 +474,8 @@ export default function MoleculeScene({ active = true }: MoleculeSceneProps) {
       camera={{ position: [0, 0, 14], fov: 40, near: 0.1, far: 60 }}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
+      <ScrollDriver scroll={scroll} state={rig} />
+
       <ambientLight intensity={0.35} />
       <pointLight position={[-6, 4, 6]} intensity={120} color="#34d399" />
       <pointLight position={[6, -3, 5]} intensity={160} color="#3b82f6" />
@@ -327,10 +489,8 @@ export default function MoleculeScene({ active = true }: MoleculeSceneProps) {
           <Lightformer form="circle" color="#ffffff" intensity={2} position={[0, 0, 8]} scale={4} />
         </Environment>
 
-        <Molecule />
-
-        <Sparkles count={80} scale={[10, 8, 6]} size={2.4} speed={0.35} opacity={0.7} color="#67e8f9" />
-        <Sparkles count={40} scale={[8, 6, 5]} size={3} speed={0.25} opacity={0.5} color="#6ee7b7" />
+        <Molecule rig={rig} />
+        <SparkleField rig={rig} />
       </Suspense>
 
       <OrbitControls
@@ -341,7 +501,7 @@ export default function MoleculeScene({ active = true }: MoleculeSceneProps) {
         rotateSpeed={0.7}
       />
       {/* Must come after OrbitControls so its touch-action wins */}
-      <SceneRig />
+      <SceneRig rig={rig} />
     </Canvas>
   );
 }

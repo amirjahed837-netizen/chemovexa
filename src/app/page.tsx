@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { profile } from "@/config/profile";
-import { Hero } from "@/components/home/Hero";
+import ChemovexaHero from "@/components/ChemovexaHero";
 import { DomainsGrid } from "@/components/home/DomainsGrid";
 import { FeaturedTools } from "@/components/home/FeaturedTools";
 import { ScienceMeetsCode } from "@/components/home/ScienceMeetsCode";
@@ -44,7 +44,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
       />
-      <Hero />
+      <ChemovexaHero labHref="/lab" atlasHref="/atlas" />
       <DomainsGrid />
       <FeaturedTools />
       <ScienceMeetsCode />

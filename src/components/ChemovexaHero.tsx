@@ -69,7 +69,7 @@ interface HeroParallax {
  * The markup is identical with and without reduced motion (so SSR and hydration
  * always agree); with reduced motion the progress is simply pinned to 0.
  */
-function useHeroParallax(target: RefObject<HTMLElement>): HeroParallax {
+function useHeroParallax(target: RefObject<HTMLElement | null>): HeroParallax {
   const reduce = useReducedMotion();
   const reduceRef = useRef(false);
   useEffect(() => {
@@ -125,14 +125,14 @@ function Stat({ label, count, suffix = '', text }: StatItem) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
   const reduce = useReducedMotion();
-  const [n, setN] = useState(0);
+  // Begin the count-up only once the element scrolls into view.
+  // With reduced motion the final value is shown immediately (no animation), so
+  // initialise the state lazily from it and let the effect skip the animation.
+  const [n, setN] = useState(() => (reduce && count !== undefined ? count : 0));
 
   useEffect(() => {
     if (count === undefined || !inView) return undefined;
-    if (reduce) {
-      setN(count);
-      return undefined;
-    }
+    if (reduce) return undefined;
     const controls = animate(0, count, {
       duration: 1.8,
       ease: 'easeOut',

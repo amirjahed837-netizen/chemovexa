@@ -169,12 +169,14 @@ interface ScrollDriverProps {
 function ScrollDriver({ scroll, state }: ScrollDriverProps) {
   const reduce = useReducedMotion();
 
+  // r3f runs this outside React's render cycle, so mutating the shared ref is safe.
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05); // ignore huge deltas after tab switches
     const s = state.current;
     const target = scroll && !reduce ? clamp(scroll.get(), 0, 1) : 0;
 
     const previous = s.progress;
+    // eslint-disable-next-line react-hooks/immutability -- r3f frame loop, not a render
     s.progress = damp(previous, target, SCROLL.progressDamping, dt);
 
     const raw = dt > 0 ? (s.progress - previous) / dt : 0;
@@ -447,6 +449,7 @@ function SceneRig({ rig }: { rig: ScrollRef }) {
   // Let vertical swipes scroll the page on touch devices; horizontal drags rotate.
   useEffect(() => {
     const el = (events.connected as HTMLElement | undefined) ?? gl.domElement;
+    // eslint-disable-next-line react-hooks/immutability -- canvas element, not a React ref
     el.style.touchAction = 'pan-y';
   }, [events.connected, gl]);
 

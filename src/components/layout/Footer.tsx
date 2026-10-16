@@ -9,6 +9,13 @@ import { useI18n } from "@/lib/i18n";
 export function Footer() {
   const { t, fmt } = useI18n();
 
+  const exploreLinks = [
+    { href: "/about", label: t.nav.about },
+    { href: "/chemistry", label: t.nav.chemistry },
+    { href: "/programming", label: t.nav.programming },
+    { href: "/research", label: t.nav.research },
+  ];
+
   const toolLinks = [
     { href: "/chemistry/calculator", label: t.footer.toolsList.calculator },
     { href: "/chemistry/molecular-explorer", label: t.footer.toolsList.explorer },
@@ -38,7 +45,7 @@ export function Footer() {
             {t.footer.explore}
           </h3>
           <ul className="space-y-2">
-            {NAV_ITEMS.slice(0, 4).map((item) => (
+            {exploreLinks.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}

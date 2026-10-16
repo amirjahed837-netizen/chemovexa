@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DOMAINS } from "@/config/site";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -31,7 +32,7 @@ export function DomainsGrid() {
             const tr = items[domain.href];
             return (
               <Reveal key={domain.href} delay={i * 90}>
-                <a href={domain.href} className="block h-full">
+                <Link href={domain.href} className="block h-full">
                   <GlassCard interactive className="flex h-full flex-col gap-4 p-6">
                     <span className={`inline-flex size-11 items-center justify-center rounded-xl border ${domain.accentClass}`}>
                       <DomainIcon name={domain.icon} className="size-6" />
@@ -45,7 +46,7 @@ export function DomainsGrid() {
                       </svg>
                     </span>
                   </GlassCard>
-                </a>
+                </Link>
               </Reveal>
             );
           })}

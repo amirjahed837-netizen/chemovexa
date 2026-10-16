@@ -44,7 +44,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
       />
-      <ChemovexaHero labHref="/lab" atlasHref="/atlas" />
+      <ChemovexaHero labHref="/chemistry/molecular-explorer" atlasHref="/chemistry/mechanisms" />
       <DomainsGrid />
       <FeaturedTools />
       <ScienceMeetsCode />

@@ -13,6 +13,20 @@ const nextConfig: NextConfig = {
       "rehype-katex",
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/lab",
+        destination: "/chemistry/molecular-explorer",
+        permanent: true,
+      },
+      {
+        source: "/atlas",
+        destination: "/chemistry/mechanisms",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

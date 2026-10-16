@@ -173,8 +173,8 @@ export interface ChemovexaHeroProps {
 }
 
 export default function ChemovexaHero({
-  labHref = '/lab',
-  atlasHref = '/atlas',
+  labHref = '/chemistry/molecular-explorer',
+  atlasHref = '/chemistry/mechanisms',
 }: ChemovexaHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { margin: '100px' }); // pauses WebGL when off-screen

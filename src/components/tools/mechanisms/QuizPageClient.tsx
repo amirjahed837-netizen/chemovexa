@@ -78,8 +78,16 @@ export function QuizPageClient() {
   const [length, setLength] = useState<(typeof LENGTHS)[number]>(10);
   const [pace, setPace] = useState<Pace>("relaxed");
   const [phase, setPhase] = useState<Phase>("setup");
-  const [best, setBest] = useState<BestRecord | null>(() => readBest());
-  const [bestSpeed, setBestSpeed] = useState<number | null>(() => readSpeed());
+  // initialize from localStorage only after mount: reading it during the first
+  // client render would diverge from the SSR HTML and break hydration
+  const [best, setBest] = useState<BestRecord | null>(null);
+  const [bestSpeed, setBestSpeed] = useState<number | null>(null);
+  useEffect(() => {
+    // intentional mount-time initialization from localStorage (hydration-safe)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setBest(readBest());
+    setBestSpeed(readSpeed());
+  }, []);
 
   // Keep the displayed best score in sync when another tab updates it.
   useEffect(() => {

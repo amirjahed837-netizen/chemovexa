@@ -37,12 +37,18 @@ function StatusPill() {
 }
 
 export function AssistantChat() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const a = t.pages.assistant;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  // abort an in-flight stream when the chat unmounts
+  useEffect(() => {
+    return () => abortRef.current?.abort();
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -57,11 +63,15 @@ export function AssistantChat() {
     const history = messages.map((m) => ({ role: m.role, content: m.content }));
     setMessages((m) => [...m, { role: "user", content: message }, { role: "assistant", content: "" }]);
 
+    abortRef.current = new AbortController();
+    const { signal } = abortRef.current;
+
     try {
       const res = await fetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, history, locale }),
+        body: JSON.stringify({ message, history }),
+        signal,
       });
 
       const contentType = res.headers.get("content-type") ?? "";
@@ -123,6 +133,7 @@ export function AssistantChat() {
         });
       }
     } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
       setMessages((m) => {
         const next = [...m];
         const last = next[next.length - 1];

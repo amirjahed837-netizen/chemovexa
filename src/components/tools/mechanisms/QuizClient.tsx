@@ -11,7 +11,7 @@
  * deck seed lives in component state so "New quiz" reshuffles.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -239,6 +239,13 @@ function MatchMode({
   const [locked, setLocked] = useState<Set<string>>(new Set());
   const [wrong, setWrong] = useState<string | null>(null);
   const [attempts, setAttempts] = useState(0);
+  const wrongTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (wrongTimer.current) clearTimeout(wrongTimer.current);
+    };
+  }, []);
 
   const byId = useMemo(() => new Map(pairs.map((p) => [p.id, p])), [pairs]);
 
@@ -265,17 +272,15 @@ function MatchMode({
     setAttempts(0);
   }, [pairs, shuffleIds]);
 
-  // deal the first round whenever the pair set changes
-  const [bootKey, setBootKey] = useState("");
-  const key = pairs.map((p) => p.id).join(",");
-  if (bootKey !== key) {
-    setBootKey(key);
-    if (usable) {
-      const take = pairs.slice(0, Math.min(6, pairs.length));
-      setLeftOrder(shuffleIds(take.map((p) => p.id)));
-      setRightOrder(shuffleIds(take.map((p) => p.id)));
-    }
-  }
+  // deal a fresh round whenever the pair set changes. this must happen in an
+  // effect, never during render: Math.random() in render produces different
+  // server/client output and breaks hydration.
+  const dealKey = pairs.map((p) => p.id).join(",");
+  useEffect(() => {
+    // intentional mount-time initialization (random deal is client-only)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (usable) newRound();
+  }, [dealKey, usable, newRound]);
 
   const onPick = (id: string, side: "title" | "equation") => {
     if (locked.has(id) || wrong) return;
@@ -292,7 +297,8 @@ function MatchMode({
       }
       // wrong pair: flash both cells, then clear
       setWrong(`${picked}|${id}`);
-      setTimeout(() => {
+      if (wrongTimer.current) clearTimeout(wrongTimer.current);
+      wrongTimer.current = setTimeout(() => {
         setWrong(null);
         setPicked(null);
         setPickedSide(null);
@@ -430,7 +436,10 @@ function Quiz({
 }) {
   const loc = locale === "fa" ? "fa" : "en";
   const byId = useMemo(() => new Map(deck.map((m) => [m.id, m])), [deck]);
-  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1e9));
+  // seed 0 initially: a random seed here would run during SSR and diverge from
+  // the client. start() always re-seeds randomly, so the initial value is
+  // never used for an actual quiz.
+  const [seed, setSeed] = useState(0);
   const questions = useMemo(
     () => generateQuiz(seed, 10, deck.map((m) => m.id), loc, byId),
     [seed, deck, loc, byId],

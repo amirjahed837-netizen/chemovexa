@@ -8,14 +8,51 @@ import type { ChatMessage } from "@/lib/ai/llm";
 let indexPromise: Promise<BM25Index> | null = null;
 
 function getIndex(): Promise<BM25Index> {
-  if (!indexPromise) {
-    indexPromise = buildCorpus().then((chunks) => new BM25Index(chunks));
-  }
+  indexPromise ??= buildCorpus()
+    .then((chunks) => new BM25Index(chunks))
+    .catch((e) => {
+      indexPromise = null;
+      throw e;
+    });
   return indexPromise;
 }
 
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX_REQUESTS = 10;
+
+const rateBuckets = new Map<string, { count: number; reset: number }>();
+
+function rateLimit(ip: string): { allowed: boolean; retryAfter: number } {
+  const now = Date.now();
+  const bucket = rateBuckets.get(ip);
+  if (!bucket || now >= bucket.reset) {
+    if (rateBuckets.size > 1000) {
+      for (const [k, v] of rateBuckets) {
+        if (now >= v.reset) rateBuckets.delete(k);
+      }
+    }
+    rateBuckets.set(ip, { count: 1, reset: now + RATE_WINDOW_MS });
+    return { allowed: true, retryAfter: 0 };
+  }
+  bucket.count += 1;
+  if (bucket.count > RATE_MAX_REQUESTS) {
+    return { allowed: false, retryAfter: Math.ceil((bucket.reset - now) / 1000) };
+  }
+  return { allowed: true, retryAfter: 0 };
+}
+
+function clientIp(request: Request): string {
+  const fwd = request.headers.get("x-forwarded-for");
+  return fwd?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+}
+
 export async function GET() {
-  const index = await getIndex();
+  let index: BM25Index;
+  try {
+    index = await getIndex();
+  } catch {
+    return NextResponse.json({ error: "Knowledge base unavailable." }, { status: 503 });
+  }
   return NextResponse.json({
     chunks: index.size,
     llm: getLlmConfig()?.models.join(" → ") ?? null,
@@ -54,7 +91,20 @@ export async function POST(request: Request) {
     .slice(-MAX_HISTORY)
     .map((m) => ({ role: m.role as "user" | "assistant", content: String(m.content).slice(0, 2000) }));
 
-  const index = await getIndex();
+  const limit = rateLimit(clientIp(request));
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfter) } },
+    );
+  }
+
+  let index: BM25Index;
+  try {
+    index = await getIndex();
+  } catch {
+    return NextResponse.json({ error: "Knowledge base unavailable." }, { status: 503 });
+  }
   const hits = index.search(message, 5);
 
   const sources = hits.map((h, i) => ({
@@ -151,12 +201,11 @@ export async function POST(request: Request) {
       },
     });
   } catch (e) {
+    console.error("[assistant] LLM call failed:", e);
     return NextResponse.json({
       mode: "retrieval",
       sources,
-      answer: `The language-model call failed (${
-        e instanceof Error ? e.message.slice(0, 120) : "unknown error"
-      }). Falling back to retrieval:\n\n${hits
+      answer: `The language-model call failed. Falling back to retrieval:\n\n${hits
         .slice(0, 3)
         .map((h, i) => `[${i + 1}] ${h.text}`)
         .join("\n\n")}`,

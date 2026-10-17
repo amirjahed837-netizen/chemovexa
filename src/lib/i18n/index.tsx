@@ -87,9 +87,3 @@ export function useI18n(): I18nContextValue {
   if (!ctx) throw new Error("useI18n must be used inside <I18nProvider>");
   return ctx;
 }
-
-/** Helpers for Persian digits — keep Latin digits in formulas/numbers, Persian in prose if desired. */
-export function toFaDigits(input: string | number): string {
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
-  return String(input).replace(/\d/g, (d) => fa[Number(d)]);
-}

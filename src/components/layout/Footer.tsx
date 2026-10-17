@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { NAV_ITEMS } from "@/config/site";
 import { profile } from "@/config/profile";
 import { LogoMark } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
@@ -115,7 +114,11 @@ export function Footer() {
 
       <div className="border-t border-white/5">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-slate-500 sm:flex-row sm:px-6 lg:px-8">
-          <span>{fmt(t.footer.copyright, { year: new Date().getFullYear(), name: profile.name })}</span>
+          {/* year is computed at render time and may differ between a cached
+              page and the current date; React patches it silently */}
+          <span suppressHydrationWarning>
+            {fmt(t.footer.copyright, { year: new Date().getFullYear(), name: profile.name })}
+          </span>
           <span className="font-mono">{t.footer.techLine}</span>
         </div>
       </div>

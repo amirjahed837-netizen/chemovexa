@@ -7,6 +7,7 @@ import { NAV_ITEMS } from "@/config/site";
 import { LogoMark } from "@/components/icons";
 import { StatusBadge } from "@/components/ui/Badge";
 import { LangSwitch } from "@/components/layout/LangSwitch";
+import { SiteSearch } from "@/components/search/SiteSearch";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { NavItem, NavChild } from "@/config/site";
@@ -183,6 +184,7 @@ export function Navbar() {
 
         {/* Actions: language + mobile toggle */}
         <div className="flex shrink-0 items-center gap-2">
+          <SiteSearch />
           <LangSwitch />
           <button
             type="button"

@@ -32,6 +32,20 @@ const TOOL_BLURBS: Chunk[] = [
     text: "The Reaction Lab at /chemistry/reaction-lab balances chemical equations automatically using exact rational nullspace elimination over the element-conservation matrix. Pick reagents from a shelf of about forty common substances (metals, acids, bases, salts, gases, oxides, organics) or type any formula; the balanced coefficients, state symbols and atom conservation appear live. It classifies reactions as synthesis, decomposition, single displacement (checking the metal activity series), double displacement/precipitation, combustion or acid-base neutralization, and describes what you would observe at the bench plus safety notes. Presets include neutralization of HCl with NaOH, silver chloride precipitation, zinc plus hydrochloric acid, methane combustion, limestone calcination and magnesium synthesis.",
   },
   {
+    id: "tool-periodic",
+    title: "Interactive Periodic Table",
+    url: "/chemistry/periodic-table",
+    kind: "tool",
+    text: "The Interactive Periodic Table at /chemistry/periodic-table shows all 118 elements with IUPAC 2021 standard atomic masses in the classic 18-column layout including lanthanides and actinides. Hovering highlights an element's category (alkali metal, alkaline earth, transition metal, post-transition metal, metalloid, nonmetal, halogen, noble gas, lanthanide, actinide) and clicking opens a detail panel with atomic number, mass, melting and boiling points, electron configuration (Aufbau order with the standard exceptions such as chromium, copper, silver and gold), group, period, and phase at room temperature. Element names are available in English and Persian, and elements are searchable by name or symbol.",
+  },
+  {
+    id: "tool-titration",
+    title: "Titration Simulator",
+    url: "/chemistry/titration",
+    kind: "tool",
+    text: "The Titration Simulator at /chemistry/titration draws the live pH curve of a titration as titrant is added: strong acid with NaOH (HCl), weak acid with NaOH (acetic acid, Ka = 1.8e-5), or weak base with HCl (ammonia, Kb = 1.8e-5). Every point on the curve is solved exactly from the charge and mass balance equations — buffer region, half-equivalence point (pH = pKa), equivalence-point hydrolysis and the post-equivalence excess — not from Henderson–Hasselbalch shortcuts. Dragging on the chart or using the slider sets the added volume and shows the pH, the equivalence volume Ve, textbook indicator ranges (phenolphthalein 8.2 to 10.0, methyl orange 3.1 to 4.4) and the current titration phase.",
+  },
+  {
     id: "tool-cv",
     title: "About the site author",
     url: "/about",

@@ -1,21 +1,9 @@
 import { NextResponse } from "next/server";
-import { buildCorpus } from "@/lib/ai/corpus";
-import { BM25Index } from "@/lib/ai/retrieval";
+import { getSearchIndex } from "@/lib/ai/search-index";
+import type { BM25Index } from "@/lib/ai/retrieval";
 import { getLlmConfig, streamChatCompletion } from "@/lib/ai/llm";
 import { answerFromEngines } from "@/lib/ai/deterministic";
 import type { ChatMessage } from "@/lib/ai/llm";
-
-let indexPromise: Promise<BM25Index> | null = null;
-
-function getIndex(): Promise<BM25Index> {
-  indexPromise ??= buildCorpus()
-    .then((chunks) => new BM25Index(chunks))
-    .catch((e) => {
-      indexPromise = null;
-      throw e;
-    });
-  return indexPromise;
-}
 
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX_REQUESTS = 10;
@@ -49,7 +37,7 @@ function clientIp(request: Request): string {
 export async function GET() {
   let index: BM25Index;
   try {
-    index = await getIndex();
+    index = await getSearchIndex();
   } catch {
     return NextResponse.json({ error: "Knowledge base unavailable." }, { status: 503 });
   }
@@ -101,7 +89,7 @@ export async function POST(request: Request) {
 
   let index: BM25Index;
   try {
-    index = await getIndex();
+    index = await getSearchIndex();
   } catch {
     return NextResponse.json({ error: "Knowledge base unavailable." }, { status: 503 });
   }

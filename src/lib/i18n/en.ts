@@ -63,6 +63,13 @@ export const en = {
       literatureDesc: "Annotated books, papers & references",
     },
   },
+  search: {
+    open: "Search (Ctrl+K)",
+    placeholder: "Search pages, notes, tools…",
+    searching: "Searching…",
+    noResults: "No results.",
+    hint: "Search across pages, notes, tools and literature",
+  },
   home: {
     hero: {
       pill: "Portfolio under active development",

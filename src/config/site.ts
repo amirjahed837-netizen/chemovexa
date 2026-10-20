@@ -60,6 +60,12 @@ export const NAV_ITEMS: NavItem[] = [
         description: "Test yourself — generated quizzes with saved best scores",
         status: "live",
       },
+      {
+        label: "Periodic Table",
+        href: "/chemistry/periodic-table",
+        description: "All 118 elements — interactive, bilingual",
+        status: "live",
+      },
     ],
   },
   {

@@ -38,6 +38,12 @@ export function ChemistryHubClient() {
       description: t.home.tools.items.mechanisms.description,
       icon: "mech" as const,
     },
+    {
+      href: "/chemistry/periodic-table",
+      label: t.home.tools.items.periodic.label,
+      description: t.home.tools.items.periodic.description,
+      icon: "periodic" as const,
+    },
   ];
 
   return (
@@ -51,7 +57,15 @@ export function ChemistryHubClient() {
               <GlassCard interactive className="flex h-full flex-col p-6">
                 <div className="mb-5 flex items-start justify-between">
                   <span className="inline-flex size-12 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300 transition-transform duration-300 group-hover:scale-110 text-lg">
-                    {tool.icon === "calc" ? "🧮" : tool.icon === "molecule" ? "⚛" : tool.icon === "mech" ? "🧩" : "⚗"}
+                    {tool.icon === "calc"
+                      ? "🧮"
+                      : tool.icon === "molecule"
+                        ? "⚛"
+                        : tool.icon === "mech"
+                          ? "🧩"
+                          : tool.icon === "periodic"
+                            ? "🧪"
+                            : "⚗"}
                   </span>
                   <StatusBadge status="live" />
                 </div>

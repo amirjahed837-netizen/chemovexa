@@ -122,6 +122,11 @@ export const en = {
           description:
             "Every core organic mechanism — step by step, bilingual, from the reference notes.",
         },
+        periodic: {
+          label: "Periodic Table",
+          description:
+            "All 118 elements — categories, groups and electron configurations, fully interactive.",
+        },
       },
     },
     science: {
@@ -154,6 +159,7 @@ export const en = {
       explorer: "Molecular Explorer",
       lab: "Reaction Lab",
       assistant: "AI Assistant",
+      periodic: "Periodic Table",
     },
     connect: "Connect",
     cvContact: "CV / Contact",
@@ -246,6 +252,34 @@ export const en = {
       liveNow: "Live now:",
       liveNowText:
         "an AI assistant grounded <em>in these tools</em> — AI over real chemistry infrastructure.",
+    },
+    periodic: {
+      eyebrow: "Chemistry · Tool",
+      title: "Interactive Periodic Table",
+      description:
+        "All 118 elements at a glance — filter by category, search by name or symbol, and click any element for its data and electron configuration.",
+      searchPlaceholder: "Search element (symbol, name, Z)…",
+      labels: {
+        mass: "Atomic mass",
+        group: "Group",
+        period: "Period",
+        block: "Block",
+        config: "Electron configuration",
+        fGroup: "f-block row",
+      },
+      categories: {
+        alkali: "Alkali metals",
+        alkaline: "Alkaline earth metals",
+        transition: "Transition metals",
+        postTransition: "Post-transition metals",
+        metalloid: "Metalloids",
+        nonmetal: "Nonmetals",
+        halogen: "Halogens",
+        noble: "Noble gases",
+        lanthanide: "Lanthanides",
+        actinide: "Actinides",
+      },
+      note: "Configurations follow the Madelung (Aufbau) order with documented exceptions (Cr, Cu, …). Atomic masses: IUPAC conventional values.",
     },
     calculator: {
       eyebrow: "Chemistry · Tool",

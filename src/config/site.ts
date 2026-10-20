@@ -66,6 +66,12 @@ export const NAV_ITEMS: NavItem[] = [
         description: "All 118 elements — interactive, bilingual",
         status: "live",
       },
+      {
+        label: "Titration Simulator",
+        href: "/chemistry/titration",
+        description: "pH curves with exact equilibrium math",
+        status: "live",
+      },
     ],
   },
   {

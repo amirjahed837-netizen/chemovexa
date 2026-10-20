@@ -44,6 +44,12 @@ export function ChemistryHubClient() {
       description: t.home.tools.items.periodic.description,
       icon: "periodic" as const,
     },
+    {
+      href: "/chemistry/titration",
+      label: t.home.tools.items.titration.label,
+      description: t.home.tools.items.titration.description,
+      icon: "titration" as const,
+    },
   ];
 
   return (
@@ -65,7 +71,9 @@ export function ChemistryHubClient() {
                           ? "🧩"
                           : tool.icon === "periodic"
                             ? "🧪"
-                            : "⚗"}
+                            : tool.icon === "titration"
+                              ? "📈"
+                              : "⚗"}
                   </span>
                   <StatusBadge status="live" />
                 </div>

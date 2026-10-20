@@ -20,6 +20,7 @@ export function Footer() {
     { href: "/chemistry/molecular-explorer", label: t.footer.toolsList.explorer },
     { href: "/chemistry/reaction-lab", label: t.footer.toolsList.lab },
     { href: "/chemistry/periodic-table", label: t.footer.toolsList.periodic },
+    { href: "/chemistry/titration", label: t.footer.toolsList.titration },
     { href: "/ai/assistant", label: t.footer.toolsList.assistant },
   ];
 

@@ -127,6 +127,11 @@ export const en = {
           description:
             "All 118 elements — categories, groups and electron configurations, fully interactive.",
         },
+        titration: {
+          label: "Titration Simulator",
+          description:
+            "Full pH curves for strong/weak acid–base systems — exact equilibrium math, live equivalence markers.",
+        },
       },
     },
     science: {
@@ -160,6 +165,7 @@ export const en = {
       lab: "Reaction Lab",
       assistant: "AI Assistant",
       periodic: "Periodic Table",
+      titration: "Titration Simulator",
     },
     connect: "Connect",
     cvContact: "CV / Contact",
@@ -280,6 +286,33 @@ export const en = {
         actinide: "Actinides",
       },
       note: "Configurations follow the Madelung (Aufbau) order with documented exceptions (Cr, Cu, …). Atomic masses: IUPAC conventional values.",
+    },
+    titration: {
+      eyebrow: "Chemistry · Tool",
+      title: "Titration Simulator",
+      description:
+        "Drag the burette and watch the full pH curve form — buffer region, equivalence jump and indicator ranges, solved exactly at every point.",
+      analyte: "Analyte",
+      analytes: {
+        "strong-acid": "Strong acid · HCl vs NaOH",
+        "weak-acid": "Weak acid — CH₃COOH vs NaOH",
+        "weak-base": "Weak base — NH₃ vs HCl",
+      },
+      analyteM: "Analyte conc. (M)",
+      analyteV: "Analyte vol. (mL)",
+      titrantM: "Titrant conc. (M)",
+      kValue: "Equilibrium constant",
+      invalid: "Enter a positive value for every field.",
+      volumeAdded: "Titrant added",
+      phaseLabel: "Stage",
+      phase: {
+        before: "before equivalence",
+        at: "at equivalence",
+        after: "past equivalence",
+      },
+      eqPoint: "Equivalence (Ve)",
+      halfEq: "Half-equivalence (pH ≈ pKa)",
+      note: "25 °C · pKw = 14 · monoprotic systems. Each point is the exact charge-balance solution for [H⁺] (bisection on the log scale) — buffer regions and equivalence-point hydrolysis are solved exactly, not with Henderson–Hasselbalch. Indicator bands: phenolphthalein 8.2–10.0, methyl orange 3.1–4.4.",
     },
     calculator: {
       eyebrow: "Chemistry · Tool",

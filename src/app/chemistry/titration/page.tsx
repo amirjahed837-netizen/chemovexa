@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { TitrationClient } from "@/components/tools/titration/TitrationClient";
+import { ElectrochemClient } from "@/components/tools/electrochem/ElectrochemClient";
 
 export const metadata: Metadata = {
-  title: "Titration Simulator",
+  title: "Titration & Electrochemistry Lab",
   description:
-    "Interactive titration curves with exact equilibrium math — strong/weak acid–base systems, equivalence points and indicator ranges.",
+    "Titration curves, glass-electrode pH-metry with calibration QC, Nernst potentiometry cells, Faraday coulometry and a real 1-D diffusion cyclic-voltammetry simulation.",
 };
 
 export default function TitrationPage() {
-  return <TitrationClient />;
+  return <ElectrochemClient />;
 }

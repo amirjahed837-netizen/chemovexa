@@ -67,9 +67,9 @@ export const NAV_ITEMS: NavItem[] = [
         status: "live",
       },
       {
-        label: "Titration Simulator",
+        label: "Titration & Electrochemistry",
         href: "/chemistry/titration",
-        description: "pH curves with exact equilibrium math",
+        description: "Titration, pH-metry, Nernst cells, coulometry, voltammetry",
         status: "live",
       },
     ],

@@ -450,6 +450,20 @@ html[dir="rtl"] .font-mono {
   unicode-bidi: embed;
 }
 
+/* Mixed Persian/Latin prose (method notes, helper text): per-paragraph base
+   direction from content so Latin formulas stay LTR inside Persian prose. */
+html[dir="rtl"] .method-note,
+html[dir="rtl"] .method-note-text {
+  direction: auto;
+  unicode-bidi: plaintext;
+}
+
+/* Persian script is always joined: letter-spacing tears it apart, so zero
+   every tracking utility (and prose heading spacing) inside RTL. */
+html[dir="rtl"] * {
+  letter-spacing: 0;
+}
+
 /* formulas, equations and chemical notation stay LTR even in RTL prose */
 html[dir="rtl"] .ltr-embed {
   direction: ltr;

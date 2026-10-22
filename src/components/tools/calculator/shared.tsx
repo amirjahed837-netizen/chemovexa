@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 export function Field({
   label,
@@ -118,10 +119,15 @@ export function ResultRow({
 }
 
 export function MethodNote({ children }: { children: React.ReactNode }) {
+  const { t } = useI18n();
   return (
-    <div className="rounded-lg border border-dashed border-white/15 px-4 py-3">
-      <span className="font-mono text-[10px] uppercase tracking-widest text-slate-500">Method</span>
-      <p className="mt-1 font-mono text-xs leading-relaxed text-slate-400">{children}</p>
+    <div className="method-note rounded-lg border border-dashed border-white/15 px-4 py-3">
+      <span className="font-mono text-[10px] uppercase tracking-widest text-slate-500">
+        {t.ui.method}
+      </span>
+      <p dir="auto" className="method-note-text mt-1 font-mono text-xs leading-relaxed text-slate-400">
+        {children}
+      </p>
     </div>
   );
 }

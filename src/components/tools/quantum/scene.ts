@@ -178,6 +178,9 @@ export class QuantumScene {
   private dragMode: "rotate" | "move" = "rotate";
   private lastX = 0;
   private lastY = 0;
+  private activePointers = new Map<number, { x: number; y: number }>();
+  private pinchMode = false;
+  private lastPinchDist = 0;
 
   private filters: SceneFilter = {
     viewMode: "atom",
@@ -213,7 +216,8 @@ export class QuantumScene {
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(w, h);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const isSmall = Math.min(window.innerWidth, window.innerHeight) < 640;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isSmall ? 1.5 : 2));
     container.appendChild(this.renderer.domElement);
 
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.8));
@@ -340,6 +344,7 @@ export class QuantumScene {
     this.resizeObserver?.disconnect();
     window.removeEventListener("pointermove", this.onPointerMove);
     window.removeEventListener("pointerup", this.onPointerUp);
+    window.removeEventListener("pointercancel", this.onPointerUp);
     disposeObject(this.scene);
     this.renderer.dispose();
     this.renderer.domElement.remove();
@@ -416,6 +421,7 @@ export class QuantumScene {
     dom.addEventListener("pointerdown", this.onPointerDown);
     window.addEventListener("pointermove", this.onPointerMove);
     window.addEventListener("pointerup", this.onPointerUp);
+    window.addEventListener("pointercancel", this.onPointerUp);
     dom.addEventListener("wheel", this.onWheel, { passive: false });
     dom.addEventListener("contextmenu", (e) => e.preventDefault());
     dom.style.touchAction = "none";
@@ -424,6 +430,13 @@ export class QuantumScene {
 
   private onPointerDown = (e: PointerEvent) => {
     const dom = this.renderer.domElement;
+    this.activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (this.activePointers.size >= 2) {
+      this.draggedAtomNode = null;
+      this.pinchMode = true;
+      this.lastPinchDist = this.getPinchDist();
+      return;
+    }
     this.isPointerDown = true;
     this.dragMode = e.button === 2 || e.shiftKey ? "move" : "rotate";
     this.lastX = e.clientX;
@@ -466,7 +479,26 @@ export class QuantumScene {
     }
   };
 
+  private getPinchDist(): number {
+    const pts = Array.from(this.activePointers.values());
+    if (pts.length < 2) return 0;
+    return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+  }
+
   private onPointerMove = (e: PointerEvent) => {
+    if (this.activePointers.has(e.pointerId)) {
+      this.activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    }
+    if (this.pinchMode) {
+      if (this.activePointers.size >= 2) {
+        const d = this.getPinchDist();
+        if (this.lastPinchDist > 0 && d > 0) {
+          this.cameraZoom = Math.max(7, Math.min(38, this.cameraZoom - (d - this.lastPinchDist) * 0.045));
+        }
+        this.lastPinchDist = d;
+      }
+      return;
+    }
     if (!this.isPointerDown) return;
     const dx = e.clientX - this.lastX;
     const dy = e.clientY - this.lastY;
@@ -499,8 +531,10 @@ export class QuantumScene {
     }
   };
 
-  private onPointerUp = () => {
-    this.isPointerDown = false;
+  private onPointerUp = (e: PointerEvent) => {
+    this.activePointers.delete(e.pointerId);
+    if (this.activePointers.size < 2) this.pinchMode = false;
+    this.isPointerDown = this.activePointers.size > 0;
     this.draggedAtomNode = null;
     if (!this.disposed) this.renderer.domElement.style.cursor = "grab";
   };

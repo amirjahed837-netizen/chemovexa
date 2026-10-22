@@ -108,6 +108,7 @@ export function QuantumLab() {
   const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState<CategoryId | null>(null);
   const [hoverNm, setHoverNm] = useState<number | null>(null);
+  const [glFailed, setGlFailed] = useState(false);
 
   const hostRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<QuantumScene | null>(null);
@@ -119,10 +120,16 @@ export function QuantumLab() {
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
-    const scene = new QuantumScene(host, { onSelectZ: (sel) => setZ(sel) });
-    sceneRef.current = scene;
+    let scene: QuantumScene | null = null;
+    try {
+      scene = new QuantumScene(host, { onSelectZ: (sel) => setZ(sel) });
+      sceneRef.current = scene;
+    } catch {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time WebGL failure flag, not a cascade
+      setGlFailed(true);
+    }
     return () => {
-      scene.dispose();
+      scene?.dispose();
       sceneRef.current = null;
     };
   }, []);
@@ -224,7 +231,7 @@ export function QuantumLab() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={p.searchPlaceholder}
-              className="min-w-44 flex-1 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/50"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/50 sm:min-w-44 sm:flex-1"
             />
             <div className="flex flex-wrap items-center gap-1.5">
               {ORBITAL_TABS.map((f) => (
@@ -286,9 +293,14 @@ export function QuantumLab() {
         {/* main grid */}
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
           {/* 3D viewport */}
-          <Reveal>
-            <GlassCard className="relative h-[520px] overflow-hidden p-0 lg:h-[680px]">
+          <Reveal className="min-w-0">
+            <GlassCard className="relative h-[400px] overflow-hidden p-0 sm:h-[520px] lg:h-[680px]">
               <div ref={hostRef} className="absolute inset-0" />
+              {glFailed && (
+                <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm leading-relaxed text-slate-400">
+                  {p.labels.webglNote}
+                </div>
+              )}
               <div className="pointer-events-none absolute top-4 left-4 flex items-center gap-3">
                 <div
                   className="rounded-xl border px-3 py-2 backdrop-blur-md"
@@ -315,7 +327,7 @@ export function QuantumLab() {
           </Reveal>
 
           {/* sidebar */}
-          <Reveal delay={80} className="flex flex-col gap-4">
+          <Reveal delay={80} className="flex min-w-0 flex-col gap-4">
             <GlassCard className="p-4">
               <div className="flex items-center justify-between gap-2">
                 <div>
@@ -334,7 +346,7 @@ export function QuantumLab() {
                   {p.categories[meta.i18nKey]}
                 </span>
               </div>
-              <div className="mt-3 grid grid-cols-3 gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {statCell(p.labels.mass, element.mass.toFixed(3))}
                 {statCell(p.labels.neutrons, String(element.neutrons))}
                 {statCell(p.labels.valence, String(element.valence))}
@@ -454,7 +466,7 @@ export function QuantumLab() {
 
             <GlassCard className="p-4">
               <div className="mb-2 text-[10px] uppercase tracking-wider text-slate-400">{p.labels.controls}</div>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 <Slider label={p.labels.orbitSpeed} value={orbitSpeed} min={0} max={3} step={0.05} onChange={setOrbitSpeed} />
                 <Slider label={p.labels.orbitalScale} value={orbitalScale} min={0.5} max={1.8} step={0.05} onChange={setOrbitalScale} />
               </div>

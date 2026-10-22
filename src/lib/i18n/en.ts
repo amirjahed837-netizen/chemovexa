@@ -388,6 +388,8 @@ export const en = {
         resetView: "Reset view",
         dragHint: "Drag to rotate · right-drag to move · wheel to zoom",
         pick: "Elements",
+        webglNote:
+          "Your browser could not start WebGL, so the 3D view is unavailable. Try updating your browser or enabling hardware acceleration.",
       },
       geoms: {
         diatomic: "Diatomic",

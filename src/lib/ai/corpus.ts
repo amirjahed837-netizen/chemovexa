@@ -33,10 +33,10 @@ const TOOL_BLURBS: Chunk[] = [
   },
   {
     id: "tool-periodic",
-    title: "Interactive Periodic Table",
+    title: "3D Quantum Periodic Table",
     url: "/chemistry/periodic-table",
     kind: "tool",
-    text: "The Interactive Periodic Table at /chemistry/periodic-table shows all 118 elements with IUPAC 2021 standard atomic masses in the classic 18-column layout including lanthanides and actinides. Hovering highlights an element's category (alkali metal, alkaline earth, transition metal, post-transition metal, metalloid, nonmetal, halogen, noble gas, lanthanide, actinide) and clicking opens a detail panel with atomic number, mass, melting and boiling points, electron configuration (Aufbau order with the standard exceptions such as chromium, copper, silver and gold), group, period, and phase at room temperature. Element names are available in English and Persian, and elements are searchable by name or symbol.",
+    text: "The 3D Quantum Periodic Table at /chemistry/periodic-table renders all 118 elements as an interactive Three.js lab with three synchronized views: a quantum atom with a nucleus of protons and neutrons, electron shells and realistic s/p/d/f orbital lobes (s spheres, p dumbbells, d cloverleaves with the dz2 torus, f eight-lobe sets) sized by principal quantum number; a 3D molecule viewer that builds each element's representative compound in its VSEPR geometry (diatomic, bent, linear, trigonal planar, trigonal pyramidal with the lone pair lobe, square planar, trigonal bipyramidal, octahedral, tetrahedral) with draggable spring-physics bonds; and a 3D periodic table of tiles you can orbit and click. Every element shows subshell occupancy with spin-box arrows (click a subshell to highlight its orbital), a canvas emission spectrum of its NIST atomic spectral lines from 200 to 850 nm with per-line hover readout in nanometers, electron configuration in Madelung order, mass, neutrons, valence electrons, block, group and period. Elements are searchable by symbol, name, Persian name or atomic number and filterable by all ten categories; orbit speed, orbital scale, auto-rotate, orbit gyro tilt, electron trails and spring bonds are all adjustable. Element names are available in English and Persian.",
   },
   {
     id: "tool-titration",

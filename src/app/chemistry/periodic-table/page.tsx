@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { PeriodicTableClient } from "@/components/tools/periodic/PeriodicTableClient";
+import { QuantumLab } from "@/components/tools/quantum/QuantumLab";
 
 export const metadata: Metadata = {
-  title: "Periodic Table",
+  title: "3D Quantum Periodic Table",
   description:
-    "All 118 elements, fully interactive — filter by category, search by name or symbol, and inspect electron configurations and placement.",
+    "All 118 elements in true 3D — s/p/d/f orbitals, interactive 3D molecules with spring bonds, a 3D periodic table and NIST spectral fingerprints.",
 };
 
 export default function PeriodicTablePage() {
-  return <PeriodicTableClient />;
+  return <QuantumLab />;
 }

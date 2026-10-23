@@ -4,7 +4,7 @@ import { ElectrochemClient } from "@/components/tools/electrochem/ElectrochemCli
 export const metadata: Metadata = {
   title: "Titration & Electrochemistry Lab",
   description:
-    "Titration curves, glass-electrode pH-metry with calibration QC, Nernst potentiometry cells, Faraday coulometry and a real 1-D diffusion cyclic-voltammetry simulation.",
+    "Exact titration curves for mono-, di- and triprotic systems plus redox titrations — temperature-corrected pKw and Nernst slopes, first-derivative and Gran analysis, indicator selection, species distributions, CSV export — plus pH-metry with calibration QC, Nernst potentiometry, Faraday coulometry and a real 1-D diffusion cyclic-voltammetry simulation.",
 };
 
 export default function TitrationPage() {

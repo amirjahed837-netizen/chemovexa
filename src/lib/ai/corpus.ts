@@ -40,10 +40,10 @@ const TOOL_BLURBS: Chunk[] = [
   },
   {
     id: "tool-titration",
-    title: "Titration Simulator",
+    title: "Titration & Electrochemistry Lab",
     url: "/chemistry/titration",
     kind: "tool",
-    text: "The Titration Simulator at /chemistry/titration draws the live pH curve of a titration as titrant is added: strong acid with NaOH (HCl), weak acid with NaOH (acetic acid, Ka = 1.8e-5), or weak base with HCl (ammonia, Kb = 1.8e-5). Every point on the curve is solved exactly from the charge and mass balance equations — buffer region, half-equivalence point (pH = pKa), equivalence-point hydrolysis and the post-equivalence excess — not from Henderson–Hasselbalch shortcuts. Dragging on the chart or using the slider sets the added volume and shows the pH, the equivalence volume Ve, textbook indicator ranges (phenolphthalein 8.2 to 10.0, methyl orange 3.1 to 4.4) and the current titration phase.",
+    text: "The Titration & Electrochemistry Lab at /chemistry/titration is a five-instrument analytical suite. The titration instrument solves the exact charge-balance equation for [H+] at every added volume (bisection on the log scale, never Henderson–Hasselbalch) for seven systems: strong acid (HCl/NaOH), weak acid (acetic acid), weak base (ammonia), strong base, diprotic carbonic acid (two jumps), triprotic phosphoric acid (three jumps, treated with exact alpha fractions) and redox titrations (Fe2+/Ce4+ or Fe2+/permanganate) plotted as electrode potential vs volume with the two-region Nernst model and the mixture potential at Ve. Temperature 0–60 C shifts pKw (interpolated from tabulated data) and all Nernst slopes. The UI shows the full curve with drag picking, all equivalence points (Ve1/Ve2/Ve3), half-equivalence pKa values, a first-derivative d(pH)/dV (or dE/dV) curve whose peaks mark the jumps, a Gran plot with post-equivalence least-squares extrapolation of Ve, five textbook indicators (methyl orange, methyl red, bromothymol blue, phenol red, phenolphthalein) each flagged whether its transition range brackets the equivalence pH, a species-distribution (alpha vs pH) diagram for the current acid-base system, and one-click CSV export of the curve. The other four tabs: glass-electrode pH-metry with two-point calibration and slope QC, Nernst potentiometry cells, Faraday-law coulometry and a real 1-D FTCS diffusion cyclic-voltammetry simulation with Randles-Sevcik verification.",
   },
   {
     id: "tool-cv",

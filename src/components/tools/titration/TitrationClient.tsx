@@ -8,7 +8,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { num, fmt } from "@/lib/chem/format";
-import { Field, NumInput, Select, SubTabs } from "@/components/tools/calculator/shared";
+import { Field, NumInput, Select, SubTabs, TextInput } from "@/components/tools/calculator/shared";
 import {
   derivativeSeries,
   equivalenceMl,
@@ -81,6 +81,8 @@ export function TitrationClient() {
   const [system, setSystem] = useState<SystemId>("weak-acid");
   const [analyteM, setAnalyteM] = useState("0.100");
   const [analyteMl, setAnalyteMl] = useState("25.0");
+  const [analyteLabel, setAnalyteLabel] = useState("CH₃COOH");
+  const [titrantLabel, setTitrantLabel] = useState("NaOH");
   const [titrantM, setTitrantM] = useState("0.100");
   const [k, setK] = useState("1.8e-5");
   const [k2, setK2] = useState("1");
@@ -185,9 +187,7 @@ export function TitrationClient() {
 
   const pKw = pKwOf(tempC);
   const caption = valid
-    ? isRedox
-      ? `${aV} mL ${SYSTEMS[system].analyte} ${aM} M + ${SYSTEMS[system].titrant} ${tM} M`
-      : `${aV} mL ${SYSTEMS[system].analyte} ${aM} M + ${SYSTEMS[system].titrant} ${tM} M`
+    ? `${aV} mL ${analyteLabel || SYSTEMS[system].analyte} ${aM} M + ${titrantLabel || SYSTEMS[system].titrant} ${tM} M`
     : "";
 
   const yDomain = isRedox
@@ -258,6 +258,8 @@ export function TitrationClient() {
                   onChange={(val) => {
                     const s = val as SystemId;
                     setSystem(s);
+                    setAnalyteLabel(SYSTEMS[s].analyte);
+                    setTitrantLabel(SYSTEMS[s].titrant);
                     if (s === "redox") {
                       setE0A("0.771"); setNA("1"); setE0T("1.61"); setNT("1");
                     } else if (K_PRESETS[s]) {
@@ -270,6 +272,14 @@ export function TitrationClient() {
                   options={(Object.keys(SYSTEMS) as SystemId[]).map((id) => ({ value: id, label: p.analytes[id] }))}
                 />
               </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label={p.analyteName}>
+                  <TextInput value={analyteLabel} onChange={setAnalyteLabel} placeholder="CH₃COOH" />
+                </Field>
+                <Field label={p.titrantName}>
+                  <TextInput value={titrantLabel} onChange={setTitrantLabel} placeholder="NaOH" />
+                </Field>
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <Field label={p.analyteM}>
                   <NumInput value={analyteM} onChange={setAnalyteM} placeholder="0.100" />

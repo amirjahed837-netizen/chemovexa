@@ -422,6 +422,8 @@ export const en = {
       description:
         "Drag the burette and watch the full curve form — buffer regions, polyprotic jumps, redox potential plateaus, indicator ranges, Gran analysis and species distributions, solved exactly at every point. Five instruments: titration, pH-metry, potentiometry, coulometry and voltammetry.",
       analyte: "Analyte",
+      analyteName: "Analyte formula",
+      titrantName: "Titrant formula",
       analytes: {
         "strong-acid": "Strong acid · HCl vs NaOH",
         "weak-acid": "Weak acid — CH₃COOH vs NaOH",
